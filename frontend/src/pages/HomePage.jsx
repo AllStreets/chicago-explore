@@ -5,6 +5,8 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import IntelFeed from '../components/IntelFeed'
 import useCTA from '../hooks/useCTA'
 import useWeather from '../hooks/useWeather'
+import useYelp from '../hooks/useYelp'
+import useHomeFeed from '../hooks/useHomeFeed'
 import './HomePage.css'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
@@ -21,8 +23,11 @@ const LINE_COLOR_MAP = {
 export default function HomePage() {
   const mapContainer = useRef(null)
   const mapRef       = useRef(null)
-  const { trains }   = useCTA()
-  const { weather, lake } = useWeather()
+  const pulseRef     = useRef(null)
+  const { trains }            = useCTA()
+  const { weather, lake }     = useWeather()
+  const { places }            = useYelp({ type: 'restaurants', limit: 20 })
+  const { feed }              = useHomeFeed()
 
   useEffect(() => {
     if (mapRef.current) return
@@ -42,6 +47,7 @@ export default function HomePage() {
       const layers = map.getStyle().layers
       const labelLayer = layers.find(l => l.type === 'symbol' && l.layout?.['text-field'])
 
+      // 3D buildings
       map.addLayer(
         {
           id: '3d-buildings',
@@ -60,11 +66,11 @@ export default function HomePage() {
         labelLayer?.id
       )
 
+      // CTA trains source + layer
       map.addSource('cta-trains', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
       })
-
       map.addLayer({
         id: 'cta-train-dots',
         type: 'circle',
@@ -77,12 +83,51 @@ export default function HomePage() {
           'circle-opacity': 0.9,
         }
       })
+
+      // Buzz spots source + layer
+      map.addSource('buzz-spots', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
+      })
+      map.addLayer({
+        id: 'buzz-spot-dots',
+        type: 'circle',
+        source: 'buzz-spots',
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['get', 'rating'], 0, 4, 5, 9],
+          'circle-color': '#f97316',
+          'circle-stroke-color': '#fff',
+          'circle-stroke-width': 1,
+          'circle-opacity': 0.75,
+        }
+      })
+      map.on('click', 'buzz-spot-dots', e => {
+        const { name, rating, category } = e.features[0].properties
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(e.features[0].geometry.coordinates)
+          .setHTML(`<strong>${name}</strong><br>${rating} stars · <small>${category}</small>`)
+          .addTo(map)
+      })
+      map.on('mouseenter', 'buzz-spot-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'buzz-spot-dots', () => { map.getCanvas().style.cursor = '' })
+
+      // Streeterville pulse marker
+      const el = document.createElement('div')
+      el.className = 'streeterville-pulse'
+      pulseRef.current = new mapboxgl.Marker({ element: el, anchor: 'center' })
+        .setLngLat(CENTER)
+        .addTo(map)
     })
 
     mapRef.current = map
-    return () => { map.remove(); mapRef.current = null }
+    return () => {
+      if (pulseRef.current) { pulseRef.current.remove(); pulseRef.current = null }
+      map.remove()
+      mapRef.current = null
+    }
   }, [])
 
+  // Update CTA train dots
   useEffect(() => {
     const map = mapRef.current
     if (!map || !map.isStyleLoaded()) return
@@ -98,10 +143,35 @@ export default function HomePage() {
     })
   }, [trains])
 
+  // Update buzz spots
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !map.isStyleLoaded()) return
+    const source = map.getSource('buzz-spots')
+    if (!source) return
+    source.setData({
+      type: 'FeatureCollection',
+      features: places
+        .filter(p => p.lat && p.lon)
+        .map(p => ({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
+          properties: { name: p.name, rating: p.rating || 0, category: p.categories?.[0] || '' }
+        }))
+    })
+  }, [places])
+
   return (
     <div className="home-page">
       <div ref={mapContainer} className="home-map" />
-      <IntelFeed weather={weather} lake={lake} trains={trains} />
+      <IntelFeed
+        weather={weather}
+        lake={lake}
+        trains={trains}
+        trainCount={feed.trainCount}
+        nextEvent={feed.nextEvent}
+        topSpots={places.slice(0, 3)}
+      />
     </div>
   )
 }

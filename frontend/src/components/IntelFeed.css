@@ -106,3 +106,52 @@
   color: var(--accent);
   white-space: nowrap;
 }
+
+.intel-train-badge {
+  margin-left: 8px;
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+}
+
+.intel-card--event {
+  border-left: 2px solid #f59e0b;
+}
+
+.intel-card--spots {
+  border-left: 2px solid #f97316;
+}
+
+.intel-card-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.intel-spot-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.intel-spot-name {
+  font-size: 11px;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.intel-spot-rating {
+  font-size: 10px;
+  color: #f97316;
+  font-family: var(--font-mono);
+  margin-left: 8px;
+}

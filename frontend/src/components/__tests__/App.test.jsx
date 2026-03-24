@@ -19,6 +19,7 @@ vi.mock('mapbox-gl', () => {
 vi.mock('../../hooks/useCTA', () => ({ default: () => ({ trains: [], loading: false, error: null }) }))
 vi.mock('../../hooks/useWeather', () => ({ default: () => ({ weather: null, lake: null, loading: false }) }))
 vi.mock('../../hooks/useYelp', () => ({ default: () => ({ places: [], loading: false }) }))
+vi.mock('../../hooks/useHomeFeed', () => ({ default: () => ({ feed: { trainCount: null, weather: null, nextEvent: null }, loading: false }) }))
 
 import App from '../../App'
 

@@ -13,12 +13,25 @@ vi.mock('mapbox-gl', () => {
     this.getSource = vi.fn(() => ({ setData: vi.fn() }))
     this.isStyleLoaded = vi.fn(() => true)
     this.getStyle = vi.fn(() => ({ layers: [] }))
+    this.getCanvas = vi.fn(() => ({ style: {} }))
   }
   function MockNavigationControl() {}
+  function MockMarker() {
+    this.setLngLat = vi.fn(() => this)
+    this.addTo = vi.fn(() => this)
+    this.remove = vi.fn()
+  }
+  function MockPopup() {
+    this.setLngLat = vi.fn(() => this)
+    this.setHTML = vi.fn(() => this)
+    this.addTo = vi.fn(() => this)
+  }
   return {
     default: {
       Map: MockMap,
       NavigationControl: MockNavigationControl,
+      Marker: MockMarker,
+      Popup: MockPopup,
       accessToken: '',
     }
   }
@@ -34,6 +47,8 @@ vi.mock('../../hooks/useWeather', () => ({
     loading: false
   })
 }))
+vi.mock('../../hooks/useYelp', () => ({ default: () => ({ places: [], loading: false }) }))
+vi.mock('../../hooks/useHomeFeed', () => ({ default: () => ({ feed: { trainCount: null, weather: null, nextEvent: null }, loading: false }) }))
 
 import HomePage from '../HomePage'
 
