@@ -18,7 +18,7 @@ export default function FoodPage() {
   const { places, loading } = useYelp({ type, open_now: openNow ? 'true' : undefined })
 
   useEffect(() => {
-    if (mapRef.current) return
+    if (mapRef.current || !MAPBOX_TOKEN) return
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/dark-v11',

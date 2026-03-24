@@ -26,7 +26,7 @@ export default function NightlifePage() {
   const { places, loading } = useYelp({ type: category })
 
   useEffect(() => {
-    if (mapRef.current) return
+    if (mapRef.current || !MAPBOX_TOKEN) return
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/dark-v11',
