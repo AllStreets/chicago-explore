@@ -1,0 +1,154 @@
+.weather-page {
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.weather-header {
+  margin-bottom: 24px;
+}
+
+.weather-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.weather-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.weather-card {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.weather-card-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.weather-loading,
+.weather-no-key {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #00d4ff;
+  line-height: 1;
+}
+
+.weather-feels {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.weather-desc {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 8px 0;
+  text-transform: capitalize;
+}
+
+.weather-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.weather-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.weather-lake-temp {
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #3b82f6;
+}
+
+.weather-lake-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 4px 0;
+}
+
+.weather-lake-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-bottom: 12px;
+}
+
+.weather-lake-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+}
+
+.weather-lake-badge--safe { background: rgba(16,185,129,0.15); color: #10b981; }
+.weather-lake-badge--caution { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+.weather-seasons { display: flex; flex-direction: column; gap: 12px; }
+
+.weather-season-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.weather-season-months {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-left: 6px;
+}
+
+.weather-season-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.weather-tips { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.weather-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.weather-tip-icon { flex-shrink: 0; color: #00d4ff; margin-top: 2px; }
