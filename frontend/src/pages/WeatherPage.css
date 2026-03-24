@@ -58,6 +58,12 @@
   line-height: 1;
 }
 
+.weather-temp-c {
+  font-size: 20px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 .weather-feels {
   font-size: 13px;
   color: var(--text-muted);

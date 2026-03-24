@@ -15,9 +15,13 @@ router.get('/', async (_req, res) => {
   try {
     const r = await fetch(owmUrl())
     const d = await r.json()
+    const tempC = Math.round(d.main.temp)
+    const feelsC = Math.round(d.main.feels_like)
     res.json({
-      temp:        Math.round(d.main.temp),
-      feelsLike:   Math.round(d.main.feels_like),
+      temp:        tempC,
+      tempF:       Math.round(tempC * 9/5 + 32),
+      feelsLike:   feelsC,
+      feelsLikeF:  Math.round(feelsC * 9/5 + 32),
       humidity:    d.main.humidity,
       wind:        { speed: d.wind.speed, deg: d.wind.deg },
       description: d.weather[0].description,

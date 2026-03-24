@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
   try {
     const r = await fetch(`${FSQ_BASE}?${params}`, {
       headers: {
-        Authorization: key,
+        Authorization: key.startsWith('fsq3') ? key : `fsq3${key}`,
         Accept: 'application/json',
       },
       signal: AbortSignal.timeout(8000),

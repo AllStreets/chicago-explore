@@ -66,8 +66,8 @@ export default function WeatherPage() {
           )}
           {weather && (
             <>
-              <div className="weather-temp">{weather.temp}°C</div>
-              <div className="weather-feels">Feels like {weather.feelsLike ?? weather.temp}°C</div>
+              <div className="weather-temp">{weather.tempF ?? Math.round(weather.temp * 9/5 + 32)}°F <span className="weather-temp-c">/ {weather.temp}°C</span></div>
+              <div className="weather-feels">Feels like {weather.feelsLikeF ?? Math.round((weather.feelsLike ?? weather.temp) * 9/5 + 32)}°F / {weather.feelsLike ?? weather.temp}°C</div>
               <div className="weather-desc">{weather.description}</div>
               <div className="weather-stats">
                 <div className="weather-stat">
