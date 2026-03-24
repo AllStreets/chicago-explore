@@ -126,7 +126,8 @@ export default function NightlifePage() {
                 </button>
               </div>
               <div className="nightlife-card-meta">
-                <span className="nightlife-card-rating">{p.rating}</span>
+                {p.rating != null && <span className="nightlife-card-rating">{p.rating}</span>}
+                {p.distance != null && <span className="nightlife-card-rating">{(p.distance / 1000).toFixed(1)} km</span>}
                 {p.price && <span className="nightlife-card-price">{p.price}</span>}
                 <span className="nightlife-card-hood">{p.neighborhood}</span>
               </div>

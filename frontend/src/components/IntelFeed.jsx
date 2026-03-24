@@ -63,7 +63,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
           {topSpots.map(s => (
             <div key={s.id} className="intel-spot-row">
               <span className="intel-spot-name">{s.name}</span>
-              <span className="intel-spot-rating">{s.rating}</span>
+              <span className="intel-spot-rating">{s.rating != null ? s.rating : s.distance != null ? `${(s.distance/1000).toFixed(1)}km` : ''}</span>
             </div>
           ))}
         </div>

@@ -110,8 +110,9 @@ export default function FoodPage() {
             <div key={p.id} className="food-card">
               <div className="food-card-name">{p.name}</div>
               <div className="food-card-meta">
-                <span className="food-card-rating">{p.rating}</span>
-                <span className="food-card-price">{p.price}</span>
+                {p.rating != null && <span className="food-card-rating">{p.rating}</span>}
+                {p.distance != null && <span className="food-card-rating">{(p.distance / 1000).toFixed(1)} km</span>}
+                {p.price && <span className="food-card-price">{p.price}</span>}
                 <span className="food-card-category">{p.categories?.[0]}</span>
               </div>
               <div className="food-card-neighborhood">{p.neighborhood}</div>
