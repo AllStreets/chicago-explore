@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
 
   // CTA train count
   try {
-    const key = process.env.CTA_KEY
+    const key = process.env.CTA_API_KEY
     if (key) {
       const url = `https://lapi.transitchicago.com/api/1.0/ttpositions.aspx?key=${key}&rt=Red,Blue,Brn,G,Org,P,Pink,Y&outputType=JSON`
       const r = await fetch(url)
@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
 
   // Next event (static fallback)
   results.nextEvent = {
-    name: 'Live Music at Millenium Park',
+    name: 'Live Music at Millennium Park',
     time: 'Tonight 7pm',
     type: 'event'
   }
