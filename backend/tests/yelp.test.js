@@ -9,53 +9,47 @@ beforeEach(() => {
 })
 
 describe('GET /api/places', () => {
-  it('returns places array from Foursquare', async () => {
-    process.env.FOURSQUARE_KEY = 'test-key'
+  it('returns places array from Overpass', async () => {
     fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
-        results: [
-          {
-            fsq_id: 'abc',
-            name: 'The Gage',
-            categories: [{ name: 'American Restaurant' }],
-            price: 2,
-            location: { neighborhood: ['Loop'] },
-            geocodes: { main: { latitude: 41.88, longitude: -87.62 } },
-            distance: 500,
-          }
+        elements: [
+          { id: 12345, type: 'node', lat: 41.88, lon: -87.62, tags: { name: 'The Gage', amenity: 'restaurant', cuisine: 'american' } }
         ]
       })
     })
     const res = await request(app).get('/api/places?type=restaurants')
     expect(res.status).toBe(200)
     expect(Array.isArray(res.body.places)).toBe(true)
-    expect(res.body.places[0]).toMatchObject({ id: 'abc', name: 'The Gage' })
-    delete process.env.FOURSQUARE_KEY
+    expect(res.body.places[0]).toMatchObject({ id: '12345', name: 'The Gage' })
   })
 
   it('serves from SQLite cache on second identical request', async () => {
-    process.env.FOURSQUARE_KEY = 'test-key'
     fetch.mockResolvedValue({
       ok: true,
       json: async () => ({
-        results: [{ fsq_id: 'xyz', name: 'Cached Place', categories: [], location: {}, geocodes: { main: { latitude: 41.88, longitude: -87.62 } }, distance: 200 }]
+        elements: [{ id: 99, type: 'node', lat: 41.88, lon: -87.62, tags: { name: 'Cached Place', amenity: 'bar' } }]
       })
     })
-
-    // First request — hits Foursquare
     await request(app).get('/api/places?type=bars')
-    // Second request — should use cache
     const res = await request(app).get('/api/places?type=bars')
     expect(res.status).toBe(200)
     expect(fetch).toHaveBeenCalledTimes(1)
-    delete process.env.FOURSQUARE_KEY
   })
 
-  it('returns empty places when FOURSQUARE_KEY is not set', async () => {
-    delete process.env.FOURSQUARE_KEY
+  it('filters out elements without a name', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        elements: [
+          { id: 1, type: 'node', lat: 41.88, lon: -87.62, tags: { amenity: 'restaurant' } },  // no name
+          { id: 2, type: 'node', lat: 41.89, lon: -87.63, tags: { name: 'Named Place', amenity: 'restaurant' } }
+        ]
+      })
+    })
     const res = await request(app).get('/api/places?type=restaurants')
     expect(res.status).toBe(200)
-    expect(res.body.places).toEqual([])
+    expect(res.body.places.length).toBe(1)
+    expect(res.body.places[0].name).toBe('Named Place')
   })
 })
