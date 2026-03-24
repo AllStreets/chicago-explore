@@ -1,0 +1,17 @@
+/* frontend/src/pages/HomePage.css */
+.home-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.home-map {
+  position: absolute;
+  inset: 0;
+}
+
+.mapboxgl-ctrl-attrib {
+  background: rgba(6,11,24,0.8) !important;
+  color: var(--text-muted) !important;
+}
