@@ -1,0 +1,209 @@
+.neighborhoods-page {
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.neighborhoods-header { margin-bottom: 20px; }
+
+.neighborhoods-title {
+  font-size: 22px;
+  font-weight: 700;
+  display: block;
+}
+
+.neighborhoods-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.neighborhoods-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.neighborhoods-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.neighborhoods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+.neighborhood-card {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.neighborhood-card:hover,
+.neighborhood-card.selected {
+  border-color: #00d4ff;
+}
+
+.neighborhood-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.neighborhood-card-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.neighborhood-card-vibes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.neighborhood-vibe-tag {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--vibe-color, #64748b) 15%, transparent);
+  color: var(--vibe-color, #64748b);
+  font-family: var(--font-mono);
+}
+
+.neighborhoods-detail {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 24px;
+  min-height: 400px;
+}
+
+.neighborhoods-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.nd-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.nd-tagline {
+  font-size: 13px;
+  color: #00d4ff;
+  font-family: var(--font-mono);
+  margin: 4px 0 12px;
+}
+
+.nd-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.nd-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.nd-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: #0f1f3a;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.nd-stat svg { color: #00d4ff; }
+
+.nd-spots { margin-bottom: 20px; }
+
+.nd-spots-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.nd-spot {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #0f1f3a;
+  border: 1px solid #1e3a5f;
+  border-radius: 12px;
+  color: var(--text-primary);
+}
+
+.nd-ai {
+  border-top: 1px solid #1e3a5f;
+  padding-top: 16px;
+}
+
+.nd-ai-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.nd-ai-label svg { color: #00d4ff; }
+
+.nd-ai-btn {
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.3);
+  color: #00d4ff;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nd-ai-btn:hover { background: rgba(0,212,255,0.2); }
+
+.nd-ai-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.nd-ai-cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+  color: #00d4ff;
+}
+
+@keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0 } }
