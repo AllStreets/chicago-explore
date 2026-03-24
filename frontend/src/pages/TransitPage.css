@@ -1,0 +1,75 @@
+.transit-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.transit-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.transit-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.transit-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.transit-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.transit-sidebar {
+  width: 200px;
+  border-right: 1px solid var(--border);
+  padding: 12px 0;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.transit-map { flex: 1; }
+
+.line-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+}
+
+.line-card:hover { background: rgba(0,212,255,0.04); }
+
+.line-card-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.line-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.line-card-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.line-card-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
