@@ -3,13 +3,15 @@ import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import IntelFeed from '../components/IntelFeed'
+import MapPlaceholder from '../components/MapPlaceholder'
 import useCTA from '../hooks/useCTA'
 import useWeather from '../hooks/useWeather'
 import useYelp from '../hooks/useYelp'
 import useHomeFeed from '../hooks/useHomeFeed'
 import './HomePage.css'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
+if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const CENTER = [-87.6197, 41.8919]  // Streeterville
 const ZOOM   = 13.5
@@ -163,7 +165,7 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      <div ref={mapContainer} className="home-map" />
+      {MAPBOX_TOKEN ? <div ref={mapContainer} className="home-map" /> : <div className="home-map"><MapPlaceholder /></div>}
       <IntelFeed
         weather={weather}
         lake={lake}

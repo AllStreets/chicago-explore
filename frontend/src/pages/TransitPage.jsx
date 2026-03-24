@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import useCTA from '../hooks/useCTA'
+import MapPlaceholder from '../components/MapPlaceholder'
 import './TransitPage.css'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
+if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -134,7 +136,7 @@ export default function TransitPage() {
           </div>
         </div>
 
-        <div ref={mapContainer} className="transit-map" />
+        {MAPBOX_TOKEN ? <div ref={mapContainer} className="transit-map" /> : <div className="transit-map"><MapPlaceholder /></div>}
       </div>
     </div>
   )

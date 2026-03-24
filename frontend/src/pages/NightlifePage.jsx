@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import useYelp from '../hooks/useYelp'
+import MapPlaceholder from '../components/MapPlaceholder'
 import './NightlifePage.css'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
+if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const CATEGORIES = ['bars', 'nightlife', 'jazzandblues', 'danceclub', 'rooftop_bars', 'wine_bars', 'cocktailbars']
 
@@ -116,7 +118,7 @@ export default function NightlifePage() {
             </div>
           ))}
         </div>
-        <div ref={mapContainer} className="nightlife-map" />
+        {MAPBOX_TOKEN ? <div ref={mapContainer} className="nightlife-map" /> : <div className="nightlife-map"><MapPlaceholder /></div>}
       </div>
     </div>
   )

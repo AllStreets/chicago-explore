@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import useYelp from '../hooks/useYelp'
+import MapPlaceholder from '../components/MapPlaceholder'
 import './FoodPage.css'
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
+if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const TYPES = ['restaurants', 'bars', 'cafes', 'pizza', 'sushi', 'tacos', 'brunch']
 
@@ -113,7 +115,7 @@ export default function FoodPage() {
             </div>
           ))}
         </div>
-        <div ref={mapContainer} className="food-map" />
+        {MAPBOX_TOKEN ? <div ref={mapContainer} className="food-map" /> : <div className="food-map"><MapPlaceholder /></div>}
       </div>
     </div>
   )
