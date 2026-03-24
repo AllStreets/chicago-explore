@@ -23,11 +23,17 @@ app.use(express.json())
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 
-app.use('/api/cta',     require('./routes/cta'))
-app.use('/api/weather', require('./routes/weather'))
-app.use('/api/lake',    require('./routes/lake'))
-app.use('/api/places',  require('./routes/yelp'))
-app.use('/api/divvy',   require('./routes/divvy'))
+app.use('/api/cta',           require('./routes/cta'))
+app.use('/api/weather',       require('./routes/weather'))
+app.use('/api/lake',          require('./routes/lake'))
+app.use('/api/places',        require('./routes/yelp'))
+app.use('/api/divvy',         require('./routes/divvy'))
+app.use('/api/home-feed',     require('./routes/home-feed'))
+app.use('/api/neighborhoods', require('./routes/neighborhoods'))
+app.use('/api/sports',        require('./routes/sports'))
+app.use('/api/events',        require('./routes/events'))
+app.use('/api/ai',            require('./routes/ai'))
+app.use('/api/me',            require('./routes/me'))
 
 if (require.main === module) {
   const port = process.env.PORT || 3001
