@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { RiHeartLine, RiHeartFill, RiCheckboxCircleLine } from 'react-icons/ri'
 import useYelp from '../hooks/useYelp'
+import { addFavorite, addVisited } from '../hooks/useMe'
 import MapPlaceholder from '../components/MapPlaceholder'
 import './FoodPage.css'
 
@@ -15,6 +17,7 @@ export default function FoodPage() {
   const mapRef       = useRef(null)
   const [type, setType] = useState('restaurants')
   const [openNow, setOpenNow] = useState(false)
+  const [saved, setSaved] = useState({})  // { placeId: 'favorite' | 'visited' }
   const { places, loading } = useYelp({ type, open_now: openNow ? 'true' : undefined })
 
   useEffect(() => {
@@ -112,6 +115,28 @@ export default function FoodPage() {
                 <span className="food-card-category">{p.categories?.[0]}</span>
               </div>
               <div className="food-card-neighborhood">{p.neighborhood}</div>
+              <div className="food-card-actions">
+                <button
+                  className={`food-action-btn${saved[p.id] === 'favorite' ? ' active' : ''}`}
+                  title="Save to favorites"
+                  onClick={() => {
+                    addFavorite({ id: p.id, name: p.name, lat: p.lat, lon: p.lon })
+                    setSaved(s => ({ ...s, [p.id]: 'favorite' }))
+                  }}
+                >
+                  {saved[p.id] === 'favorite' ? <RiHeartFill /> : <RiHeartLine />}
+                </button>
+                <button
+                  className={`food-action-btn${saved[p.id] === 'visited' ? ' active visited' : ''}`}
+                  title="Mark as visited"
+                  onClick={() => {
+                    addVisited({ id: p.id, name: p.name })
+                    setSaved(s => ({ ...s, [p.id]: 'visited' }))
+                  }}
+                >
+                  <RiCheckboxCircleLine />
+                </button>
+              </div>
             </div>
           ))}
         </div>

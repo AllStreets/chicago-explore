@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { RiHeartLine, RiHeartFill } from 'react-icons/ri'
 import useYelp from '../hooks/useYelp'
+import { addFavorite } from '../hooks/useMe'
 import MapPlaceholder from '../components/MapPlaceholder'
 import './NightlifePage.css'
 
@@ -23,6 +25,7 @@ export default function NightlifePage() {
   const mapContainer = useRef(null)
   const mapRef       = useRef(null)
   const [category, setCategory] = useState('bars')
+  const [saved, setSaved] = useState({})
   const { places, loading } = useYelp({ type: category })
 
   useEffect(() => {
@@ -109,7 +112,19 @@ export default function NightlifePage() {
           {loading && <div className="nightlife-loading">Loading...</div>}
           {places.slice(0, 12).map(p => (
             <div key={p.id} className="nightlife-card">
-              <div className="nightlife-card-name">{p.name}</div>
+              <div className="nightlife-card-top">
+                <div className="nightlife-card-name">{p.name}</div>
+                <button
+                  className={`nightlife-fav-btn${saved[p.id] ? ' active' : ''}`}
+                  title="Save to favorites"
+                  onClick={() => {
+                    addFavorite({ id: p.id, name: p.name, lat: p.lat, lon: p.lon })
+                    setSaved(s => ({ ...s, [p.id]: true }))
+                  }}
+                >
+                  {saved[p.id] ? <RiHeartFill /> : <RiHeartLine />}
+                </button>
+              </div>
               <div className="nightlife-card-meta">
                 <span className="nightlife-card-rating">{p.rating}</span>
                 {p.price && <span className="nightlife-card-price">{p.price}</span>}

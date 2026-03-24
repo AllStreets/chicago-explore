@@ -109,3 +109,37 @@
   color: var(--text-muted);
   font-family: var(--font-mono);
 }
+
+.food-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.food-action-btn {
+  background: none;
+  border: 1px solid #1e3a5f;
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+
+.food-action-btn:hover {
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+.food-action-btn.active {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.food-action-btn.active.visited {
+  border-color: #10b981;
+  color: #10b981;
+}

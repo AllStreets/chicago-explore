@@ -133,3 +133,23 @@
   width: 100%;
   height: 100%;
 }
+
+.nightlife-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.nightlife-fav-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.nightlife-fav-btn:hover { color: #ef4444; }
+.nightlife-fav-btn.active { color: #ef4444; }
