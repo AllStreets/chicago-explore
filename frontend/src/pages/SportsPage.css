@@ -114,6 +114,14 @@
   margin-bottom: 4px;
 }
 
+.sports-game-score {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #00d4ff;
+  margin: 4px 0;
+}
+
 .sports-game-meta {
   display: flex;
   flex-direction: column;

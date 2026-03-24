@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { RiCalendarLine, RiMapPinLine, RiRefreshLine } from 'react-icons/ri'
+import { RiCalendarLine, RiMapPinLine } from 'react-icons/ri'
 import './SportsPage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -88,6 +88,11 @@ export default function SportsPage() {
             {(team.games || []).map(g => (
               <div key={g.id} className="sports-game">
                 <div className="sports-game-name">{g.name}</div>
+                {(g.homeScore != null || g.awayScore != null) && (
+                  <div className="sports-game-score">
+                    {g.awayScore ?? '–'} – {g.homeScore ?? '–'}
+                  </div>
+                )}
                 <div className="sports-game-meta">
                   <span className="sports-game-date">
                     <RiCalendarLine style={{ verticalAlign: 'middle', marginRight: 4 }} />

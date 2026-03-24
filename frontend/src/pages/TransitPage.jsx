@@ -66,6 +66,28 @@ export default function TransitPage() {
         source: 'divvy',
         paint: { 'circle-radius': 3, 'circle-color': '#22c55e', 'circle-opacity': 0.7 }
       })
+
+      // Train dot popups
+      map.on('click', 'train-dots', e => {
+        const { line, rn } = e.features[0].properties
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(e.features[0].geometry.coordinates)
+          .setHTML(`<strong>${line} Line</strong><br>Train #${rn}`)
+          .addTo(map)
+      })
+      map.on('mouseenter', 'train-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'train-dots', () => { map.getCanvas().style.cursor = '' })
+
+      // Divvy station popups
+      map.on('click', 'divvy-dots', e => {
+        const { name, bikes } = e.features[0].properties
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(e.features[0].geometry.coordinates)
+          .setHTML(`<strong>${name}</strong><br>${bikes} bikes available`)
+          .addTo(map)
+      })
+      map.on('mouseenter', 'divvy-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'divvy-dots', () => { map.getCanvas().style.cursor = '' })
     })
     mapRef.current = map
     return () => { map.remove(); mapRef.current = null }
@@ -81,7 +103,7 @@ export default function TransitPage() {
       features: trains.map(t => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [t.lon, t.lat] },
-        properties: { color: LINE_COLORS[t.line] || '#00d4ff' }
+        properties: { color: LINE_COLORS[t.line] || '#00d4ff', line: t.line, rn: t.rn }
       }))
     })
   }, [trains])

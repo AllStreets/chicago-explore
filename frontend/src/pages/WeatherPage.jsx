@@ -67,7 +67,7 @@ export default function WeatherPage() {
           {weather && (
             <>
               <div className="weather-temp">{weather.temp}°C</div>
-              <div className="weather-feels">Feels like {weather.feelsLike ?? weather.feels_like ?? weather.temp}°C</div>
+              <div className="weather-feels">Feels like {weather.feelsLike ?? weather.temp}°C</div>
               <div className="weather-desc">{weather.description}</div>
               <div className="weather-stats">
                 <div className="weather-stat">
@@ -96,14 +96,14 @@ export default function WeatherPage() {
           )}
           {lake && (
             <>
-              <div className="weather-lake-temp">{lake.waterTemp ?? '--'}°C</div>
+              <div className="weather-lake-temp">{lake.tempC ?? '--'}°C</div>
               <div className="weather-lake-label">{lake.niceLabel}</div>
               <div className="weather-lake-meta">
-                <span>{lake.waveHeight ? `Waves ${lake.waveHeight}m` : 'Calm'}</span>
-                <span>{lake.windDirection ?? ''}</span>
+                <span>{lake.windMps != null ? `Wind ${lake.windMps} m/s` : 'Calm'}</span>
+                <span>{lake.description || ''}</span>
               </div>
-              <div className={`weather-lake-badge weather-lake-badge--${lake.safe ? 'safe' : 'caution'}`}>
-                {lake.safe ? 'Good for outdoor activity' : 'Use caution outdoors'}
+              <div className={`weather-lake-badge weather-lake-badge--${(lake.niceScore ?? 0) >= 60 ? 'safe' : 'caution'}`}>
+                {(lake.niceScore ?? 0) >= 60 ? 'Good for outdoor activity' : 'Use caution outdoors'}
               </div>
             </>
           )}
