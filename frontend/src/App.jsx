@@ -4,15 +4,14 @@ import Sidebar from './components/Sidebar'
 import HomePage from './pages/HomePage'
 import TransitPage from './pages/TransitPage'
 import FoodPage from './pages/FoodPage'
+import NeighborhoodsPage from './pages/NeighborhoodsPage'
+import NightlifePage from './pages/NightlifePage'
+import SportsPage from './pages/SportsPage'
+import EventsPage from './pages/EventsPage'
+import ExplorePage from './pages/ExplorePage'
+import WeatherPage from './pages/WeatherPage'
+import MyChicagoPage from './pages/MyChicagoPage'
 import './App.css'
-
-function ComingSoon({ name }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-      {name} — coming in Phase 2
-    </div>
-  )
-}
 
 export default function App() {
   return (
@@ -23,13 +22,13 @@ export default function App() {
           <Route path="/"              element={<HomePage />} />
           <Route path="/transit"       element={<TransitPage />} />
           <Route path="/food"          element={<FoodPage />} />
-          <Route path="/neighborhoods" element={<ComingSoon name="Neighborhoods" />} />
-          <Route path="/nightlife"     element={<ComingSoon name="Nightlife" />} />
-          <Route path="/sports"        element={<ComingSoon name="Sports" />} />
-          <Route path="/events"        element={<ComingSoon name="Events" />} />
-          <Route path="/explore"       element={<ComingSoon name="Explore" />} />
-          <Route path="/weather"       element={<ComingSoon name="Weather & Lake" />} />
-          <Route path="/me"            element={<ComingSoon name="My Chicago" />} />
+          <Route path="/neighborhoods" element={<NeighborhoodsPage />} />
+          <Route path="/nightlife"     element={<NightlifePage />} />
+          <Route path="/sports"        element={<SportsPage />} />
+          <Route path="/events"        element={<EventsPage />} />
+          <Route path="/explore"       element={<ExplorePage />} />
+          <Route path="/weather"       element={<WeatherPage />} />
+          <Route path="/me"            element={<MyChicagoPage />} />
         </Routes>
       </main>
     </BrowserRouter>
