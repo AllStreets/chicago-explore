@@ -1,61 +1,81 @@
 # Chicago Explorer
 
-A public city intelligence app for exploring Chicago. Built for someone moving to Streeterville (one block from Navy Pier) in late May 2026. Shows live CTA L train positions, a Yelp-powered food and drink map, current weather, and a floating intel feed with lake conditions and transit arrivals.
+A city intelligence app for exploring Chicago. Built for someone moving to Streeterville (one block from Navy Pier) in late May 2026.
+
+**Live:** [chicago-explorer.vercel.app](https://chicago-explorer.vercel.app) — **API:** [railway.app](https://railway.app)
 
 Repo: https://github.com/AllStreets/chicago-explore
 
 ---
 
-## Phase 1 Pages
+## Pages
 
 | Route | Page | Description |
 |---|---|---|
-| `/` | Home | Full-screen 3D Mapbox map centered on Streeterville, live CTA train dots, floating IntelFeed overlay (weather, lake conditions, CTA arrivals) |
-| `/transit` | Transit | All 8 CTA L lines with live train positions and Divvy bike stations on map, line status sidebar |
-| `/food` | Food & Drink | Yelp-powered restaurant map, cuisine filter buttons, open-now toggle, place cards |
+| `/` | Home | 3D globe centered on Streeterville, live CTA train dots, floating IntelFeed (weather, sports, tonight's event, closest train, Buzzing Now) |
+| `/explore` | Explore Chicago | Curated landmarks, architecture, culture, nature, and hidden gems with AI guide chat |
+| `/transit` | Transit | All 8 CTA L lines with animated live train positions, line status sidebar, Divvy stations |
+| `/nightlife` | Nightlife | Bars, clubs, cocktail bars, rooftop bars, wine bars, jazz venues — map + scene profiles |
+| `/food` | Food & Drink | Foursquare-powered restaurant map with cuisine filters |
+| `/sports` | Sports | Cubs, Sox, Bears, Bulls, Blackhawks, Fire — live scores, today's games, upcoming schedule |
+| `/events` | Events | Ticketmaster-powered event listings, color-coded by type with filter tabs |
+| `/weather` | Weather & Lake | Current conditions, HIGH/NOW/LOW tiles, animated Lake Michigan scene (8 weather states) |
+| `/neighborhoods` | Neighborhoods | Per-neighborhood character, stats, vibe tags, AI brief, and AI live-in advisor |
+| `/me` | My Chicago | Saved favorites and been-there places from Food, Nightlife, and Explore pages |
 
 ---
 
 ## Tech Stack
 
 **Frontend**
-- React 19, Vite 8, React Router v7
-- Mapbox GL JS
-- react-icons/ri (Remix Icons)
-- Testing: Vitest + React Testing Library (25 tests, 8 files)
+- React 19, Vite, React Router v7
+- Mapbox GL JS (maps on Home, Transit, Food, Nightlife)
+- react-icons/ri (Remix Icons — no emojis)
+- Vitest + React Testing Library
 
 **Backend**
 - Express 5, Node.js 18+
-- better-sqlite3 (SQLite — used to cache Yelp results)
-- Testing: Jest + Supertest (11 tests, 5 suites)
+- better-sqlite3 (SQLite — caches API responses, stores user favorites/visited)
+- Jest + Supertest
 
 **Design**
-- Background: `#060b18`, Accent: `#00d4ff`
+- Background: `#060b18` · Accent: `#00d4ff`
 - Fonts: Space Grotesk (UI), JetBrains Mono (numbers/code)
+
+**External APIs**
+| API | Used For | Free Tier |
+|---|---|---|
+| OpenWeatherMap | Current weather + lake conditions | Yes |
+| CTA Train Tracker | Live L train positions | Yes |
+| Foursquare Places | Food & Drink + Nightlife places | Yes |
+| Ticketmaster Discovery | Events listings | Yes |
+| ESPN (public) | Sports scores + schedules | No key needed |
+| Mapbox | Maps + globe | 50k loads/mo free |
+| OpenAI | AI streaming (Explore, Neighborhoods) | Pay per token |
 
 ---
 
 ## Local Development
 
-### 1. Clone the repo
+### 1. Clone
 
 ```bash
 git clone https://github.com/AllStreets/chicago-explore.git
 cd chicago-explore
 ```
 
-### 2. Start the backend
+### 2. Backend
 
 ```bash
 cd backend
 npm install
-cp .env.example .env   # then fill in real API keys
+cp .env.example .env   # fill in keys (see Environment Variables below)
 node server.js
 ```
 
-Backend runs at http://localhost:3001.
+Runs at `http://localhost:3001`.
 
-### 3. Start the frontend
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -63,9 +83,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs at http://localhost:5173.
-
-Both must be running at the same time for the app to work locally.
+Runs at `http://localhost:5173`. Both must be running simultaneously.
 
 ---
 
@@ -75,53 +93,38 @@ Both must be running at the same time for the app to work locally.
 
 | Variable | Required | Description |
 |---|---|---|
-| `CTA_API_KEY` | Yes | CTA Train Tracker API key — get free at transitchicago.com |
-| `YELP_API_KEY` | Yes | Yelp Fusion API key — get free at yelp.com/developers (500 req/day) |
-| `OPENWEATHER_API_KEY` | Yes | OpenWeatherMap API key — free tier at openweathermap.org |
-| `TICKETMASTER_API_KEY` | No | Ticketmaster Discovery API — used in Phase 2 Events page |
-| `ANTHROPIC_API_KEY` | No | Anthropic Claude API — used in Phase 2 AI features |
-| `FRONTEND_URL` | Yes | Full URL of the deployed frontend, e.g. `https://your-app.vercel.app` (used for CORS) |
-| `PORT` | No | Port to listen on — defaults to `3001` |
+| `OPENWEATHER_KEY` | Yes | OpenWeatherMap API key — [openweathermap.org](https://openweathermap.org) |
+| `OPENWEATHER_API_KEY` | Yes | Same key as above (used by two routes) |
+| `OPENAI_API_KEY` | Yes | OpenAI API key — [platform.openai.com](https://platform.openai.com) — powers AI streaming |
+| `TICKETMASTER_KEY` | Yes | Ticketmaster Discovery API — [developer.ticketmaster.com](https://developer.ticketmaster.com) |
+| `FOURSQUARE_KEY` | Yes | Foursquare Places API — [location.foursquare.com](https://location.foursquare.com) |
+| `CTA_API_KEY` | Yes | CTA Train Tracker — [transitchicago.com/developers](https://www.transitchicago.com/developers/) |
+| `FRONTEND_URL` | Yes | Your Vercel URL — used for CORS, e.g. `https://your-app.vercel.app` |
+| `PORT` | No | Defaults to `3001` (Railway sets this automatically) |
 
-### Frontend (`frontend/.env.local`)
+### Frontend (`frontend/.env`)
 
 | Variable | Required | Description |
 |---|---|---|
-| `VITE_MAPBOX_TOKEN` | Yes | Mapbox public access token — get at mapbox.com (pay-as-you-go) |
-| `VITE_API_URL` | Yes | Full URL of the deployed backend, e.g. `https://your-api.railway.app` |
+| `VITE_MAPBOX_TOKEN` | Yes | Mapbox public token — [mapbox.com](https://mapbox.com) |
+| `VITE_API_URL` | Yes | Your Railway backend URL, e.g. `https://your-api.railway.app` |
+
+Without API keys the app degrades gracefully — maps show a placeholder, data sections show "add key to enable".
 
 ---
 
 ## Testing
 
-### Backend
-
 ```bash
-cd backend
-npm test
+# Backend
+cd backend && npm test
+
+# Frontend
+cd frontend && npx vitest run
 ```
-
-Runs 11 tests across 5 suites (cta, divvy, weather, yelp, server) using Jest + Supertest.
-
-### Frontend
-
-```bash
-cd frontend
-npx vitest run
-```
-
-Runs 25 tests across 8 files using Vitest + React Testing Library.
 
 ---
 
-## Phase 2 (Coming)
+## Deployment
 
-The following pages are stubbed and will be built out:
-
-- **Neighborhoods** — character, demographics, and vibe per Chicago neighborhood
-- **Nightlife** — bars, live music, clubs with Yelp + hours data
-- **Sports** — Cubs, Sox, Bulls, Bears, Blackhawks schedules and venues
-- **Events** — Ticketmaster-powered event listings on a map
-- **Explore** — curated spots and hidden gems
-- **Weather & Lake** — detailed forecast and Lake Michigan conditions
-- **My Chicago** — saved places and personal notes
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full Railway + Vercel setup guide with step-by-step instructions.

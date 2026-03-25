@@ -1,56 +1,55 @@
 # Deployment Guide
 
-This guide covers deploying Chicago Explorer as two separate services: the Express backend to Railway and the React frontend to Vercel.
+Chicago Explorer deploys as two separate services: Express backend on **Railway**, React frontend on **Vercel**.
 
 ---
 
 ## Prerequisites
 
-Before starting, have accounts and API keys ready for:
+Have accounts at:
 
-- **Vercel** — vercel.com (free tier is fine)
-- **Railway** — railway.app (free trial, then usage-based)
-- **Mapbox** — mapbox.com (pay-as-you-go; free up to 50,000 map loads/month)
-- **CTA Train Tracker** — transitchicago.com/developers (free, register for key)
-- **Yelp Fusion** — yelp.com/developers (free, 500 requests/day)
-- **OpenWeatherMap** — openweathermap.org (free tier)
-- **Anthropic** (optional, Phase 2) — console.anthropic.com
-- **Ticketmaster** (optional, Phase 2) — developer.ticketmaster.com
+- [railway.app](https://railway.app) — free trial, then usage-based
+- [vercel.com](https://vercel.com) — free tier is fine
+
+All API keys are already in `backend/.env` and `frontend/.env` in the repo. Do not commit those files — copy the values into Railway/Vercel as environment variables instead.
 
 ---
 
 ## 1. Deploy Backend to Railway
 
-### Create the project
+### Create the service
 
-1. Go to railway.app and log in.
-2. Click **New Project** → **Deploy from GitHub repo**.
-3. Authorize Railway to access your GitHub account if prompted.
-4. Select the `chicago-explore` repository.
-5. When Railway asks which directory to use, set the **Root Directory** to `backend`.
-6. Railway will detect the `Procfile` (`web: node server.js`) and configure the start command automatically.
+1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**
+2. Select the `chicago-explore` repository
+3. Set **Root Directory** to `backend`
+4. Railway detects `Procfile` (`web: node server.js`) and configures the start command automatically
 
 ### Set environment variables
 
-In the Railway project dashboard, go to **Variables** and add the following:
+Go to the service → **Variables** and add all of the following:
 
 ```
-CTA_API_KEY=your_cta_key_here
-YELP_API_KEY=your_yelp_key_here
-OPENWEATHER_API_KEY=your_openweather_key_here
-TICKETMASTER_API_KEY=your_ticketmaster_key_here
-ANTHROPIC_API_KEY=your_anthropic_key_here
-FRONTEND_URL=https://your-frontend.vercel.app
-PORT=3001
+OPENWEATHER_KEY=<your_openweather_key>
+OPENWEATHER_API_KEY=<your_openweather_key>
+OPENAI_API_KEY=<your_openai_key>
+TICKETMASTER_KEY=<your_ticketmaster_key>
+FOURSQUARE_KEY=<your_foursquare_key>
+CTA_API_KEY=<your_cta_key>
+FRONTEND_URL=https://PLACEHOLDER.vercel.app
 ```
 
-Leave `FRONTEND_URL` as a placeholder for now — you will fill it in after the frontend is deployed.
+> Your actual key values are in `backend/.env` locally — copy from there into the Railway dashboard.
+> Never commit real keys to the repo.
+
+Leave `FRONTEND_URL` as a placeholder for now — update it after the frontend is deployed.
+
+> Railway injects `PORT` automatically — do not set it manually.
 
 ### Get the backend URL
 
-After the first deploy completes, go to **Settings** → **Domains** in the Railway dashboard and either use the auto-generated domain or add a custom one. Copy this URL — you will need it when setting up the frontend.
+After the first deploy: **Settings** → **Domains** → copy the generated URL.
 
-It will look like: `https://your-project-name.railway.app`
+It will look like `https://chicago-explore-production.up.railway.app` — you need this for the frontend.
 
 ---
 
@@ -58,32 +57,33 @@ It will look like: `https://your-project-name.railway.app`
 
 ### Create the project
 
-1. Go to vercel.com and log in.
-2. Click **Add New** → **Project**.
-3. Import the `chicago-explore` GitHub repository.
-4. Under **Root Directory**, click **Edit** and set it to `frontend`.
-5. Vercel will detect Vite automatically. The build settings should be:
+1. Go to [vercel.com](https://vercel.com) → **Add New** → **Project**
+2. Import the `chicago-explore` GitHub repository
+3. Set **Root Directory** to `frontend`
+4. Vercel detects Vite automatically. Build settings should be:
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
    - **Install Command:** `npm install`
-6. Do not deploy yet — add environment variables first.
+5. **Do not deploy yet** — add environment variables first
 
 ### Set environment variables
 
-In the project configuration screen (before clicking Deploy), go to **Environment Variables** and add:
+In the project config → **Environment Variables**:
 
 ```
-VITE_MAPBOX_TOKEN=your_mapbox_public_token
-VITE_API_URL=https://your-project-name.railway.app
+VITE_MAPBOX_TOKEN=<your_mapbox_public_token>
+VITE_API_URL=https://your-railway-backend-url.up.railway.app
 ```
 
-Use the Railway backend URL you copied in step 1 for `VITE_API_URL`.
+> Your actual token is in `frontend/.env` locally — copy from there into the Vercel dashboard.
 
-7. Click **Deploy**.
+Replace `VITE_API_URL` with the Railway URL from step 1.
 
-### Verify the vercel.json SPA rewrite
+6. Click **Deploy**
 
-The `frontend/vercel.json` file already contains the SPA rewrite rule so that React Router routes work correctly on direct load:
+### SPA routing
+
+`frontend/vercel.json` already contains the React Router rewrite — no changes needed:
 
 ```json
 {
@@ -91,61 +91,69 @@ The `frontend/vercel.json` file already contains the SPA rewrite rule so that Re
 }
 ```
 
-No changes needed — it is already committed to the repo.
-
 ---
 
-## 3. Connect Frontend and Backend
+## 3. Connect the Two Services
 
 Once both deploys succeed:
 
-1. Copy the Vercel deployment URL (e.g. `https://chicago-explorer.vercel.app`).
-2. Go to the Railway project → **Variables**.
-3. Update `FRONTEND_URL` to the real Vercel URL.
-4. Railway will automatically redeploy with the updated variable.
-
-This updates the CORS allowlist on the backend so the frontend can make API requests.
+1. Copy your Vercel URL (e.g. `https://chicago-explorer.vercel.app`)
+2. Go to Railway → **Variables** → update `FRONTEND_URL` to the real Vercel URL
+3. Railway redeploys automatically — this unlocks CORS so the frontend can call the backend
 
 ---
 
-## 4. Mapbox Token Security
+## 4. Mapbox Token Security (Optional but Recommended)
 
-Mapbox public tokens are visible in the browser. Restrict the token to your Vercel domain so it cannot be used from other origins.
+The Mapbox token is a public token visible in browser source. Restrict it to your domain:
 
-1. Go to mapbox.com → **Tokens** → click your token.
-2. Under **Allowed URLs**, add your Vercel domain:
+1. Go to [mapbox.com](https://mapbox.com) → **Tokens** → click your token
+2. Under **Allowed URLs**, add:
    ```
    https://your-app.vercel.app
+   http://localhost:5173
    ```
-   Also add `http://localhost:5173` for local development (or use a separate dev token).
-3. Save the token.
+3. Save — the token now rejects requests from other origins
 
-### Set a usage alert
-
-1. In the Mapbox dashboard, go to **Billing** → **Usage Alerts**.
-2. Set a monthly alert at a comfortable threshold (e.g. $5 or $10) so you are notified before unexpected charges.
+Also set a **billing alert** under Mapbox → **Billing** → **Usage Alerts** (e.g. $5/month) to catch unexpected traffic.
 
 ---
 
-## 5. Verify the Deployment
+## 5. Post-Deploy Verification Checklist
 
-Work through this checklist after both services are live:
+- [ ] Home page loads with 3D globe centered on Streeterville
+- [ ] CTA train dots appear on the home map within a few seconds
+- [ ] IntelFeed shows weather, sports tile, tonight event, and closest CTA train
+- [ ] `/transit` shows all 8 L lines with animated train positions
+- [ ] `/food` loads the Foursquare restaurant map; cuisine filters work
+- [ ] `/nightlife` loads bars on the map with scene profile sidebar
+- [ ] `/sports` loads team schedules and live scores
+- [ ] `/events` loads Ticketmaster events with color-coded filter tabs
+- [ ] `/weather` shows temperature tiles and animated lake scene
+- [ ] `/neighborhoods` shows neighborhood list and AI ask box
+- [ ] `/explore` shows landmark cards with heart/been buttons
+- [ ] `/me` shows Favorites and Been There tabs (empty initially)
+- [ ] No CORS errors in the browser console (F12 → Network)
 
-- [ ] Visit the Vercel URL — the home page loads with the Mapbox 3D map centered on Streeterville
-- [ ] CTA train dots appear on the map within a few seconds
-- [ ] The IntelFeed overlay shows weather, lake conditions, and CTA arrivals
-- [ ] `/transit` loads all 8 L lines with live train positions and Divvy bike stations
-- [ ] `/food` loads the Yelp restaurant map; cuisine filters and open-now toggle work
-- [ ] No CORS errors appear in the browser console
-- [ ] The Mapbox token is restricted to your Vercel domain and still works
+---
 
-### Check Railway logs
+## Troubleshooting
 
-If the backend is not responding, go to the Railway project → **Deployments** → click the active deployment → **View Logs** to diagnose startup errors or missing environment variables.
+**Backend not responding**
+- Railway → **Deployments** → active deployment → **View Logs**
+- Check that all environment variables are set — missing keys cause startup errors
 
-### Redeploy after env var changes
+**CORS errors in browser**
+- Confirm `FRONTEND_URL` in Railway exactly matches your Vercel URL (including `https://`, no trailing slash)
 
-If you add or update environment variables in Railway or Vercel after the initial deploy:
+**Map shows placeholder instead of map**
+- Confirm `VITE_MAPBOX_TOKEN` is set in Vercel environment variables
+- Redeploy after adding — Vite bakes env vars at build time, not runtime
 
-- **Railway** — redeployment is automatic when variables are changed via the dashboard.
-- **Vercel** — go to **Deployments** → find the latest deployment → click the three-dot menu → **Redeploy**.
+**AI features not working**
+- Confirm `OPENAI_API_KEY` is valid and has credits
+- The app degrades gracefully — AI sections show "add API key to enable" rather than crashing
+
+**Redeploying after env var changes**
+- Railway: automatic when vars change via dashboard
+- Vercel: **Deployments** → latest → three-dot menu → **Redeploy**
