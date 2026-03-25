@@ -25,6 +25,11 @@ const LINE_COLOR_MAP = {
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
+const LINE_NAME_MAP = {
+  Red: 'Red Line', Blue: 'Blue Line', Brn: 'Brown Line',
+  G: 'Green Line', Org: 'Orange Line', P: 'Purple Line',
+  Pexp: 'Purple Line Express', Pink: 'Pink Line', Y: 'Yellow Line',
+}
 
 const BAR_KEYWORDS = ['bar', 'cocktail', 'lounge', 'nightlife', 'wine', 'beer', 'pub', 'spirits', 'tavern', 'brewery']
 function isBar(place) {
@@ -333,7 +338,7 @@ export default function HomePage() {
         const { line, rn } = e.features[0].properties
         new mapboxgl.Popup({ closeButton: false, offset: 10 })
           .setLngLat(e.features[0].geometry.coordinates)
-          .setHTML(`<strong>${line} Line</strong><small>Train #${rn}</small>`)
+          .setHTML(`<strong>${LINE_NAME_MAP[line] || line || 'CTA'}</strong><small>Train #${rn}</small>`)
           .addTo(map)
       })
       map.on('mouseenter', 'cta-train-dots', () => { map.getCanvas().style.cursor = 'pointer' })
