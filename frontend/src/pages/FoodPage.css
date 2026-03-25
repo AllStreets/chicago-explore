@@ -145,18 +145,30 @@
   color: #10b981;
 }
 
+.food-reserve-btns {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
 .food-reserve-btn {
   font-size: 10px;
+  font-family: var(--font-mono);
   color: #f97316;
   text-decoration: none;
   border: 1px solid rgba(249,115,22,0.3);
   padding: 3px 8px;
   border-radius: 3px;
-  transition: background 0.15s;
-  display: flex;
-  align-items: center;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
 }
-.food-reserve-btn:hover { background: rgba(249,115,22,0.1); }
+.food-reserve-btn:hover { background: rgba(249,115,22,0.12); }
+
+.food-reserve-btn--resy {
+  color: #e11d48;
+  border-color: rgba(225,29,72,0.3);
+}
+.food-reserve-btn--resy:hover { background: rgba(225,29,72,0.1); }
 
 /* Mapbox popup overrides */
 .food-map .mapboxgl-popup-content {

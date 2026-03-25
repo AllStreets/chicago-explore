@@ -4,13 +4,21 @@ import {
   RiTempHotLine,
   RiWindyLine,
   RiWaterFlashLine,
-  RiEyeLine,
   RiWifiLine,
+  RiDropLine,
 } from 'react-icons/ri'
 import useMidnightRefresh from '../hooks/useMidnightRefresh'
 import './WeatherPage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+function useBeaches() {
+  const [data, setData] = useState(null)
+  useEffect(() => {
+    fetch(`${API}/api/beach`).then(r => r.json()).then(setData).catch(() => {})
+  }, [])
+  return data
+}
 
 function useWeatherDetail(midnightTick) {
   const [weather, setWeather] = useState(null)
@@ -216,15 +224,15 @@ const SURVIVAL_TIPS = [
 export default function WeatherPage() {
   const midnightTick = useMidnightRefresh()
   const { weather, lake, loading } = useWeatherDetail(midnightTick)
+  const beachData = useBeaches()
 
   const tempF      = weather?.tempF ?? (weather?.temp != null ? Math.round(weather.temp * 9 / 5 + 32) : null)
-  const highF      = weather?.highF ?? null
-  const lowF       = weather?.lowF ?? null
+  const highF      = weather?.dailyHighF ?? weather?.highF ?? null
+  const lowF       = weather?.dailyLowF  ?? weather?.lowF  ?? null
   const feelsLikeF = weather?.feelsLikeF ?? (weather?.feelsLike != null ? Math.round(weather.feelsLike * 9 / 5 + 32) : null)
   const windSpeed  = Math.round((weather?.wind?.speed ?? weather?.wind ?? 0) * 2.237 * 10) / 10
   const windDeg    = weather?.wind?.deg ?? 0
   const humidity   = weather?.humidity ?? null
-  const visibility = weather?.visibility ?? null
 
   return (
     <div className="weather-page">
@@ -295,10 +303,6 @@ export default function WeatherPage() {
                   <RiTempHotLine />
                   <span>{feelsLikeF != null ? `${feelsLikeF}°F` : '--'} feels like</span>
                 </div>
-                <div className="weather-stat">
-                  <RiEyeLine />
-                  <span>{visibility != null ? `${(visibility / 1000).toFixed(1)} km` : '--'} visibility</span>
-                </div>
               </div>
             </>
           )}
@@ -312,6 +316,35 @@ export default function WeatherPage() {
             <div className="weather-no-key">Add OPENWEATHER_KEY to see lake data</div>
           )}
           {lake && <LakeScene lake={lake} weather={weather} />}
+        </div>
+
+        {/* Beach tiles */}
+        <div className="weather-card weather-card--beaches">
+          <div className="weather-card-label">LAKE MICHIGAN BEACHES</div>
+          {!beachData && <div className="weather-loading">Loading beach conditions...</div>}
+          {beachData?.keyMissing && <div className="weather-no-key">Add OPENWEATHER_KEY to enable beach conditions</div>}
+          {beachData?.beaches && (
+            <div className="weather-beach-row">
+              {beachData.beaches.map(b => (
+                <div key={b.id} className="weather-beach-tile">
+                  <div className="weather-beach-name">{b.name}</div>
+                  <div className="weather-beach-advisory" style={{ color: b.advisory.color }}>{b.advisory.label}</div>
+                  {b.weather && (
+                    <div className="weather-beach-stats">
+                      <span><RiTempHotLine /> {b.weather.tempF}°F</span>
+                      <span><RiWindyLine /> {b.weather.windMph} mph</span>
+                      <span><RiDropLine /> {b.weather.humidity}%</span>
+                    </div>
+                  )}
+                  {b.advisory.score != null && (
+                    <div className="weather-beach-bar">
+                      <div className="weather-beach-fill" style={{ width: `${b.advisory.score}%`, background: b.advisory.color }} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Seasonal guide */}

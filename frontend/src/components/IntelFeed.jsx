@@ -3,7 +3,7 @@ import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine } from 're
 import './IntelFeed.css'
 
 const LINE_COLORS = {
-  Red: '#ef4444', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
@@ -85,10 +85,8 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
         <div className="intel-card">
           <div className="intel-card-label">WEATHER</div>
           <div className="intel-card-value">
-            <span style={{color:'#f87171'}}>{weather.highF ?? Math.round((weather.temp+2) * 9/5 + 32)}°</span>
-            <span style={{fontSize:'14px',color:'var(--text-muted)',margin:'0 4px'}}>/</span>
-            <span style={{color:'#60a5fa'}}>{weather.lowF ?? Math.round((weather.temp-2) * 9/5 + 32)}°</span>
-            <span style={{fontSize:'11px',color:'var(--text-muted)',marginLeft:6}}>F</span>
+            <span style={{color:'#60a5fa'}}>{weather.tempF ?? Math.round(weather.temp * 9/5 + 32)}°</span>
+            <span style={{fontSize:'11px',color:'var(--text-muted)',marginLeft:4}}>F</span>
           </div>
           <div className="intel-card-sub">{weather.description} · Wind {Math.round((weather.wind?.speed ?? weather.wind ?? 0) * 2.237 * 10) / 10} mph</div>
           {lake && <div className="intel-card-badge">{lake.niceLabel}</div>}

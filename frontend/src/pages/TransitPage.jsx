@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { RiWifiLine, RiRefreshLine, RiBusLine } from 'react-icons/ri'
+import { RiWifiLine, RiRefreshLine, RiBusLine, RiBikeLine } from 'react-icons/ri'
 import useCTA from '../hooks/useCTA'
 import { sharedTrainState } from '../hooks/trainAnimState'
 import MapPlaceholder from '../components/MapPlaceholder'
@@ -12,7 +12,7 @@ if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 const LINE_COLOR_MAP = {
-  Red: '#ef4444', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
@@ -23,7 +23,7 @@ const LINE_NAME_MAP = {
 }
 
 const LINES = [
-  { id: 'Red',  label: 'Red Line',    color: '#ef4444' },
+  { id: 'Red',  label: 'Red Line',    color: '#DA291C' },
   { id: 'Blue', label: 'Blue Line',   color: '#3b82f6' },
   { id: 'Brn',  label: 'Brown Line',  color: '#92400e' },
   { id: 'G',    label: 'Green Line',  color: '#10b981' },
@@ -43,8 +43,9 @@ export default function TransitPage() {
   const trainStateRef = useRef(sharedTrainState)   // shared with HomePage — no position reset on navigate
   const GLIDE_MS = 14000
   const { trains, loading, refresh } = useCTA()
-  const [showBuses, setShowBuses] = useState(false)
-  const [buses, setBuses] = useState([])
+  const [showBuses, setShowBuses]   = useState(false)
+  const [buses, setBuses]           = useState([])
+  const [showDivvy, setShowDivvy]   = useState(false)
 
   useEffect(() => {
     trainDataRef.current = trains
@@ -122,6 +123,7 @@ export default function TransitPage() {
       map.addSource('divvy', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
       map.addLayer({
         id: 'divvy-dots', type: 'circle', source: 'divvy',
+        layout: { visibility: 'none' },
         paint: {
           'circle-radius': 3.5,
           'circle-color': ['case', ['==', ['get', 'renting'], true], '#10b981', '#64748b'],
@@ -260,6 +262,13 @@ export default function TransitPage() {
     })
   }, [buses])
 
+  // Toggle Divvy layer visibility
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !map.isStyleLoaded() || !map.getLayer('divvy-dots')) return
+    map.setLayoutProperty('divvy-dots', 'visibility', showDivvy ? 'visible' : 'none')
+  }, [showDivvy])
+
   const trainsByLine = Object.fromEntries(LINES.map(l => [l.id, trains.filter(t => t.line === l.id)]))
 
   return (
@@ -272,6 +281,13 @@ export default function TransitPage() {
             <RiWifiLine size={9} />
             LIVE CTA DATA
           </span>
+          <button
+            className={`transit-bike-btn${showDivvy ? ' active' : ''}`}
+            onClick={() => setShowDivvy(s => !s)}
+            title={showDivvy ? 'Hide Divvy stations' : 'Show Divvy stations'}
+          >
+            <RiBikeLine size={13} />
+          </button>
           <button
             className={`transit-bus-btn${showBuses ? ' active' : ''}`}
             onClick={() => setShowBuses(s => !s)}

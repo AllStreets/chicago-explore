@@ -18,8 +18,15 @@ function todayDateStr() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T19:00`
 }
 
-function reservationUrl(name) {
-  return `https://www.opentable.com/s/?covers=2&dateTime=${encodeURIComponent(todayDateStr())}&metroId=13&term=${encodeURIComponent(name)}`
+// OpenTable: search by name in Chicago metro (no metroId to avoid over-constraining)
+function openTableUrl(name) {
+  const term = `${name} Chicago`
+  return `https://www.opentable.com/s/?covers=2&dateTime=${encodeURIComponent(todayDateStr())}&term=${encodeURIComponent(term)}`
+}
+
+// Resy: Chicago city search (many upscale Chicago spots prefer Resy over OpenTable)
+function resyUrl(name) {
+  return `https://resy.com/cities/chi?query=${encodeURIComponent(name)}`
 }
 
 const BAR_KEYWORDS = ['bar', 'cocktail', 'lounge', 'nightlife', 'wine', 'beer', 'pub', 'spirits', 'tavern', 'brewery']
@@ -193,9 +200,14 @@ export default function FoodPage() {
                   <RiCheckboxCircleLine />
                 </button>
                 {!isBar(p) && (
-                  <a className="food-reserve-btn" href={reservationUrl(p.name)} target="_blank" rel="noreferrer">
-                    Reserve
-                  </a>
+                  <div className="food-reserve-btns">
+                    <a className="food-reserve-btn" href={openTableUrl(p.name)} target="_blank" rel="noreferrer">
+                      OpenTable
+                    </a>
+                    <a className="food-reserve-btn food-reserve-btn--resy" href={resyUrl(p.name)} target="_blank" rel="noreferrer">
+                      Resy
+                    </a>
+                  </div>
                 )}
               </div>
             </div>

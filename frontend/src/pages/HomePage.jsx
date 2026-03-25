@@ -21,7 +21,7 @@ const CENTER = [-87.6172, 41.8921]
 const ZOOM   = 13.5
 
 const LINE_COLOR_MAP = {
-  Red: '#ef4444', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
@@ -537,7 +537,7 @@ export default function HomePage() {
       </div>
       <IntelFeed
         weather={weather} lake={lake} trains={trains}
-        trainCount={feed.trainCount} nextEvent={feed.nextEvent}
+        trainCount={trains.length || feed.trainCount} nextEvent={feed.nextEvent}
         topSpots={getBuzzingSpots(feed.tonightGames || [], nightlifePlaces, foodPlaces)}
         tonightGames={feed.tonightGames || []}
       />

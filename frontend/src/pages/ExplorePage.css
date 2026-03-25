@@ -192,9 +192,9 @@
 }
 .explore-tour-btn:hover,
 .explore-tour-btn.active {
-  border-color: #00d4ff;
-  color: #00d4ff;
-  background: rgba(0,212,255,0.1);
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239,68,68,0.1);
 }
 
 .explore-tour-panel {

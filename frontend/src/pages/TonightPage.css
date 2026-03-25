@@ -1,92 +1,630 @@
 /* frontend/src/pages/TonightPage.css */
+
+/* ─── Page shell ───────────────────────────────────────────────────────────── */
 .tonight-page {
-  padding: 24px;
+  padding: 20px 24px;
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
+  overflow-y: auto;
 }
 
+/* ─── Header ───────────────────────────────────────────────────────────────── */
 .tonight-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  gap: 16px;
 }
 
-.tonight-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
-.tonight-sub   { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); margin: 0; }
+.tonight-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tonight-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tonight-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tn-live-badge-icon {
+  color: #10b981;
+  font-size: 12px;
+}
+
+.tn-live-badge {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.tn-updated {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.tonight-header-right {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* ─── Live clock ───────────────────────────────────────────────────────────── */
+.tn-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tn-clock-time {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #00d4ff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tn-clock-sec {
+  font-size: 18px;
+  color: #1e6a7e;
+}
+
+.tn-clock-ampm {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  align-self: flex-end;
+  padding-bottom: 2px;
+}
+
+.tn-clock-date {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  width: 100%;
+  text-align: right;
+}
 
 .tonight-refresh {
-  background: none; border: none; color: var(--text-muted);
-  cursor: pointer; padding: 6px; font-size: 18px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  font-size: 18px;
   transition: color 0.15s;
+  flex-shrink: 0;
 }
 .tonight-refresh:hover { color: #00d4ff; }
+.tonight-refresh:disabled { opacity: 0.4; cursor: default; }
 
-.tonight-loading {
-  font-size: 13px; color: var(--text-muted);
-  font-family: var(--font-mono); padding: 20px 0;
+/* ─── Vibe bar ─────────────────────────────────────────────────────────────── */
+.tn-vibe-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 18px;
 }
 
+.tn-vibe-ring-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tn-vibe-svg {
+  display: block;
+}
+
+.tn-vibe-arc {
+  transition: stroke-dasharray 1s ease;
+}
+
+.tn-vibe-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tn-vibe-score {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.tn-vibe-label {
+  font-size: 7px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.tn-vibe-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tn-vibe-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tn-vibe-factors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tn-vibe-factors span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* ─── Grid ─────────────────────────────────────────────────────────────────── */
 .tonight-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 12px;
-  max-width: 900px;
 }
 
+/* ─── Tile base ─────────────────────────────────────────────────────────────── */
 .tn-tile {
   background: #0a1628;
   border: 1px solid #1e3a5f;
   border-radius: 8px;
   padding: 14px 16px;
 }
-.tn-tile--wide { grid-column: 1 / -1; }
+
+.tn-tile--wide     { grid-column: 1 / -1; }
+.tn-tile--beaches  { grid-column: 1 / -1; }
 
 .tn-tile-label {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 9px; font-family: var(--font-mono);
-  letter-spacing: 0.12em; font-weight: 700;
-  color: var(--text-muted); margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 
-/* Weather */
-.tn-weather { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.tn-temp    { font-size: 40px; font-weight: 700; font-family: var(--font-mono); color: #00d4ff; }
-.tn-feels   { font-size: 13px; color: var(--text-muted); }
-.tn-desc    { font-size: 13px; color: var(--text); flex: 1; text-transform: capitalize; }
-.tn-weather-meta {
-  width: 100%; display: flex; gap: 16px; margin-top: 8px;
-  font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);
+/* ─── Weather tile ──────────────────────────────────────────────────────────── */
+.tn-tile--weather {
+  border-color: rgba(0, 212, 255, 0.25);
 }
-.tn-weather-meta span { display: flex; align-items: center; gap: 4px; }
 
-/* Beaches */
-.tn-beach-list { display: flex; flex-direction: column; gap: 8px; }
-.tn-beach-row  { display: flex; justify-content: space-between; align-items: center; }
-.tn-beach-name { font-size: 12px; color: var(--text); }
-.tn-beach-status { font-size: 11px; font-family: var(--font-mono); font-weight: 700; }
-
-/* Events */
-.tn-event-list { display: flex; flex-direction: column; gap: 8px; }
-.tn-event-row  {
-  display: flex; align-items: flex-start; gap: 10px;
-  text-decoration: none; padding: 4px 0;
-  border-bottom: 1px solid rgba(30,58,95,0.5);
+.tn-weather-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap;
 }
-.tn-event-row:last-child { border-bottom: none; }
-.tn-event-time  { font-size: 10px; font-family: var(--font-mono); color: #00d4ff; white-space: nowrap; padding-top: 2px; }
-.tn-event-info  { flex: 1; }
-.tn-event-name  { font-size: 12px; color: var(--text); display: block; }
-.tn-event-venue { font-size: 10px; color: var(--text-muted); display: block; }
 
-/* Games */
+.tn-weather-temps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 100px;
+}
+
+.tn-temp {
+  font-size: 46px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #00d4ff;
+  line-height: 1;
+}
+
+.tn-desc {
+  font-size: 14px;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.tn-feels {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.tn-weather-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  align-self: center;
+}
+
+.tn-wx-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.tn-wx-stat svg {
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.tn-wx-stat span {
+  font-size: 14px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tn-wx-stat small {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Weather icon animations ────────────────────────────────────────────────── */
+.tn-wx-icon { flex-shrink: 0; }
+
+.tn-wx-icon--sun {
+  animation: tn-sun-pulse 3s ease-in-out infinite;
+}
+@keyframes tn-sun-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.5)); }
+  50%       { filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.9)); }
+}
+
+.tn-wx-icon--moon {
+  animation: tn-moon-glow 4s ease-in-out infinite;
+}
+@keyframes tn-moon-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(226, 232, 240, 0.4)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(226, 232, 240, 0.7)); }
+}
+
+.tn-wx-icon--rain {
+  animation: tn-rain-drop 1.2s ease-in-out infinite;
+}
+@keyframes tn-rain-drop {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(4px); }
+}
+
+.tn-wx-icon--snow {
+  animation: tn-snow-spin 6s linear infinite;
+}
+@keyframes tn-snow-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.tn-wx-icon--storm {
+  animation: tn-storm-flash 2s ease-in-out infinite;
+}
+@keyframes tn-storm-flash {
+  0%, 40%, 60%, 100% { opacity: 1; }
+  50%                 { opacity: 0.4; }
+}
+
+.tn-wx-icon--wind {
+  animation: tn-wind-sway 1.5s ease-in-out infinite;
+}
+@keyframes tn-wind-sway {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(5px); }
+}
+
+.tn-wx-icon--cloud {
+  animation: tn-cloud-float 4s ease-in-out infinite;
+}
+@keyframes tn-cloud-float {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(6px); }
+}
+
+/* ─── Beach grid ────────────────────────────────────────────────────────────── */
+.tn-beach-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.tn-beach-item {
+  background: #060e1f;
+  border: 1px solid #1e3a5f;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tn-beach-item-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tn-beach-item-status {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.tn-beach-item-temp {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.tn-beach-bar {
+  height: 3px;
+  background: #1e3a5f;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.tn-beach-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ─── Events ────────────────────────────────────────────────────────────────── */
+.tn-event-list { display: flex; flex-direction: column; gap: 6px; }
+
+.tn-event-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.tn-event-row:hover { background: rgba(255,255,255,0.04); }
+
+.tn-event-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.tn-event-body { flex: 1; min-width: 0; }
+.tn-event-name {
+  font-size: 12px;
+  color: var(--text);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tn-event-meta {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tn-event-arrow {
+  color: var(--text-muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.tn-event-more {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  padding: 4px 8px;
+}
+
+/* ─── Games ─────────────────────────────────────────────────────────────────── */
 .tn-game-list { display: flex; flex-direction: column; gap: 8px; }
-.tn-game-row  { display: flex; align-items: center; gap: 10px; }
-.tn-game-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.tn-game-info { flex: 1; }
-.tn-game-name { font-size: 12px; color: var(--text); display: block; }
-.tn-game-time { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
-.tn-game-score { font-size: 13px; font-family: var(--font-mono); color: #00d4ff; }
 
-.tn-missing { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin: 0; }
+.tn-game-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid transparent;
+}
+
+.tn-game-row--live {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.tn-game-color-bar {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tn-game-body { flex: 1; }
+
+.tn-game-matchup {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.tn-game-team { font-size: 13px; font-weight: 600; color: var(--text); }
+.tn-game-vs   { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+.tn-game-opp  { font-size: 12px; color: var(--text-muted); }
+
+.tn-game-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.tn-live-dot {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 2px 6px;
+  border-radius: 3px;
+  animation: tn-live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes tn-live-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.tn-game-time  { font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); }
+.tn-game-venue { font-size: 10px; color: var(--text-muted); }
+
+.tn-game-score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.tn-score-dash { color: var(--text-muted); font-size: 14px; }
+
+/* ─── Transit tile ───────────────────────────────────────────────────────────── */
+.tn-transit-body {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.tn-transit-count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tn-transit-num {
+  font-size: 40px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #00d4ff;
+  line-height: 1;
+}
+
+.tn-transit-sub {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.tn-transit-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tn-line-pill {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 10px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+
+/* ─── Misc ───────────────────────────────────────────────────────────────────── */
+.tonight-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding: 20px 0;
+}
+
+.tn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #1e3a5f;
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: tn-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+.tn-spinning {
+  animation: tn-spin 0.7s linear infinite;
+}
+
+@keyframes tn-spin {
+  to { transform: rotate(360deg); }
+}
+
+.tn-missing {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .tn-beach-grid { grid-template-columns: repeat(2, 1fr); }
+  .tn-clock-time { font-size: 20px; }
+  .tonight-header { flex-direction: column; }
+  .tonight-header-right { width: 100%; justify-content: space-between; }
+  .tn-vibe-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
