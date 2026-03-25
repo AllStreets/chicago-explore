@@ -76,28 +76,32 @@
 
 /* Streeterville pulse marker */
 .streeterville-pulse {
-  width: 16px;
-  height: 16px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: #00d4ff;
-  box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.6);
+  background: #e11d48;
+  box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6);
   animation: streeterville-pulse 2s ease-out infinite;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255,255,255,0.75);
 }
 
 .streeterville-pulse::after {
   content: '';
   position: absolute;
-  inset: -4px;
+  inset: -5px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 212, 255, 0.4);
+  border: 2px solid rgba(225, 29, 72, 0.4);
   animation: streeterville-ring 2s ease-out infinite;
 }
 
 @keyframes streeterville-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.6); }
-  70%  { box-shadow: 0 0 0 14px rgba(0, 212, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6); }
+  70%  { box-shadow: 0 0 0 16px rgba(225, 29, 72, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
 }
 
 @keyframes streeterville-ring {

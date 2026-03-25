@@ -424,6 +424,23 @@ export default function HomePage() {
       // Pulse marker
       const el = document.createElement('div')
       el.className = 'streeterville-pulse'
+      el.innerHTML = `<svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events:none">
+        <polyline points="2,9 10,2 18,9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <rect x="4" y="9" width="12" height="9" rx="0.5" fill="white" fill-opacity="0.9"/>
+        <rect x="7.5" y="13" width="5" height="5" rx="0.5" fill="#e11d48"/>
+      </svg>`
+      el.style.cursor = 'pointer'
+      el.addEventListener('click', (e) => {
+        e.stopPropagation()
+        new mapboxgl.Popup({ closeButton: false, offset: 18 })
+          .setLngLat(CENTER)
+          .setHTML(
+            `<strong>Moment Apartments</strong>` +
+            `<div style="color:#94a3b8;font-size:11px;margin:3px 0 2px">545 N. McClurg Ct., Chicago, IL 60611</div>` +
+            `<small>· Apartment building</small>`
+          )
+          .addTo(map)
+      })
       pulseRef.current = new mapboxgl.Marker({ element: el, anchor: 'center' }).setLngLat(CENTER).addTo(map)
 
       // Animation loop — glow breathing + ring pulsing + smooth train position lerp
