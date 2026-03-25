@@ -22,6 +22,12 @@ function useAIBrief(neighborhood) {
   const [streaming, setStreaming] = useState(false)
   const abortRef = useRef(null)
 
+  useEffect(() => {
+    if (abortRef.current) abortRef.current.abort()
+    setText('')
+    setStreaming(false)
+  }, [neighborhood?.id])
+
   async function fetchBrief() {
     if (!neighborhood) return
     setText('')
