@@ -34,7 +34,12 @@ function useMe() {
     load()
   }
 
-  return { me, loading, deleteFavorite, userId }
+  async function deleteVisited(placeId) {
+    await fetch(`${API}/api/me/visited/${placeId}`, { method: 'DELETE', headers: { 'X-User-ID': userId } })
+    load()
+  }
+
+  return { me, loading, deleteFavorite, deleteVisited, userId }
 }
 
 function formatDate(ts) {
@@ -44,7 +49,7 @@ function formatDate(ts) {
 }
 
 export default function MyChicagoPage() {
-  const { me, loading, deleteFavorite, userId } = useMe()
+  const { me, loading, deleteFavorite, deleteVisited, userId } = useMe()
   const [tab, setTab] = useState('favorites')
 
   return (
@@ -115,6 +120,9 @@ export default function MyChicagoPage() {
                 <div className="mc-item-name">{v.place_name}</div>
                 <div className="mc-item-date">Visited {formatDate(v.visited_at)}</div>
               </div>
+              <button className="mc-delete-btn" onClick={() => deleteVisited(v.place_id)} title="Remove">
+                <RiDeleteBinLine />
+              </button>
             </div>
           ))}
         </div>
