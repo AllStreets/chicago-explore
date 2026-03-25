@@ -16,6 +16,11 @@ const LINE_COLOR_MAP = {
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
+const LINE_NAME_MAP = {
+  Red: 'Red Line', Blue: 'Blue Line', Brn: 'Brown Line',
+  G: 'Green Line', Org: 'Orange Line', P: 'Purple Line',
+  Pexp: 'Purple Line Express', Pink: 'Pink Line', Y: 'Yellow Line',
+}
 
 const LINES = [
   { id: 'Red',  label: 'Red Line',    color: '#ef4444' },
@@ -105,7 +110,7 @@ export default function TransitPage() {
         const { line, rn } = e.features[0].properties
         new mapboxgl.Popup({ closeButton: false })
           .setLngLat(e.features[0].geometry.coordinates)
-          .setHTML(`<strong>${line || 'CTA'} Line</strong><br>Train #${rn}`)
+          .setHTML(`<strong>${LINE_NAME_MAP[line] || line || 'CTA'}</strong><br>Train #${rn}`)
           .addTo(map)
       })
       map.on('mouseenter', 'train-dots', () => { map.getCanvas().style.cursor = 'pointer' })
