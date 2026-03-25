@@ -124,6 +124,83 @@ cd frontend && npx vitest run
 
 ---
 
+## Project Structure
+
+```
+chicago-explorer/
+├── backend/
+│   ├── routes/
+│   │   ├── ai.js               # OpenAI streaming — Explore + Neighborhoods AI
+│   │   ├── cta.js              # CTA Train Tracker — live L train positions
+│   │   ├── divvy.js            # Divvy bike stations
+│   │   ├── events.js           # Ticketmaster — events (today → +30 days)
+│   │   ├── home-feed.js        # Aggregated homepage feed (weather, sports, events, trains)
+│   │   ├── lake.js             # Lake Michigan conditions + niceScore
+│   │   ├── me.js               # Favorites + visited persistence (SQLite)
+│   │   ├── neighborhoods.js    # Static neighborhood data + AI advisor
+│   │   ├── sports.js           # ESPN scoreboard + team schedules
+│   │   ├── weather.js          # OpenWeatherMap current conditions
+│   │   └── yelp.js             # Overpass/OSM — food, drink, and nightlife places
+│   ├── tests/                  # Jest + Supertest backend tests
+│   ├── db.js                   # SQLite setup (cache + favorites tables)
+│   ├── server.js               # Express app entry point
+│   ├── chicago.db              # SQLite database (gitignored)
+│   └── Procfile                # Railway start command
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── IntelFeed.jsx   # Live intel sidebar (weather, sports, events, trains)
+│   │   │   ├── MapPlaceholder.jsx
+│   │   │   └── Sidebar.jsx     # Navigation sidebar
+│   │   ├── hooks/
+│   │   │   ├── useCTA.js       # CTA train polling + animation state
+│   │   │   ├── useHomeFeed.js  # Homepage feed (polls every 60s)
+│   │   │   ├── useMe.js        # Favorites/visited read+write
+│   │   │   ├── useMidnightRefresh.js  # Auto-refresh at midnight (Sports, Events, Weather)
+│   │   │   ├── useWeather.js   # Weather + lake data
+│   │   │   └── useYelp.js      # Overpass places with module-level cache
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx    # Mapbox map, CTA trains, stadium logos, food/nightlife icons
+│   │   │   ├── TransitPage.jsx # All 8 CTA L lines, animated trains, Divvy stations
+│   │   │   ├── NightlifePage.jsx  # Nightlife map + 7 neighborhood scene profiles
+│   │   │   ├── FoodPage.jsx    # Food & drink map + cuisine filters
+│   │   │   ├── SportsPage.jsx  # Team cards — live scores + schedules
+│   │   │   ├── EventsPage.jsx  # Ticketmaster events, color-coded by type
+│   │   │   ├── WeatherPage.jsx # Conditions tiles + animated Lake Michigan scene
+│   │   │   ├── ExplorePage.jsx # Curated landmarks + AI guide chat
+│   │   │   ├── NeighborhoodsPage.jsx  # Neighborhood profiles + AI advisor
+│   │   │   └── MyChicagoPage.jsx      # Saved favorites + been-there
+│   │   ├── utils/
+│   │   │   └── mapIcons.js     # Shared 2× HiDPI Mapbox icon factory (makeMapPin)
+│   │   ├── data/
+│   │   │   └── ctaRoutes.js    # CTA line geometry + colors
+│   │   └── styles/
+│   │       └── global.css      # Design tokens, typography, dark theme
+│   └── vercel.json             # SPA rewrite rule for React Router
+│
+├── README.md
+└── DEPLOYMENT.md               # Railway + Vercel setup guide
+```
+
+---
+
+## Caching
+
+The backend caches all external API responses in SQLite to avoid rate limits and keep the UI snappy:
+
+| Data | TTL | Cache key |
+|---|---|---|
+| Food / nightlife places | 6 hours | `{"v":2,"type":"..."}` — bump `CACHE_VER` in `yelp.js` when queries change |
+| Sports live scores | 90 seconds | `sports_today_v1_{league}_{id}` |
+| Sports schedule | 1 hour | `sports_upcoming_v1_{league}_{id}` |
+| Weather / lake | Per-request (no cache) | — |
+| Events | Per-request (no cache) | — |
+
+Frontend places data is cached in a module-level `Map` in `useYelp.js` — survives page navigation within the same session so Food and Nightlife pages load instantly after the homepage prefetches them.
+
+---
+
 ## Deployment
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for the full Railway + Vercel setup guide with step-by-step instructions.
