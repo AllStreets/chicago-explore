@@ -14,20 +14,21 @@ const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, 
 
 // Shared bounding boxes (west boundary ~-87.635 cuts off lake, east ~-87.72 hits western suburbs)
 // S=south N=north W=west E=east — format (S,W,N,E)
-const BB_WIDE    = '41.85,-87.72,41.97,-87.625'  // whole city, excludes lake
-const BB_NORTH   = '41.905,-87.72,41.97,-87.625' // Lincoln Park → Andersonville / Wicker Park
-const BB_CENTRAL = '41.87,-87.655,41.905,-87.625' // River North, West Loop, downtown
+const BB_WIDE         = '41.85,-87.72,41.97,-87.625'  // whole city, excludes lake
+const BB_NORTH        = '41.905,-87.72,41.97,-87.625' // Lincoln Park → Andersonville / Wicker Park
+const BB_CENTRAL      = '41.87,-87.655,41.905,-87.625' // River North, West Loop, downtown
+const BB_STREETERVILLE = '41.888,-87.624,41.898,-87.612' // Streeterville (east of Michigan Ave)
 
 // Map UI category → OSM amenity/tag filter
 const CATEGORY_QUERIES = {
   // Food
-  restaurants: `[out:json];(node["amenity"="restaurant"](41.87,-87.655,41.92,-87.625);way["amenity"="restaurant"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  restaurants: `[out:json];(node["amenity"="restaurant"](41.87,-87.655,41.92,-87.612);way["amenity"="restaurant"](41.87,-87.655,41.92,-87.612););out center 20;`,
   bars:        `[out:json];(node["amenity"="bar"](${BB_WIDE});way["amenity"="bar"](${BB_WIDE}););out center 50;`,
-  cafes:       `[out:json];(node["amenity"="cafe"](41.87,-87.655,41.92,-87.625);way["amenity"="cafe"](41.87,-87.655,41.92,-87.625););out center 20;`,
-  pizza:       `[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](41.87,-87.655,41.92,-87.625););out center 20;`,
-  sushi:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](41.87,-87.655,41.92,-87.625););out center 20;`,
-  tacos:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](41.87,-87.655,41.92,-87.625););out center 20;`,
-  brunch:      `[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](41.87,-87.655,41.92,-87.625);node["amenity"="cafe"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  cafes:       `[out:json];(node["amenity"="cafe"](41.87,-87.655,41.92,-87.612);way["amenity"="cafe"](41.87,-87.655,41.92,-87.612););out center 20;`,
+  pizza:       `[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](41.87,-87.655,41.92,-87.612););out center 20;`,
+  sushi:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](41.87,-87.655,41.92,-87.612););out center 20;`,
+  tacos:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](41.87,-87.655,41.92,-87.612););out center 20;`,
+  brunch:      `[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](41.87,-87.655,41.92,-87.612);node["amenity"="cafe"](41.87,-87.655,41.92,-87.612););out center 20;`,
 
   // Nightlife — wider bounding boxes, emphasis on nightclubs + cocktail infrastructure
   nightlife:    `[out:json];(node["amenity"~"bar|nightclub"](${BB_WIDE});way["amenity"~"bar|nightclub"](${BB_WIDE}););out center 50;`,
@@ -38,10 +39,11 @@ const CATEGORY_QUERIES = {
   cocktailbars: `[out:json];(node["amenity"="bar"]["bar"~"cocktail"](${BB_WIDE});node["amenity"="nightclub"](${BB_CENTRAL});way["amenity"="nightclub"](${BB_CENTRAL});node["amenity"="bar"](${BB_CENTRAL}););out center 40;`,
 }
 
-// Food "all" — two parallel zones for downtown + wider city coverage
+// Food "all" — three parallel zones: downtown, north side, Streeterville
 const ALL_FOOD_QUERIES = [
   '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625);way["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625););out center 60;',
   '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625);way["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625););out center 60;',
+  `[out:json];(node["amenity"~"restaurant|bar|cafe"](${BB_STREETERVILLE});way["amenity"~"restaurant|bar|cafe"](${BB_STREETERVILLE}););out center 30;`,
 ]
 
 // Nightlife "all" — 6 neighborhood zones fetched in parallel, each capped at 25 results
@@ -53,6 +55,7 @@ const NL_ALL_QUERIES = [
   '[out:json];(node["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650);way["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650););out center 20;', // Andersonville
   '[out:json];(node["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635);way["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635););out center 25;', // West Loop
   '[out:json];(node["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630);way["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630););out center 20;', // Lincoln Park
+  `[out:json];(node["amenity"~"bar|nightclub"](${BB_STREETERVILLE});way["amenity"~"bar|nightclub"](${BB_STREETERVILLE}););out center 20;`, // Streeterville
 ]
 
 function parseElement(el) {
@@ -129,7 +132,7 @@ router.get('/', async (req, res) => {
       elements = await overpassFetch(query)
     }
 
-    const places = elements.map(parseElement).filter(Boolean).slice(0, 120)
+    const places = elements.map(parseElement).filter(Boolean).slice(0, 150)
     const payload = { places }
     stmtSet.run(cacheKey, JSON.stringify(payload), Date.now())
     res.json(payload)

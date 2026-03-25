@@ -43,6 +43,8 @@ const SCENES = [
     poly: [[-87.657,41.875],[-87.643,41.875],[-87.643,41.889],[-87.657,41.889],[-87.657,41.875]] },
   { key: 'lincoln_park',  name: 'Lincoln Park',            vibe: 'Bar crawls, DePaul crowd, rooftop patios',    color: '#eab308',
     poly: [[-87.648,41.918],[-87.631,41.918],[-87.631,41.935],[-87.648,41.935],[-87.648,41.918]] },
+  { key: 'streeterville', name: 'Streeterville',           vibe: 'Hotel rooftop bars, lakefront views, Mag Mile adjacent', color: '#1e40af',
+    poly: [[-87.624,41.888],[-87.614,41.888],[-87.614,41.898],[-87.624,41.898],[-87.624,41.888]] },
 ]
 
 function hexToRgb(hex) {
