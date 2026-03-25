@@ -79,8 +79,7 @@ async function overpassFetch(query) {
         body: `data=${encodeURIComponent(query)}`,
         signal: AbortSignal.timeout(14000),
       })
-      if (r.status === 429 || r.status === 504) { lastErr = new Error(`Overpass ${r.status}`); continue }
-      if (!r.ok) throw new Error(`Overpass ${r.status}`)
+      if (!r.ok) { lastErr = new Error(`Overpass ${r.status}`); continue }
       const data = await r.json()
       return data.elements || []
     } catch (e) { lastErr = e }
