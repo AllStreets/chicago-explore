@@ -8,7 +8,7 @@ const _cache = new Map()
 
 export function prewarm(types) {
   for (const type of types) {
-    if (_cache.has(type)) continue
+    if (_cache.has(type) && _cache.get(type).length > 0) continue
     fetch(`${API}/api/places?type=${type}`)
       .then(r => r.json())
       .then(d => { if (d.places?.length > 0) _cache.set(type, d.places) })
@@ -18,11 +18,12 @@ export function prewarm(types) {
 
 export default function useYelp(params = {}) {
   const type = params.type || 'restaurants'
-  const [places, setPlaces] = useState(_cache.get(type) || [])
-  const [loading, setLoading] = useState(!_cache.has(type))
+  const cached = _cache.get(type)
+  const [places, setPlaces] = useState(cached?.length > 0 ? cached : [])
+  const [loading, setLoading] = useState(!(cached?.length > 0))
 
   useEffect(() => {
-    if (_cache.has(type)) {
+    if (_cache.has(type) && _cache.get(type).length > 0) {
       setPlaces(_cache.get(type))
       setLoading(false)
       return
