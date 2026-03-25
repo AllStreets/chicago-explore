@@ -132,7 +132,7 @@ chicago-explorer/
 │   ├── routes/
 │   │   ├── ai.js               # OpenAI streaming — Explore + Neighborhoods AI
 │   │   ├── cta.js              # CTA Train Tracker — live L train positions
-│   │   ├── divvy.js            # Divvy bike stations
+│   │   ├── divvy.js            # Divvy bike stations (public GBFS feed, no key needed)
 │   │   ├── events.js           # Ticketmaster — events (today → +30 days)
 │   │   ├── home-feed.js        # Aggregated homepage feed (weather, sports, events, trains)
 │   │   ├── lake.js             # Lake Michigan conditions + niceScore
