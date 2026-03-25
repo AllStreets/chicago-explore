@@ -1,6 +1,6 @@
 # Chicago Explorer
 
-A city intelligence app for exploring Chicago. Built for someone moving to Streeterville (one block from Navy Pier) in late May 2026.
+A city intelligence app for exploring Chicago, centered on Streeterville.
 
 **Live:** [chicago-explorer.vercel.app](https://chicago-explorer.vercel.app) — **API:** [railway.app](https://railway.app)
 
