@@ -200,6 +200,17 @@ function BeachCard({ beaches }) {
 }
 
 // ─── Events card ─────────────────────────────────────────────────────────────
+const EVENT_TYPE_COLORS = {
+  music:    '#8b5cf6',
+  arts:     '#00d4ff',
+  comedy:   '#eab308',
+  film:     '#3b82f6',
+  festival: '#f97316',
+  family:   '#10b981',
+  sports:   '#ef4444',
+  other:    '#94a3b8',
+}
+
 function EventsCard({ events }) {
   const MAX = 5
   const list = events?.slice(0, MAX) || []
@@ -210,7 +221,7 @@ function EventsCard({ events }) {
         <div className="tn-event-list">
           {list.map((e, i) => (
             <a key={e.id || i} className="tn-event-row" href={e.url} target="_blank" rel="noreferrer">
-              <span className="tn-event-dot" />
+              <span className="tn-event-dot" style={{ background: EVENT_TYPE_COLORS[e.type] || EVENT_TYPE_COLORS.other }} />
               <div className="tn-event-body">
                 <span className="tn-event-name">{e.name}</span>
                 <span className="tn-event-meta">{e.time} · {e.venue}</span>

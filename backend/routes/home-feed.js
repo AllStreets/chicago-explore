@@ -89,6 +89,42 @@ async function fetchTonightEventsRaw() {
   })
 }
 
+// Mirror of events.js normalizeType — keeps event types consistent across pages
+const SEG_MAP = {
+  'KZFzniwnSyZfZ7v7nJ': 'music',
+  'KZFzniwnSyZfZ7v7nE': 'sports',
+  'KZFzniwnSyZfZ7v7na': 'arts',
+  'KZFzniwnSyZfZ7v7nn': 'film',
+  'KZFzniwnSyZfZ7v7n1': 'other',
+}
+function normalizeType(classification, name) {
+  const seg   = (classification?.segment?.name || '').toLowerCase()
+  const segId = classification?.segment?.id || ''
+  const genre = (classification?.genre?.name  || '').toLowerCase()
+  if (SEG_MAP[segId] && SEG_MAP[segId] !== 'other') return SEG_MAP[segId]
+  if (seg === 'music') return 'music'
+  if (seg === 'sports') return 'sports'
+  if (seg === 'film') return 'film'
+  if (seg === 'arts & theatre') {
+    if (genre === 'comedy') return 'comedy'
+    if (genre === 'classical' || genre === 'opera') return 'music'
+    return 'arts'
+  }
+  if (seg === 'miscellaneous') {
+    if (genre === 'family') return 'family'
+    if (genre.includes('fest')) return 'festival'
+  }
+  if (genre === 'comedy') return 'comedy'
+  if (genre === 'family') return 'family'
+  if (genre.includes('fest')) return 'festival'
+  if (['rock','pop','r&b','country','jazz','blues','hip-hop','hip hop',
+       'classical','electronic','folk','metal','punk','indie'].includes(genre)) return 'music'
+  const n = (name || '').toLowerCase()
+  const SPORT_KW = ['bulls','blackhawks','cubs','white sox','bears','nba','nhl','mlb','nfl','mls']
+  if (SPORT_KW.some(k => n.includes(k))) return 'sports'
+  return 'other'
+}
+
 // Format a raw Ticketmaster event into a consistent shape
 function formatEvent(e) {
   const localTime = e.dates?.start?.localTime || '20:00:00'
@@ -102,12 +138,13 @@ function formatEvent(e) {
     time:  `${h12}:${m.toString().padStart(2, '0')} ${ampm}`,
     venue: e._embedded?.venues?.[0]?.name || 'Chicago',
     url:   e.url || null,
+    type:  normalizeType(e.classifications?.[0], e.name),
   }
 }
 
 // Returns the single best event for the Home page feed
 async function fetchTonightEvent() {
-  const key = `home_tonight_event_v5_${tonightDateStr()}`
+  const key = `home_tonight_event_v6_${tonightDateStr()}`
   const cached = stmtGet.get(key)
   if (cached && Date.now() < midnightTonight()) {
     return JSON.parse(cached.data)
@@ -147,7 +184,7 @@ async function fetchTonightEvent() {
 
 // Returns all tonight's events (for Tonight page — same filter as home, but up to 8)
 async function fetchTonightEvents() {
-  const key = `home_tonight_events_list_v2_${tonightDateStr()}`
+  const key = `home_tonight_events_list_v3_${tonightDateStr()}`
   const cached = stmtGet.get(key)
   if (cached && Date.now() - cached.cached_at < 5 * 60 * 1000) {
     return JSON.parse(cached.data)

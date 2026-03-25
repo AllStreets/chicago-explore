@@ -43,7 +43,7 @@ async function fetchBeaches(owKey) {
 }
 
 router.get('/', async (_req, res) => {
-  const key = 'tonight_v4'
+  const key = 'tonight_v5'
   const cached = stmtGet.get(key)
   if (cached && Date.now() - cached.cached_at < TTL) {
     return res.json(JSON.parse(cached.data))
