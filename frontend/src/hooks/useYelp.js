@@ -11,7 +11,7 @@ export function prewarm(types) {
     if (_cache.has(type)) continue
     fetch(`${API}/api/places?type=${type}`)
       .then(r => r.json())
-      .then(d => { if (d.places) _cache.set(type, d.places) })
+      .then(d => { if (d.places?.length > 0) _cache.set(type, d.places) })
       .catch(() => {})
   }
 }
@@ -35,7 +35,7 @@ export default function useYelp(params = {}) {
       .then(r => r.json())
       .then(d => {
         const list = d.places || []
-        _cache.set(type, list)
+        if (list.length > 0) _cache.set(type, list)
         setPlaces(list)
       })
       .catch(() => {})

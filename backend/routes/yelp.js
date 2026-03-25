@@ -143,7 +143,7 @@ router.get('/', async (req, res) => {
 
     const places = elements.map(parseElement).filter(Boolean).slice(0, 150)
     const payload = { places }
-    stmtSet.run(cacheKey, JSON.stringify(payload), Date.now())
+    if (places.length > 0) stmtSet.run(cacheKey, JSON.stringify(payload), Date.now())
     res.json(payload)
   } catch (e) {
     res.status(502).json({ error: 'Places unavailable', detail: e.message })

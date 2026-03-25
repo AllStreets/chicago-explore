@@ -94,10 +94,10 @@ export default function NightlifePage() {
     map.on('load', () => {
       // Register one icon per category + defaults for "all"
       CATEGORIES.filter(c => c.shape).forEach(c => {
-        map.addImage(`nl-${c.key}`, makeMapPin(c.shape, c.color), { pixelRatio: 2 })
+        if (!map.hasImage(`nl-${c.key}`)) map.addImage(`nl-${c.key}`, makeMapPin(c.shape, c.color), { pixelRatio: 2 })
       })
-      map.addImage('nl-bars',     makeMapPin('martini','#7c3aed'), { pixelRatio: 2 })
-      map.addImage('nl-danceclub',makeMapPin('dancer', '#f43f5e'), { pixelRatio: 2 })
+      if (!map.hasImage('nl-bars'))     map.addImage('nl-bars',     makeMapPin('martini','#7c3aed'), { pixelRatio: 2 })
+      if (!map.hasImage('nl-danceclub')) map.addImage('nl-danceclub',makeMapPin('dancer', '#f43f5e'), { pixelRatio: 2 })
 
       // Neighborhood highlight polygons (static context — always shown)
       map.addSource('nl-hoods', {
