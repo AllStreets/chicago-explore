@@ -5,6 +5,7 @@ import { RiHeartLine, RiHeartFill, RiCheckboxCircleLine } from 'react-icons/ri'
 import useYelp from '../hooks/useYelp'
 import { addFavorite, removeFavorite, addVisited, removeVisited } from '../hooks/useMe'
 import MapPlaceholder from '../components/MapPlaceholder'
+import { makeMapPin } from '../utils/mapIcons'
 import './FoodPage.css'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
@@ -20,48 +21,6 @@ function isBar(place) {
   return cats.some(c => BAR_KEYWORDS.some(k => c.includes(k)))
 }
 
-// Returns ImageData — the one type mapboxgl.addImage accepts unconditionally
-function makeIcon(bar) {
-  const S = 28
-  const canvas = document.createElement('canvas')
-  canvas.width = S; canvas.height = S
-  const ctx = canvas.getContext('2d')
-
-  // Background circle
-  ctx.beginPath()
-  ctx.arc(S / 2, S / 2, S / 2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = bar ? '#7c3aed' : '#f59e0b'
-  ctx.fill()
-  ctx.strokeStyle = 'rgba(255,255,255,0.45)'
-  ctx.lineWidth = 1; ctx.stroke()
-
-  ctx.strokeStyle = 'white'; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
-
-  if (bar) {
-    // Martini glass
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.moveTo(8, 7); ctx.lineTo(14, 15); ctx.lineTo(20, 7); ctx.closePath()
-    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fill(); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 15); ctx.lineTo(14, 21); ctx.stroke()
-    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(11, 21); ctx.lineTo(17, 21); ctx.stroke()
-  } else {
-    ctx.lineWidth = 1.6
-    // Fork outer tines
-    ctx.beginPath(); ctx.moveTo(8.5, 7); ctx.lineTo(8.5, 12); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(11.5, 7); ctx.lineTo(11.5, 12); ctx.stroke()
-    // Fork center handle
-    ctx.beginPath(); ctx.moveTo(10, 7); ctx.lineTo(10, 21); ctx.stroke()
-    // Fork arch
-    ctx.beginPath(); ctx.moveTo(8.5, 12); ctx.quadraticCurveTo(10, 13.5, 11.5, 12); ctx.stroke()
-    // Knife
-    ctx.beginPath(); ctx.moveTo(17, 7)
-    ctx.bezierCurveTo(19.5, 8.5, 19.5, 13, 17, 14); ctx.lineTo(17, 21); ctx.stroke()
-  }
-
-  // Return plain object with Uint8ClampedArray — unambiguously matches mapboxgl.addImage signature
-  const imageData = ctx.getImageData(0, 0, S, S)
-  return { width: S, height: S, data: imageData.data }
-}
 
 function toGeoJSON(places) {
   return {
@@ -103,8 +62,8 @@ export default function FoodPage() {
 
     map.on('load', () => {
       // Canvas icons — synchronous, no async loading issues
-      map.addImage('food-icon', makeIcon(false))
-      map.addImage('bar-icon',  makeIcon(true))
+      map.addImage('food-icon', makeMapPin('fork',    '#f59e0b'), { pixelRatio: 2 })
+      map.addImage('bar-icon',  makeMapPin('martini', '#7c3aed'), { pixelRatio: 2 })
 
       map.addSource('places', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
       map.addLayer({

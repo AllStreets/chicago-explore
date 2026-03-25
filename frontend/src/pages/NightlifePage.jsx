@@ -5,6 +5,7 @@ import { RiHeartLine, RiHeartFill, RiCheckboxCircleLine, RiMusicFill, RiBuilding
 import useYelp from '../hooks/useYelp'
 import { addFavorite, removeFavorite, addVisited, removeVisited } from '../hooks/useMe'
 import MapPlaceholder from '../components/MapPlaceholder'
+import { makeMapPin } from '../utils/mapIcons'
 import './NightlifePage.css'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
@@ -51,73 +52,6 @@ function hexToRgb(hex) {
   return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`
 }
 
-function makeIcon(shape, color) {
-  const S = 28
-  const canvas = document.createElement('canvas')
-  canvas.width = S; canvas.height = S
-  const ctx = canvas.getContext('2d')
-
-  // Background circle
-  ctx.beginPath()
-  ctx.arc(S/2, S/2, S/2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = color; ctx.fill()
-  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; ctx.stroke()
-
-  ctx.strokeStyle = 'white'; ctx.fillStyle = 'white'
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round'
-
-  if (shape === 'beer') {
-    // Body x:7-18, y:8-21 → body center x=12.5, handle to x:24 → optical center ~14
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.rect(7, 8, 11, 13); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(18, 11); ctx.bezierCurveTo(24, 11, 24, 18, 18, 18); ctx.stroke()
-    ctx.lineWidth = 1.8
-    ctx.beginPath(); ctx.moveTo(10, 8); ctx.lineTo(10, 5); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 8); ctx.lineTo(14, 6); ctx.stroke()
-  } else if (shape === 'dancer') {
-    // Head y:5.5-10, legs to y:22 → center ~(14,13.75)
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.arc(14, 8, 2.5, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.moveTo(14, 11); ctx.lineTo(14, 18); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 13); ctx.lineTo(8,   9); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 13); ctx.lineTo(20, 10); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 18); ctx.lineTo(9,  23); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 18); ctx.lineTo(20, 22); ctx.stroke()
-  } else if (shape === 'music') {
-    // Note head y:17, stem y:7-17 → center ~(14,13)
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.arc(11, 18, 2.8, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.moveTo(13.8, 18); ctx.lineTo(13.8, 7); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(13.8, 7); ctx.bezierCurveTo(20, 7, 21, 12, 18, 14); ctx.stroke()
-  } else if (shape === 'building') {
-    // Body x:9-21, y:6-22 → center (15, 14) — shift left 1px for better optical center
-    ctx.fillStyle = 'rgba(255,255,255,0.9)'
-    ctx.fillRect(8, 6, 12, 16)
-    ctx.fillStyle = color
-    ctx.fillRect(10,  8, 2, 2); ctx.fillRect(14,  8, 2, 2)
-    ctx.fillRect(10, 12, 2, 2); ctx.fillRect(14, 12, 2, 2)
-    ctx.fillRect(10, 16, 2, 2); ctx.fillRect(14, 16, 2, 2)
-  } else if (shape === 'wine') {
-    // Bowl top y:7, base y:21 → center y:14
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.moveTo(9,  7); ctx.bezierCurveTo(8,  13, 11, 15, 14, 16); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(19, 7); ctx.bezierCurveTo(20, 13, 17, 15, 14, 16); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(9, 7); ctx.lineTo(19, 7); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 16); ctx.lineTo(14, 21); ctx.stroke()
-    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(11, 21); ctx.lineTo(17, 21); ctx.stroke()
-  } else {
-    // martini: top y:7, base y:21 → center y:14
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.moveTo(8, 7); ctx.lineTo(14, 15); ctx.lineTo(20, 7); ctx.closePath()
-    ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fill()
-    ctx.strokeStyle = 'white'; ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14, 15); ctx.lineTo(14, 21); ctx.stroke()
-    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(11, 21); ctx.lineTo(17, 21); ctx.stroke()
-  }
-
-  const img = ctx.getImageData(0, 0, S, S)
-  return { width: S, height: S, data: img.data }
-}
 
 function toGeoJSON(places, catKey) {
   return {
@@ -159,10 +93,10 @@ export default function NightlifePage() {
     map.on('load', () => {
       // Register one icon per category + defaults for "all"
       CATEGORIES.filter(c => c.shape).forEach(c => {
-        map.addImage(`nl-${c.key}`, makeIcon(c.shape, c.color))
+        map.addImage(`nl-${c.key}`, makeMapPin(c.shape, c.color), { pixelRatio: 2 })
       })
-      map.addImage('nl-bars',     makeIcon('beer',   '#a78bfa'))
-      map.addImage('nl-danceclub',makeIcon('dancer', '#f43f5e'))
+      map.addImage('nl-bars',     makeMapPin('beer',   '#a78bfa'), { pixelRatio: 2 })
+      map.addImage('nl-danceclub',makeMapPin('dancer', '#f43f5e'), { pixelRatio: 2 })
 
       // Neighborhood highlight polygons (static context — always shown)
       map.addSource('nl-hoods', {

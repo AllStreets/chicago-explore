@@ -9,6 +9,7 @@ import useCTA from '../hooks/useCTA'
 import { sharedTrainState } from '../hooks/trainAnimState'
 import useWeather from '../hooks/useWeather'
 import useYelp from '../hooks/useYelp'
+import { makeMapPin } from '../utils/mapIcons'
 import useHomeFeed from '../hooks/useHomeFeed'
 import './HomePage.css'
 
@@ -32,65 +33,6 @@ function isBar(place) {
   return cats.some(c => BAR_KEYWORDS.some(k => c.includes(k)))
 }
 
-function makeFoodIcon(bar) {
-  const S = 28
-  const canvas = document.createElement('canvas')
-  canvas.width = S; canvas.height = S
-  const ctx = canvas.getContext('2d')
-  ctx.beginPath()
-  ctx.arc(S/2, S/2, S/2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = bar ? '#7c3aed' : '#f59e0b'; ctx.fill()
-  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; ctx.stroke()
-  ctx.strokeStyle = 'white'; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
-  if (bar) {
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.moveTo(8,7); ctx.lineTo(14,15); ctx.lineTo(20,7); ctx.closePath()
-    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fill(); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,15); ctx.lineTo(14,21); ctx.stroke()
-    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(11,21); ctx.lineTo(17,21); ctx.stroke()
-  } else {
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.moveTo(8.5,7); ctx.lineTo(8.5,12); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(11.5,7); ctx.lineTo(11.5,12); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(10,7); ctx.lineTo(10,21); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(8.5,12); ctx.quadraticCurveTo(10,13.5,11.5,12); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(17,7)
-    ctx.bezierCurveTo(19.5,8.5,19.5,13,17,14); ctx.lineTo(17,21); ctx.stroke()
-  }
-  const img = ctx.getImageData(0, 0, S, S)
-  return { width: S, height: S, data: img.data }
-}
-
-function makeNlIcon(shape, color) {
-  const S = 28
-  const canvas = document.createElement('canvas')
-  canvas.width = S; canvas.height = S
-  const ctx = canvas.getContext('2d')
-  ctx.beginPath()
-  ctx.arc(S/2, S/2, S/2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = color; ctx.fill()
-  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; ctx.stroke()
-  ctx.strokeStyle = 'white'; ctx.fillStyle = 'white'
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round'
-  if (shape === 'beer') {
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.rect(7,8,11,13); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(18,11); ctx.bezierCurveTo(24,11,24,18,18,18); ctx.stroke()
-    ctx.lineWidth = 1.8
-    ctx.beginPath(); ctx.moveTo(10,8); ctx.lineTo(10,5); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,8); ctx.lineTo(14,6); ctx.stroke()
-  } else {
-    ctx.lineWidth = 1.6
-    ctx.beginPath(); ctx.arc(14,8,2.5,0,Math.PI*2); ctx.fill()
-    ctx.beginPath(); ctx.moveTo(14,11); ctx.lineTo(14,18); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,13); ctx.lineTo(8,9); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,13); ctx.lineTo(20,10); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,18); ctx.lineTo(9,23); ctx.stroke()
-    ctx.beginPath(); ctx.moveTo(14,18); ctx.lineTo(20,22); ctx.stroke()
-  }
-  const img = ctx.getImageData(0, 0, S, S)
-  return { width: S, height: S, data: img.data }
-}
 
 const SPORTS_BAR_KEYS = ['sport', 'slugger', 'bleacher', 'cubby', 'tap', 'game day', 'game bar', 'pub', 'bar & grill', 'grill & bar', 'irish', 'fado', 'sideline', 'draft', 'replay']
 
@@ -355,10 +297,10 @@ export default function HomePage() {
       map.on('mouseleave', 'cta-train-dots', () => { map.getCanvas().style.cursor = '' })
 
       // Food + nightlife icons
-      map.addImage('home-food',      makeFoodIcon(false))
-      map.addImage('home-bar',       makeFoodIcon(true))
-      map.addImage('home-nl-bar',    makeNlIcon('beer',   '#a78bfa'))
-      map.addImage('home-nl-dancer', makeNlIcon('dancer', '#f43f5e'))
+      map.addImage('home-food',      makeMapPin('fork',    '#f59e0b'), { pixelRatio: 2 })
+      map.addImage('home-bar',       makeMapPin('martini', '#7c3aed'), { pixelRatio: 2 })
+      map.addImage('home-nl-bar',    makeMapPin('beer',    '#a78bfa'), { pixelRatio: 2 })
+      map.addImage('home-nl-dancer', makeMapPin('dancer',  '#f43f5e'), { pixelRatio: 2 })
 
       // Food places layer
       map.addSource('home-food', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
