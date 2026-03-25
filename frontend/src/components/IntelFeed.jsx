@@ -3,7 +3,7 @@ import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine } from 're
 import './IntelFeed.css'
 
 const LINE_COLORS = {
-  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#ff1a1a', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }

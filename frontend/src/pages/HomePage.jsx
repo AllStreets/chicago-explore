@@ -21,7 +21,7 @@ const CENTER = [-87.6172, 41.8921]
 const ZOOM   = 13.5
 
 const LINE_COLOR_MAP = {
-  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#ff1a1a', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
@@ -301,7 +301,11 @@ export default function HomePage() {
         : fetch(`${API}/api/cta/routes`).then(r => r.json()).then(d => { _routesCache = d; return d })
       ).then(g => { if (map.getSource('cta-routes')) map.getSource('cta-routes').setData(g) }).catch(() => {}))
 
-      const noGlowColor = ['case', ['==', ['get', 'color'], '#92400e'], 'rgba(0,0,0,0)', ['get', 'color']]
+      const noGlowColor = ['case',
+        ['any', ['==', ['get', 'color'], '#92400e'], ['==', ['get', 'color'], '#ec4899']],
+        'rgba(0,0,0,0)',
+        ['get', 'color'],
+      ]
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': noGlowColor, 'line-width': 40, 'line-blur': 28, 'line-opacity': 0.07 },

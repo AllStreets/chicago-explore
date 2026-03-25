@@ -296,7 +296,7 @@ function GamesCard({ games }) {
 // ─── Transit pulse card ────────────────────────────────────────────────────────
 function TransitCard({ trainCount }) {
   const lines = [
-    { id: 'Red',  label: 'Red Line',    color: '#DA291C' },
+    { id: 'Red',  label: 'Red Line',    color: '#ff1a1a' },
     { id: 'Blue', label: 'Blue Line',   color: '#3b82f6' },
     { id: 'Brn',  label: 'Brown Line',  color: '#92400e' },
     { id: 'G',    label: 'Green Line',  color: '#10b981' },

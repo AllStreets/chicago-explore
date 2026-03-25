@@ -12,7 +12,7 @@ if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 const LINE_COLOR_MAP = {
-  Red: '#DA291C', Blue: '#3b82f6', Brn: '#92400e',
+  Red: '#ff1a1a', Blue: '#3b82f6', Brn: '#92400e',
   G: '#10b981', Org: '#f97316', P: '#8b5cf6',
   Pink: '#ec4899', Y: '#eab308',
 }
@@ -23,7 +23,7 @@ const LINE_NAME_MAP = {
 }
 
 const LINES = [
-  { id: 'Red',  label: 'Red Line',    color: '#DA291C' },
+  { id: 'Red',  label: 'Red Line',    color: '#ff1a1a' },
   { id: 'Blue', label: 'Blue Line',   color: '#3b82f6' },
   { id: 'Brn',  label: 'Brown Line',  color: '#92400e' },
   { id: 'G',    label: 'Green Line',  color: '#10b981' },
@@ -82,7 +82,11 @@ export default function TransitPage() {
         : fetch(`${API}/api/cta/routes`).then(r => r.json()).then(d => { _routesCache = d; return d })
       ).then(g => { if (map.getSource('cta-routes')) map.getSource('cta-routes').setData(g) }).catch(() => {}))
 
-      const noGlowColor = ['case', ['==', ['get', 'color'], '#92400e'], 'rgba(0,0,0,0)', ['get', 'color']]
+      const noGlowColor = ['case',
+        ['any', ['==', ['get', 'color'], '#92400e'], ['==', ['get', 'color'], '#ec4899']],
+        'rgba(0,0,0,0)',
+        ['get', 'color'],
+      ]
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
         paint: { 'line-color': noGlowColor, 'line-width': 36, 'line-blur': 22, 'line-opacity': 0.08 }
       })
