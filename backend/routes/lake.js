@@ -12,14 +12,32 @@ function owmUrl() {
 
 function calcNiceScore({ tempC, windMps, description }) {
   let score = 50
-  if (tempC >= 18 && tempC <= 24) score += 25
-  else if (tempC >= 12 && tempC < 18) score += 10
-  else if (tempC < 5 || tempC > 30) score -= 20
-  if (windMps > 10) score -= 20
-  else if (windMps < 5) score += 10
-  if (description.includes('clear') || description.includes('sunny')) score += 15
-  if (description.includes('rain') || description.includes('storm')) score -= 30
-  if (description.includes('snow')) score -= 25
+  const desc = description.toLowerCase()
+
+  // Water temperature — Lake Michigan swimmability
+  if (tempC >= 22)                    score += 25   // perfect swimming
+  else if (tempC >= 18)               score += 15   // comfortable
+  else if (tempC >= 14)               score += 0    // cool but okay
+  else if (tempC >= 10)               score -= 15   // cold
+  else                                score -= 35   // dangerously cold
+
+  // Wind — lake surface chop and feel
+  if (windMps < 2.5)                  score += 20   // calm, glassy
+  else if (windMps < 5)               score += 10   // light breeze
+  else if (windMps < 8)               score -= 10   // noticeable, choppy
+  else if (windMps < 12)              score -= 25   // windy, rough
+  else                                score -= 40   // dangerous
+
+  // Sky conditions
+  if (desc.includes('clear') || desc.includes('sunny'))  score += 20
+  else if (desc.includes('few clouds') || desc.includes('partly'))  score += 10
+  else if (desc.includes('scattered'))                   score += 5
+  else if (desc.includes('overcast') || desc.includes('broken'))    score -= 10
+  if (desc.includes('drizzle') || desc.includes('mist')) score -= 20
+  if (desc.includes('rain'))                             score -= 35
+  if (desc.includes('thunder') || desc.includes('storm'))score -= 50
+  if (desc.includes('snow'))                             score -= 40
+
   return Math.min(100, Math.max(0, score))
 }
 
@@ -37,7 +55,7 @@ router.get('/', async (_req, res) => {
       windMps:   Math.round(windMps * 10) / 10,
       description,
       niceScore,
-      niceLabel: niceScore >= 70 ? 'Great day' : niceScore >= 40 ? 'Decent' : 'Stay inside',
+      niceLabel: niceScore >= 75 ? 'Great day' : niceScore >= 55 ? 'Decent' : niceScore >= 35 ? 'Not ideal' : 'Stay inside',
     })
   } catch (e) {
     res.status(502).json({ error: 'Lake conditions unavailable', detail: e.message })

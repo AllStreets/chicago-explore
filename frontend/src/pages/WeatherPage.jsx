@@ -63,7 +63,7 @@ function getLakeState(lake, description) {
   if (desc.includes('rain') || desc.includes('drizzle')) return 'rainy'
   if (windMps > 8) return 'windy'
   if (desc.includes('overcast')) return 'overcast'
-  if ((lake?.niceScore ?? 0) >= 70) return 'beautiful'
+  if ((lake?.niceScore ?? 0) >= 75) return 'beautiful'
   return 'decent'
 }
 
