@@ -22,14 +22,14 @@ const BB_STREETERVILLE = '41.888,-87.624,41.898,-87.612' // Streeterville (east 
 
 // Map UI category → OSM amenity/tag filter
 const CATEGORY_QUERIES = {
-  // Food
-  restaurants: `[out:json];(node["amenity"="restaurant"](41.87,-87.655,41.92,-87.612);way["amenity"="restaurant"](41.87,-87.655,41.92,-87.612););out center 20;`,
-  bars:        `[out:json];(node["amenity"="bar"](${BB_WIDE});way["amenity"="bar"](${BB_WIDE}););out center 50;`,
-  cafes:       `[out:json];(node["amenity"="cafe"](41.87,-87.655,41.92,-87.612);way["amenity"="cafe"](41.87,-87.655,41.92,-87.612););out center 20;`,
-  pizza:       `[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](41.87,-87.655,41.92,-87.612););out center 20;`,
-  sushi:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](41.87,-87.655,41.92,-87.612););out center 20;`,
-  tacos:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](41.87,-87.655,41.92,-87.612););out center 20;`,
-  brunch:      `[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](41.87,-87.655,41.92,-87.612);node["amenity"="cafe"](41.87,-87.655,41.92,-87.612););out center 20;`,
+  // Food — BB_WIDE covers downtown through Lincoln Park, Wicker Park, Andersonville
+  restaurants: `[out:json];(node["amenity"="restaurant"](${BB_WIDE});way["amenity"="restaurant"](${BB_WIDE}););out center 100;`,
+  bars:        `[out:json];(node["amenity"="bar"](${BB_WIDE});way["amenity"="bar"](${BB_WIDE}););out center 100;`,
+  cafes:       `[out:json];(node["amenity"="cafe"](${BB_WIDE});way["amenity"="cafe"](${BB_WIDE}););out center 80;`,
+  pizza:       `[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](${BB_WIDE});way["amenity"="restaurant"]["cuisine"="pizza"](${BB_WIDE}););out center 60;`,
+  sushi:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](${BB_WIDE}););out center 60;`,
+  tacos:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](${BB_WIDE}););out center 60;`,
+  brunch:      `[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](${BB_WIDE});node["amenity"="cafe"](${BB_WIDE}););out center 80;`,
 
   // Nightlife — wider bounding boxes, emphasis on nightclubs + cocktail infrastructure
   nightlife:    `[out:json];(node["amenity"~"bar|nightclub"](${BB_WIDE});way["amenity"~"bar|nightclub"](${BB_WIDE}););out center 50;`,
