@@ -39,7 +39,7 @@ function makeFoodIcon(bar) {
   const ctx = canvas.getContext('2d')
   ctx.beginPath()
   ctx.arc(S/2, S/2, S/2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = bar ? '#8b5cf6' : '#f97316'; ctx.fill()
+  ctx.fillStyle = bar ? '#7c3aed' : '#f59e0b'; ctx.fill()
   ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; ctx.stroke()
   ctx.strokeStyle = 'white'; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
   if (bar) {
@@ -357,8 +357,8 @@ export default function HomePage() {
       // Food + nightlife icons
       map.addImage('home-food',      makeFoodIcon(false))
       map.addImage('home-bar',       makeFoodIcon(true))
-      map.addImage('home-nl-bar',    makeNlIcon('beer',   '#8b5cf6'))
-      map.addImage('home-nl-dancer', makeNlIcon('dancer', '#ec4899'))
+      map.addImage('home-nl-bar',    makeNlIcon('beer',   '#a78bfa'))
+      map.addImage('home-nl-dancer', makeNlIcon('dancer', '#f43f5e'))
 
       // Food places layer
       map.addSource('home-food', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })

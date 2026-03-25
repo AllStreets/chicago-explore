@@ -19,12 +19,12 @@ const MartiniIcon   = () => <svg width="12" height="12" viewBox="0 0 16 16" fill
 
 const CATEGORIES = [
   { key: 'nightlife_all', label: 'All',           color: '#00d4ff', Icon: AllIcon,       shape: null       },
-  { key: 'bars',          label: 'Bars',           color: '#8b5cf6', Icon: BeerMugIcon,   shape: 'beer'     },
-  { key: 'danceclub',     label: 'Night Clubs',    color: '#ec4899', Icon: DancerIcon,    shape: 'dancer'   },
-  { key: 'cocktailbars',  label: 'Cocktail Bars',  color: '#14b8a6', Icon: MartiniIcon,   shape: 'martini'  },
-  { key: 'rooftop_bars',  label: 'Rooftop Bars',   color: '#0ea5e9', Icon: RiBuildingLine,shape: 'building' },
-  { key: 'wine_bars',     label: 'Wine Bars',      color: '#f43f5e', Icon: WineGlassIcon, shape: 'wine'     },
-  { key: 'jazzandblues',  label: 'Jazz & Blues',   color: '#d97706', Icon: RiMusicFill,   shape: 'music'    },
+  { key: 'bars',          label: 'Bars',           color: '#a78bfa', Icon: BeerMugIcon,   shape: 'beer'     },
+  { key: 'danceclub',     label: 'Night Clubs',    color: '#f43f5e', Icon: DancerIcon,    shape: 'dancer'   },
+  { key: 'cocktailbars',  label: 'Cocktail Bars',  color: '#2dd4bf', Icon: MartiniIcon,   shape: 'martini'  },
+  { key: 'rooftop_bars',  label: 'Rooftop Bars',   color: '#38bdf8', Icon: RiBuildingLine,shape: 'building' },
+  { key: 'wine_bars',     label: 'Wine Bars',      color: '#fb7185', Icon: WineGlassIcon, shape: 'wine'     },
+  { key: 'jazzandblues',  label: 'Jazz & Blues',   color: '#fbbf24', Icon: RiMusicFill,   shape: 'music'    },
 ]
 
 const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.key, c]))
@@ -161,8 +161,8 @@ export default function NightlifePage() {
       CATEGORIES.filter(c => c.shape).forEach(c => {
         map.addImage(`nl-${c.key}`, makeIcon(c.shape, c.color))
       })
-      map.addImage('nl-bars',     makeIcon('beer',   '#8b5cf6'))
-      map.addImage('nl-danceclub',makeIcon('dancer', '#1d4ed8'))
+      map.addImage('nl-bars',     makeIcon('beer',   '#a78bfa'))
+      map.addImage('nl-danceclub',makeIcon('dancer', '#f43f5e'))
 
       // Neighborhood highlight polygons (static context — always shown)
       map.addSource('nl-hoods', {
@@ -279,8 +279,8 @@ export default function NightlifePage() {
           {loading && <div className="nightlife-loading">Loading...</div>}
           {places.map(p => {
             const dotColor = cat === 'nightlife_all'
-              ? (p.amenity === 'nightclub' ? '#ec4899' : '#8b5cf6')
-              : (activeCat?.color || '#8b5cf6')
+              ? (p.amenity === 'nightclub' ? '#f43f5e' : '#a78bfa')
+              : (activeCat?.color || '#a78bfa')
             return (
               <div key={p.id} className="nightlife-card">
                 <div className="nightlife-card-top">

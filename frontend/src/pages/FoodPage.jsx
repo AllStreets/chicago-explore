@@ -30,7 +30,7 @@ function makeIcon(bar) {
   // Background circle
   ctx.beginPath()
   ctx.arc(S / 2, S / 2, S / 2 - 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = bar ? '#8b5cf6' : '#f97316'
+  ctx.fillStyle = bar ? '#7c3aed' : '#f59e0b'
   ctx.fill()
   ctx.strokeStyle = 'rgba(255,255,255,0.45)'
   ctx.lineWidth = 1; ctx.stroke()
@@ -183,7 +183,7 @@ export default function FoodPage() {
           {places.map(p => (
             <div key={p.id} className="food-card">
               <div className="food-card-name">
-                <span className="food-card-type-dot" style={{ background: isBar(p) ? '#8b5cf6' : '#f97316' }} />
+                <span className="food-card-type-dot" style={{ background: isBar(p) ? '#7c3aed' : '#f59e0b' }} />
                 {p.name}
               </div>
               <div className="food-card-meta">
