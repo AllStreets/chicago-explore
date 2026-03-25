@@ -251,7 +251,7 @@ export default function HomePage() {
   const trainStateRef  = useRef(sharedTrainState)
   const foodRef        = useRef([])
   const nightlifeRef   = useRef([])
-  const GLIDE_MS = 14000
+  const GLIDE_MS = 8000
 
   const { trains, loading, refresh }          = useCTA()
   const { weather, lake }                     = useWeather()
@@ -313,28 +313,35 @@ export default function HomePage() {
       ).then(g => { if (map.getSource('cta-routes')) map.getSource('cta-routes').setData(g) }).catch(() => {}))
 
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 30, 'line-blur': 20, 'line-opacity': 0.08 },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 40, 'line-blur': 28, 'line-opacity': 0.07 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-glow', type: 'line', source: 'cta-routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 14, 'line-blur': 8, 'line-opacity': 0.18 },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 7, 'line-blur': 2.5, 'line-opacity': 0.35 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-solid', type: 'line', source: 'cta-routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 2.5, 'line-opacity': 0.85 },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 2.5, 'line-opacity': 0.92 },
+      }, labelLayer?.id)
+      map.addLayer({ id: 'cta-routes-core', type: 'line', source: 'cta-routes',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#ffffff', 'line-width': 0.75, 'line-opacity': 0.22 },
       }, labelLayer?.id)
 
       // Train sources + layers
       map.addSource('cta-trains', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
       map.addLayer({ id: 'cta-train-ring', type: 'circle', source: 'cta-trains',
         paint: {
-          'circle-radius': 8, 'circle-color': 'rgba(0,0,0,0)',
-          'circle-stroke-color': ['get', 'color'], 'circle-stroke-width': 1.5,
-          'circle-stroke-opacity': 0.35,
+          'circle-radius': 11, 'circle-color': ['get', 'color'],
+          'circle-opacity': 0.12, 'circle-stroke-width': 0,
         }
       })
       map.addLayer({ id: 'cta-train-dots', type: 'circle', source: 'cta-trains',
         paint: {
-          'circle-radius': 4.5, 'circle-color': ['get', 'color'],
-          'circle-stroke-color': '#060b18', 'circle-stroke-width': 1.5, 'circle-opacity': 1,
+          'circle-radius': 4, 'circle-color': ['get', 'color'],
+          'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5,
+          'circle-stroke-opacity': 0.85, 'circle-opacity': 1,
         }
       })
       map.on('click', 'cta-train-dots', e => {
@@ -441,13 +448,13 @@ export default function HomePage() {
         ringPhase += 0.03
 
         if (map.getLayer('cta-routes-glow')) {
-          const op = 0.10 + Math.sin(glowPhase) * 0.16
-          map.setPaintProperty('cta-routes-glow', 'line-opacity', op)
-          map.setPaintProperty('cta-routes-atmo', 'line-opacity', 0.04 + Math.sin(glowPhase) * 0.06)
+          const glow = 0.28 + Math.sin(glowPhase) * 0.12
+          map.setPaintProperty('cta-routes-glow', 'line-opacity', glow)
+          map.setPaintProperty('cta-routes-atmo', 'line-opacity', 0.04 + Math.sin(glowPhase) * 0.04)
         }
         if (map.getLayer('cta-train-ring')) {
-          map.setPaintProperty('cta-train-ring', 'circle-radius', 6 + Math.sin(ringPhase) * 4)
-          map.setPaintProperty('cta-train-ring', 'circle-stroke-opacity', Math.max(0, 0.08 + Math.sin(ringPhase) * 0.25))
+          const halo = 0.07 + (1 + Math.sin(ringPhase)) / 2 * 0.13
+          map.setPaintProperty('cta-train-ring', 'circle-opacity', halo)
         }
 
         const now = Date.now()
@@ -455,7 +462,8 @@ export default function HomePage() {
         const trainList = trainDataRef.current
         if (trainList.length > 0) {
           for (const state of Object.values(states)) {
-            const p = Math.min((now - state.startTime) / GLIDE_MS, 1)
+            const t = Math.min((now - state.startTime) / GLIDE_MS, 1)
+            const p = 1 - Math.pow(1 - t, 3)  // cubic ease-out
             state.lat = state.fromLat + (state.toLat - state.fromLat) * p
             state.lon = state.fromLon + (state.toLon - state.fromLon) * p
           }
