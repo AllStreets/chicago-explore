@@ -55,7 +55,7 @@ router.get('/', async (_req, res) => {
       windMps:   Math.round(windMps * 10) / 10,
       description,
       niceScore,
-      niceLabel: niceScore >= 75 ? 'Great day' : niceScore >= 55 ? 'Decent' : niceScore >= 35 ? 'Not ideal' : 'Stay inside',
+      niceLabel: niceScore >= 75 ? 'Great day' : niceScore >= 40 ? 'Decent' : 'Stay inside',
     })
   } catch (e) {
     res.status(502).json({ error: 'Lake conditions unavailable', detail: e.message })
