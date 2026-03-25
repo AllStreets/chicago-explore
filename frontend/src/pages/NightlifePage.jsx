@@ -39,7 +39,7 @@ const SCENES = [
     poly: [[-87.691,41.908],[-87.664,41.908],[-87.664,41.924],[-87.691,41.924],[-87.691,41.908]] },
   { key: 'wrigleyville',  name: 'Wrigleyville',            vibe: 'Sports bars, Cubs game crowds, rowdy fun',     color: '#ef4444',
     poly: [[-87.663,41.943],[-87.647,41.943],[-87.647,41.958],[-87.663,41.958],[-87.663,41.943]] },
-  { key: 'andersonville', name: 'Andersonville',           vibe: 'LGBTQ+ welcoming, cozy bars, diverse crowd',  color: '#10b981',
+  { key: 'andersonville', name: 'Andersonville',           vibe: 'Welcoming, cozy bars, diverse crowd',  color: '#10b981',
     poly: [[-87.669,41.974],[-87.654,41.974],[-87.654,41.986],[-87.669,41.986],[-87.669,41.974]] },
   { key: 'west_loop',     name: 'West Loop',               vibe: 'Craft cocktails, chef-driven, wine bars',      color: '#00d4ff',
     poly: [[-87.657,41.875],[-87.643,41.875],[-87.643,41.889],[-87.657,41.889],[-87.657,41.875]] },

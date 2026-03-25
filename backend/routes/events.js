@@ -90,14 +90,24 @@ router.get('/', async (_req, res) => {
   if (!key) return res.json(getFallbackEvents())
 
   try {
+    // Date window: today → +30 days
+    const now   = new Date()
+    const start = now.toISOString().slice(0, 19) + 'Z'
+    const end   = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z'
+
     // Fetch 50 so we have plenty after filtering junk
-    const url = `https://app.ticketmaster.com/discovery/v2/events.json?city=Chicago&stateCode=IL&size=50&sort=date%2Casc&apikey=${key}`
+    const url = `https://app.ticketmaster.com/discovery/v2/events.json?city=Chicago&stateCode=IL&size=50&sort=date%2Casc&startDateTime=${start}&endDateTime=${end}&apikey=${key}`
     const r = await fetch(url, { signal: AbortSignal.timeout(8000) })
     if (!r.ok) throw new Error(`Ticketmaster ${r.status}`)
     const json = await r.json()
 
+    const cutoff = now.getTime()
     const events = (json?._embedded?.events || [])
       .filter(e => !isJunk(e.name))
+      .filter(e => {
+        const d = e.dates?.start?.dateTime || e.dates?.start?.localDate
+        return d ? new Date(d).getTime() >= cutoff : true
+      })
       .map(e => ({
         id:           e.id,
         name:         e.name,

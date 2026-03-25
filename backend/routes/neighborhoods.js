@@ -5,7 +5,7 @@ const NEIGHBORHOODS = [
   {
     id: 'streeterville',
     name: 'Streeterville',
-    tagline: 'Lake-front luxury, your home base',
+    tagline: 'Lake-front luxury, Magnificent Mile adjacent',
     vibe: ['upscale', 'lakefront', 'walkable'],
     walkScore: 97,
     transitScore: 84,
