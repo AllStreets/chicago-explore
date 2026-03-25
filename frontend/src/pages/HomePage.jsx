@@ -296,13 +296,14 @@ export default function HomePage() {
         : fetch(`${API}/api/cta/routes`).then(r => r.json()).then(d => { _routesCache = d; return d })
       ).then(g => { if (map.getSource('cta-routes')) map.getSource('cta-routes').setData(g) }).catch(() => {}))
 
+      const noGlowColor = ['case', ['==', ['get', 'color'], '#92400e'], 'rgba(0,0,0,0)', ['get', 'color']]
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': ['get', 'color'], 'line-width': 40, 'line-blur': 28, 'line-opacity': 0.07 },
+        paint: { 'line-color': noGlowColor, 'line-width': 40, 'line-blur': 28, 'line-opacity': 0.07 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-glow', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': ['get', 'color'], 'line-width': 7, 'line-blur': 2.5, 'line-opacity': 0.35 },
+        paint: { 'line-color': noGlowColor, 'line-width': 7, 'line-blur': 2.5, 'line-opacity': 0.35 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-solid', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },

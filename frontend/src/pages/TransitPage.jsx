@@ -74,11 +74,12 @@ export default function TransitPage() {
         : fetch(`${API}/api/cta/routes`).then(r => r.json()).then(d => { _routesCache = d; return d })
       ).then(g => { if (map.getSource('cta-routes')) map.getSource('cta-routes').setData(g) }).catch(() => {}))
 
+      const noGlowColor = ['case', ['==', ['get', 'color'], '#92400e'], 'rgba(0,0,0,0)', ['get', 'color']]
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 36, 'line-blur': 22, 'line-opacity': 0.08 }
+        paint: { 'line-color': noGlowColor, 'line-width': 36, 'line-blur': 22, 'line-opacity': 0.08 }
       })
       map.addLayer({ id: 'cta-routes-glow', type: 'line', source: 'cta-routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 16, 'line-blur': 10, 'line-opacity': 0.18 }
+        paint: { 'line-color': noGlowColor, 'line-width': 16, 'line-blur': 10, 'line-opacity': 0.18 }
       })
       map.addLayer({ id: 'cta-routes-solid', type: 'line', source: 'cta-routes',
         paint: { 'line-color': ['get', 'color'], 'line-width': 2.5, 'line-opacity': 0.85 }
