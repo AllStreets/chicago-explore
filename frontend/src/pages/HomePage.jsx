@@ -308,11 +308,11 @@ export default function HomePage() {
       ]
       map.addLayer({ id: 'cta-routes-atmo', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': noGlowColor, 'line-width': 40, 'line-blur': 28, 'line-opacity': 0.07 },
+        paint: { 'line-color': noGlowColor, 'line-width': 24, 'line-blur': 18, 'line-opacity': 0.04 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-glow', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
-        paint: { 'line-color': noGlowColor, 'line-width': 7, 'line-blur': 2.5, 'line-opacity': 0.35 },
+        paint: { 'line-color': noGlowColor, 'line-width': 5, 'line-blur': 2, 'line-opacity': 0.22 },
       }, labelLayer?.id)
       map.addLayer({ id: 'cta-routes-solid', type: 'line', source: 'cta-routes',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
