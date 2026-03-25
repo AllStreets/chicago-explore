@@ -26,14 +26,12 @@ async function fetchWeather() {
   const feelsC = d.main?.feels_like ?? tempC
   const windMps = d.wind?.speed ?? 0
 
-  // True daily high/low from next 24h forecast intervals
+  // True daily high/low: include current temp so NOW never exceeds HIGH or falls below LOW
   const entries = Array.isArray(fd.list) ? fd.list : []
-  const dailyHighC = entries.length
-    ? Math.max(...entries.map(e => e.main.temp_max ?? e.main.temp))
-    : d.main.temp_max ?? tempC
-  const dailyLowC = entries.length
-    ? Math.min(...entries.map(e => e.main.temp_min ?? e.main.temp))
-    : d.main.temp_min ?? tempC
+  const forecastHighs = entries.map(e => e.main.temp_max ?? e.main.temp)
+  const forecastLows  = entries.map(e => e.main.temp_min ?? e.main.temp)
+  const dailyHighC = Math.max(tempC, ...forecastHighs, d.main.temp_max ?? tempC)
+  const dailyLowC  = Math.min(tempC, ...forecastLows,  d.main.temp_min ?? tempC)
 
   _cached = {
     temp:        Math.round(tempC),
