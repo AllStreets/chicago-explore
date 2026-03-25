@@ -114,18 +114,26 @@ router.get('/', async (req, res) => {
     let elements
 
     if (type === 'all') {
-      const [zoneA, zoneB] = await Promise.all(ALL_FOOD_QUERIES.map(overpassFetch))
+      const results = await Promise.allSettled(ALL_FOOD_QUERIES.map(overpassFetch))
       const seen = new Set()
       elements = []
-      for (const el of [...zoneA, ...zoneB]) {
-        if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+      for (const r of results) {
+        if (r.status === 'fulfilled') {
+          for (const el of r.value) {
+            if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+          }
+        }
       }
     } else if (type === 'nightlife_all') {
-      const zones = await Promise.all(NL_ALL_QUERIES.map(overpassFetch))
+      const results = await Promise.allSettled(NL_ALL_QUERIES.map(overpassFetch))
       const seen = new Set()
       elements = []
-      for (const el of zones.flat()) {
-        if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+      for (const r of results) {
+        if (r.status === 'fulfilled') {
+          for (const el of r.value) {
+            if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+          }
+        }
       }
     } else {
       const query = CATEGORY_QUERIES[type] || CATEGORY_QUERIES.restaurants
