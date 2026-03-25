@@ -48,6 +48,14 @@ router.post('/visited', (req, res) => {
   }
 })
 
+// PUT /api/me/visited/:place_id/notes
+router.put('/visited/:place_id/notes', (req, res) => {
+  const userId = getUserId(req)
+  const { notes } = req.body
+  db.prepare('UPDATE me_visited SET notes = ? WHERE user_id = ? AND place_id = ?').run(notes ?? '', userId, req.params.place_id)
+  res.json({ ok: true })
+})
+
 // DELETE /api/me/visited/:place_id
 router.delete('/visited/:place_id', (req, res) => {
   const userId = getUserId(req)

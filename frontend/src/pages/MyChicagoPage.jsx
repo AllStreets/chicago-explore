@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { RiHeartFill, RiHeartLine, RiCheckboxCircleLine, RiDeleteBinLine } from 'react-icons/ri'
+import { RiHeartFill, RiCheckboxCircleLine, RiDeleteBinLine, RiPencilLine, RiFileTextLine } from 'react-icons/ri'
 import './MyChicagoPage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -39,7 +39,16 @@ function useMe() {
     load()
   }
 
-  return { me, loading, deleteFavorite, deleteVisited, userId }
+  async function saveNote(placeId, notes) {
+    await fetch(`${API}/api/me/visited/${placeId}/notes`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-User-ID': userId },
+      body: JSON.stringify({ notes }),
+    })
+    load()
+  }
+
+  return { me, loading, deleteFavorite, deleteVisited, saveNote }
 }
 
 function formatDate(ts) {
@@ -49,8 +58,25 @@ function formatDate(ts) {
 }
 
 export default function MyChicagoPage() {
-  const { me, loading, deleteFavorite, deleteVisited, userId } = useMe()
+  const { me, loading, deleteFavorite, deleteVisited, saveNote } = useMe()
   const [tab, setTab] = useState('favorites')
+  const [noteModal, setNoteModal] = useState(null)   // { placeId, placeName, text }
+  const [viewModal, setViewModal] = useState(null)   // { placeName, notes }
+  const [noteDraft, setNoteDraft] = useState('')
+
+  function openWriteNote(v) {
+    setNoteDraft(v.notes || '')
+    setNoteModal({ placeId: v.place_id, placeName: v.place_name })
+  }
+
+  function openViewNote(v) {
+    setViewModal({ placeName: v.place_name, notes: v.notes || '' })
+  }
+
+  async function handleSaveNote() {
+    await saveNote(noteModal.placeId, noteDraft)
+    setNoteModal(null)
+  }
 
   return (
     <div className="mychicago-page">
@@ -70,19 +96,11 @@ export default function MyChicagoPage() {
       </div>
 
       <div className="mychicago-tabs">
-        <button
-          className={`mc-tab${tab === 'favorites' ? ' active' : ''}`}
-          onClick={() => setTab('favorites')}
-        >
-          <RiHeartFill />
-          Favorites
+        <button className={`mc-tab${tab === 'favorites' ? ' active' : ''}`} onClick={() => setTab('favorites')}>
+          <RiHeartFill /> Favorites
         </button>
-        <button
-          className={`mc-tab${tab === 'visited' ? ' active' : ''}`}
-          onClick={() => setTab('visited')}
-        >
-          <RiCheckboxCircleLine />
-          Been There
+        <button className={`mc-tab${tab === 'visited' ? ' active' : ''}`} onClick={() => setTab('visited')}>
+          <RiCheckboxCircleLine /> Been There
         </button>
       </div>
 
@@ -120,11 +138,64 @@ export default function MyChicagoPage() {
                 <div className="mc-item-name">{v.place_name}</div>
                 <div className="mc-item-date">Visited {formatDate(v.visited_at)}</div>
               </div>
+              <button
+                className={`mc-note-view-btn${v.notes ? ' has-notes' : ''}`}
+                onClick={() => openViewNote(v)}
+                title={v.notes ? 'View notes' : 'No notes yet'}
+              >
+                <RiFileTextLine />
+              </button>
+              <button className="mc-note-edit-btn" onClick={() => openWriteNote(v)} title="Write a note">
+                <RiPencilLine />
+              </button>
               <button className="mc-delete-btn" onClick={() => deleteVisited(v.place_id)} title="Remove">
                 <RiDeleteBinLine />
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Write note modal */}
+      {noteModal && (
+        <div className="mc-modal-overlay" onClick={() => setNoteModal(null)}>
+          <div className="mc-modal" onClick={e => e.stopPropagation()}>
+            <div className="mc-modal-title">
+              <RiPencilLine />
+              {noteModal.placeName}
+            </div>
+            <textarea
+              className="mc-note-textarea"
+              placeholder="Write your notes about this place…"
+              value={noteDraft}
+              onChange={e => setNoteDraft(e.target.value)}
+              autoFocus
+              rows={5}
+            />
+            <div className="mc-modal-actions">
+              <button className="mc-modal-cancel" onClick={() => setNoteModal(null)}>Cancel</button>
+              <button className="mc-modal-save" onClick={handleSaveNote}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View note modal */}
+      {viewModal && (
+        <div className="mc-modal-overlay" onClick={() => setViewModal(null)}>
+          <div className="mc-modal" onClick={e => e.stopPropagation()}>
+            <div className="mc-modal-title">
+              <RiFileTextLine />
+              {viewModal.placeName}
+            </div>
+            {viewModal.notes
+              ? <p className="mc-note-body">{viewModal.notes}</p>
+              : <p className="mc-note-empty">No notes yet — click the pencil icon to add one.</p>
+            }
+            <div className="mc-modal-actions">
+              <button className="mc-modal-save" onClick={() => setViewModal(null)}>Close</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -41,4 +41,7 @@ db.exec(`
   )
 `)
 
+// Safe migration — add notes column if it doesn't exist yet
+try { db.exec(`ALTER TABLE me_visited ADD COLUMN notes TEXT NOT NULL DEFAULT ''`) } catch {}
+
 module.exports = db
