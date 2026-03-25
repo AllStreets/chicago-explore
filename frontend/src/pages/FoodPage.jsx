@@ -62,7 +62,7 @@ export default function FoodPage() {
 
     map.on('load', () => {
       // Canvas icons — synchronous, no async loading issues
-      map.addImage('food-icon', makeMapPin('fork',    '#f59e0b'), { pixelRatio: 2 })
+      map.addImage('food-icon', makeMapPin('fork',    '#00d4ff'), { pixelRatio: 2 })
       map.addImage('bar-icon',  makeMapPin('martini', '#7c3aed'), { pixelRatio: 2 })
 
       map.addSource('places', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
@@ -142,7 +142,7 @@ export default function FoodPage() {
           {places.map(p => (
             <div key={p.id} className="food-card">
               <div className="food-card-name">
-                <span className="food-card-type-dot" style={{ background: isBar(p) ? '#7c3aed' : '#f59e0b' }} />
+                <span className="food-card-type-dot" style={{ background: isBar(p) ? '#7c3aed' : '#00d4ff' }} />
                 {p.name}
               </div>
               <div className="food-card-meta">

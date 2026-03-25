@@ -85,12 +85,54 @@ function toFoodGeoJSON(places) {
 // ── Stadium icons ──────────────────────────────────────────────────────────────
 const STADIUMS = [
   { name: 'Cubs',       sport: 'baseball',   color: '#0e3386', coords: [-87.6554, 41.9484], stadium: 'Wrigley Field' },
-  { name: 'White Sox',  sport: 'baseball',   color: '#808080', coords: [-87.6338, 41.8300], stadium: 'Guaranteed Rate Field' },
-  { name: 'Bears',      sport: 'football',   color: '#4a6c8c', coords: [-87.6167, 41.8623], stadium: 'Soldier Field' },
+  { name: 'White Sox',  sport: 'baseball',   color: '#1a1a1a', coords: [-87.6338, 41.8300], stadium: 'Guaranteed Rate Field' },
+  { name: 'Bears',      sport: 'football',   color: '#0b162a', coords: [-87.6167, 41.8623], stadium: 'Soldier Field' },
   { name: 'Bulls',      sport: 'basketball', color: '#ce1141', coords: [-87.6742, 41.8806], stadium: 'United Center' },
   { name: 'Blackhawks', sport: 'hockey',     color: '#cf0a2c', coords: [-87.6756, 41.8815], stadium: 'United Center' },
   { name: 'Fire',       sport: 'soccer',     color: '#9d2235', coords: [-87.6185, 41.8610], stadium: 'Soldier Field' },
 ]
+
+// Official team logo URLs (ESPN CDN — publicly accessible)
+const STADIUM_LOGOS = {
+  'Cubs':       'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/chc.png',
+  'White Sox':  'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/cws.png',
+  'Bears':      'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/chi.png',
+  'Bulls':      'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/chi.png',
+  'Blackhawks': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/chi.png',
+  'Fire':       'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/chif.png',
+}
+
+function loadStadiumLogo(map, s) {
+  const iconKey = `stadium-${s.sport}-${s.name.toLowerCase().replace(' ', '')}`
+  const url = STADIUM_LOGOS[s.name]
+  if (!url) { map.addImage(iconKey, makeStadiumIcon(s.sport, s.color)); return Promise.resolve() }
+  return new Promise(resolve => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      const S = 64
+      const c = document.createElement('canvas')
+      c.width = S; c.height = S
+      const x = c.getContext('2d')
+      // Colored circle background, clipped
+      x.save()
+      x.beginPath(); x.arc(S/2, S/2, S/2 - 1, 0, Math.PI * 2)
+      x.fillStyle = s.color; x.fill()
+      x.clip()
+      const pad = 5
+      x.drawImage(img, pad, pad, S - pad * 2, S - pad * 2)
+      x.restore()
+      // White border ring
+      x.beginPath(); x.arc(S/2, S/2, S/2 - 1.5, 0, Math.PI * 2)
+      x.strokeStyle = 'rgba(255,255,255,0.65)'; x.lineWidth = 2.5; x.stroke()
+      const data = x.getImageData(0, 0, S, S)
+      map.addImage(iconKey, { width: S, height: S, data: data.data }, { pixelRatio: 2 })
+      resolve()
+    }
+    img.onerror = () => { map.addImage(iconKey, makeStadiumIcon(s.sport, s.color)); resolve() }
+    img.src = url
+  })
+}
 
 function makeStadiumIcon(sport, color) {
   const S = 30
@@ -231,7 +273,7 @@ export default function HomePage() {
     })
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
-    map.on('load', () => {
+    map.on('load', async () => {
       const layers = map.getStyle().layers
       const labelLayer = layers.find(l => l.type === 'symbol' && l.layout?.['text-field'])
 
@@ -297,9 +339,9 @@ export default function HomePage() {
       map.on('mouseleave', 'cta-train-dots', () => { map.getCanvas().style.cursor = '' })
 
       // Food + nightlife icons
-      map.addImage('home-food',      makeMapPin('fork',    '#f59e0b'), { pixelRatio: 2 })
+      map.addImage('home-food',      makeMapPin('fork',    '#00d4ff'), { pixelRatio: 2 })
       map.addImage('home-bar',       makeMapPin('martini', '#7c3aed'), { pixelRatio: 2 })
-      map.addImage('home-nl-bar',    makeMapPin('beer',    '#a78bfa'), { pixelRatio: 2 })
+      map.addImage('home-nl-bar',    makeMapPin('martini', '#7c3aed'), { pixelRatio: 2 })
       map.addImage('home-nl-dancer', makeMapPin('dancer',  '#f43f5e'), { pixelRatio: 2 })
 
       // Food places layer
@@ -348,15 +390,16 @@ export default function HomePage() {
       map.on('mouseenter', 'home-nl-icons', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'home-nl-icons', () => { map.getCanvas().style.cursor = '' })
 
-      // Stadium sport icons
-      STADIUMS.forEach(s => {
-        map.addImage(`stadium-${s.sport}-${s.name.toLowerCase().replace(' ','')}`, makeStadiumIcon(s.sport, s.color))
-      })
+      // Stadium team logos — load from ESPN CDN, fall back to canvas icons
+      await Promise.allSettled(STADIUMS.map(s => loadStadiumLogo(map, s)))
       map.addSource('stadiums', { type: 'geojson', data: stadiumGeoJSON() })
       map.addLayer({
         id: 'stadium-icons', type: 'symbol', source: 'stadiums',
         layout: {
-          'icon-image': ['get', 'icon'], 'icon-size': 0.9,
+          'icon-image': ['get', 'icon'],
+          // Bulls + Bears scale up when zoomed out so they dominate their shared venues
+          'icon-size': 0.9,
+          'symbol-sort-key': ['match', ['get', 'name'], ['Bulls', 'Bears'], 1, 0],
           'icon-allow-overlap': true, 'icon-ignore-placement': true, 'icon-anchor': 'center',
         },
       })

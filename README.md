@@ -12,12 +12,12 @@ Repo: https://github.com/AllStreets/chicago-explore
 
 | Route | Page | Description |
 |---|---|---|
-| `/` | Home | 3D globe centered on Streeterville, live CTA train dots, floating IntelFeed (weather, sports, tonight's event, closest train, Buzzing Now) |
-| `/explore` | Explore Chicago | Curated landmarks, architecture, culture, nature, and hidden gems with AI guide chat |
+| `/` | Home | 3D Mapbox map centered on Streeterville — live CTA train dots, official team logo stadium pins (Bulls/Bears sort on top), food and nightlife icons, floating IntelFeed (weather, sports scores, tonight's event, closest train, Buzzing Now) |
+| `/explore` | Explore Chicago | Curated landmarks by category (architecture, culture, nature, hidden) with AI guide chat |
 | `/transit` | Transit | All 8 CTA L lines with animated live train positions, line status sidebar, Divvy stations |
-| `/nightlife` | Nightlife | Bars, clubs, cocktail bars, rooftop bars, wine bars, jazz venues — map + scene profiles |
-| `/food` | Food & Drink | Foursquare-powered restaurant map with cuisine filters |
-| `/sports` | Sports | Cubs, Sox, Bears, Bulls, Blackhawks, Fire — live scores, today's games, upcoming schedule |
+| `/nightlife` | Nightlife | Bars, night clubs, cocktail bars, rooftop bars, wine bars, jazz venues — Mapbox map + 7 neighborhood scene profiles including Streeterville |
+| `/food` | Food & Drink | OSM-powered restaurant map with cuisine filters (restaurants, bars, cafes, pizza, sushi, tacos, brunch) |
+| `/sports` | Sports | Cubs, Sox, Bears, Bulls, Blackhawks, Fire — live scores (refreshes every 90s), today's games, upcoming schedule |
 | `/events` | Events | Ticketmaster-powered event listings, color-coded by type with filter tabs |
 | `/weather` | Weather & Lake | Current conditions, HIGH/NOW/LOW tiles, animated Lake Michigan scene (8 weather states) |
 | `/neighborhoods` | Neighborhoods | Per-neighborhood character, stats, vibe tags, AI brief, and AI live-in advisor |
@@ -43,15 +43,15 @@ Repo: https://github.com/AllStreets/chicago-explore
 - Fonts: Space Grotesk (UI), JetBrains Mono (numbers/code)
 
 **External APIs**
-| API | Used For | Free Tier |
+| API | Used For | Key Required |
 |---|---|---|
 | OpenWeatherMap | Current weather + lake conditions | Yes |
 | CTA Train Tracker | Live L train positions | Yes |
-| Foursquare Places | Food & Drink + Nightlife places | Yes |
+| OpenStreetMap / Overpass | Food, drink, and nightlife places | No |
 | Ticketmaster Discovery | Events listings | Yes |
-| ESPN (public) | Sports scores + schedules | No key needed |
-| Mapbox | Maps + globe | 50k loads/mo free |
-| OpenAI | AI streaming (Explore, Neighborhoods) | Pay per token |
+| ESPN (public scoreboard) | Sports scores + schedules | No |
+| Mapbox | Maps | 50k loads/mo free |
+| OpenAI | AI streaming (Explore, Neighborhoods) | Yes (pay per token) |
 
 ---
 
@@ -97,10 +97,9 @@ Runs at `http://localhost:5173`. Both must be running simultaneously.
 | `OPENWEATHER_API_KEY` | Yes | Same key as above (used by two routes) |
 | `OPENAI_API_KEY` | Yes | OpenAI API key — [platform.openai.com](https://platform.openai.com) — powers AI streaming |
 | `TICKETMASTER_KEY` | Yes | Ticketmaster Discovery API — [developer.ticketmaster.com](https://developer.ticketmaster.com) |
-| `FOURSQUARE_KEY` | Yes | Foursquare Places API — [location.foursquare.com](https://location.foursquare.com) |
 | `CTA_API_KEY` | Yes | CTA Train Tracker — [transitchicago.com/developers](https://www.transitchicago.com/developers/) |
 | `FRONTEND_URL` | Yes | Your Vercel URL — used for CORS, e.g. `https://your-app.vercel.app` |
-| `PORT` | No | Defaults to `3001` (Railway sets this automatically) |
+| `PORT` | No | Do not set — Railway injects this automatically |
 
 ### Frontend (`frontend/.env`)
 

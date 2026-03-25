@@ -14,15 +14,16 @@ if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 // Inline SVG icon components — exact shapes for each category
 const AllIcon       = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
 const BeerMugIcon   = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="9" height="12" rx="1.5" fill="currentColor" fillOpacity=".25"/><path d="M11 6h2.5a1.5 1.5 0 010 3H11"/><line x1="4" y1="3" x2="4" y2="1"/><line x1="7" y1="3" x2="7" y2="1.5"/></svg>
-const DancerIcon    = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="8" cy="2.5" r="1.5" fill="currentColor" stroke="none"/><line x1="8" y1="4" x2="8" y2="9"/><line x1="8" y1="6" x2="4" y2="4"/><line x1="8" y1="6" x2="12" y2="5"/><line x1="8" y1="9" x2="5.5" y2="14"/><line x1="8" y1="9" x2="11" y2="13.5"/></svg>
+const DancerIcon    = () => <svg width="12" height="12" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><circle cx="4.5" cy="1.8" r="1.3" fill="currentColor"/><path d="M3.2 3.3h2.6L5.4 6.8H4.2z" fill="currentColor"/><line x1="3.4" y1="4.3" x2="1.2" y2="2.6" stroke="currentColor" strokeWidth="1.5"/><line x1="5.6" y1="4.3" x2="7.5" y2="5.3" stroke="currentColor" strokeWidth="1.5"/><line x1="4.3" y1="6.8" x2="2.5" y2="12" stroke="currentColor" strokeWidth="1.5"/><line x1="5.4" y1="6.8" x2="7.2" y2="11.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="11.5" cy="1.8" r="1.3" fill="currentColor"/><path d="M10.2 3.3h2.6L12.4 6.8H11.2z" fill="currentColor"/><line x1="10.4" y1="4.3" x2="8.5" y2="5.3" stroke="currentColor" strokeWidth="1.5"/><line x1="12.6" y1="4.3" x2="14.8" y2="2.6" stroke="currentColor" strokeWidth="1.5"/><line x1="11.2" y1="6.8" x2="8.8" y2="11.5" stroke="currentColor" strokeWidth="1.5"/><line x1="12.4" y1="6.8" x2="13.5" y2="12" stroke="currentColor" strokeWidth="1.5"/></svg>
 const WineGlassIcon = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 2C4 2 3.5 8 8 8S12 2 12 2H4z" fill="currentColor" fillOpacity=".25"/><line x1="8" y1="8" x2="8" y2="14"/><line x1="5" y1="14" x2="11" y2="14"/></svg>
 const MartiniIcon   = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 2L14 2L8 9Z" fill="currentColor" fillOpacity=".25"/><line x1="8" y1="9" x2="8" y2="14"/><line x1="5" y1="14" x2="11" y2="14"/></svg>
+const WhiskeyIcon   = () => <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2h10l-1.5 12H4.5L3 2z" fill="currentColor" fillOpacity=".2"/><line x1="3.5" y1="8" x2="12.5" y2="8"/><rect x="5.5" y="9.5" width="3" height="2.5" rx="0.3" strokeWidth="1.2"/></svg>
 
 const CATEGORIES = [
   { key: 'nightlife_all', label: 'All',           color: '#00d4ff', Icon: AllIcon,       shape: null       },
-  { key: 'bars',          label: 'Bars',           color: '#a78bfa', Icon: BeerMugIcon,   shape: 'beer'     },
+  { key: 'bars',          label: 'Bars',           color: '#7c3aed', Icon: MartiniIcon,   shape: 'martini'  },
   { key: 'danceclub',     label: 'Night Clubs',    color: '#f43f5e', Icon: DancerIcon,    shape: 'dancer'   },
-  { key: 'cocktailbars',  label: 'Cocktail Bars',  color: '#2dd4bf', Icon: MartiniIcon,   shape: 'martini'  },
+  { key: 'cocktailbars',  label: 'Cocktail Bars',  color: '#2dd4bf', Icon: WhiskeyIcon,   shape: 'whiskey'  },
   { key: 'rooftop_bars',  label: 'Rooftop Bars',   color: '#38bdf8', Icon: RiBuildingLine,shape: 'building' },
   { key: 'wine_bars',     label: 'Wine Bars',      color: '#fb7185', Icon: WineGlassIcon, shape: 'wine'     },
   { key: 'jazzandblues',  label: 'Jazz & Blues',   color: '#fbbf24', Icon: RiMusicFill,   shape: 'music'    },
@@ -95,7 +96,7 @@ export default function NightlifePage() {
       CATEGORIES.filter(c => c.shape).forEach(c => {
         map.addImage(`nl-${c.key}`, makeMapPin(c.shape, c.color), { pixelRatio: 2 })
       })
-      map.addImage('nl-bars',     makeMapPin('beer',   '#a78bfa'), { pixelRatio: 2 })
+      map.addImage('nl-bars',     makeMapPin('martini','#7c3aed'), { pixelRatio: 2 })
       map.addImage('nl-danceclub',makeMapPin('dancer', '#f43f5e'), { pixelRatio: 2 })
 
       // Neighborhood highlight polygons (static context — always shown)
@@ -213,8 +214,8 @@ export default function NightlifePage() {
           {loading && <div className="nightlife-loading">Loading...</div>}
           {places.map(p => {
             const dotColor = cat === 'nightlife_all'
-              ? (p.amenity === 'nightclub' ? '#f43f5e' : '#a78bfa')
-              : (activeCat?.color || '#a78bfa')
+              ? (p.amenity === 'nightclub' ? '#f43f5e' : '#7c3aed')
+              : (activeCat?.color || '#7c3aed')
             return (
               <div key={p.id} className="nightlife-card">
                 <div className="nightlife-card-top">

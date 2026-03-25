@@ -163,18 +163,72 @@ export function makeMapPin(shape, color) {
       break
     }
 
-    case 'dancer': {
+    case 'whiskey': {
+      // Rocks / old-fashioned tumbler — short wide glass with liquid and ice cube
       ctx.lineWidth = 1.8
+      // Glass body — trapezoid shape (wider at top)
+      ctx.beginPath()
+      ctx.moveTo(7,  8)   // top-left
+      ctx.lineTo(21, 8)   // top-right
+      ctx.lineTo(19, 23)  // bottom-right
+      ctx.lineTo(9,  23)  // bottom-left
+      ctx.closePath()
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'
+      ctx.fill()
+      ctx.strokeStyle = '#ffffff'
+      ctx.stroke()
+      // Liquid fill (amber tint)
+      ctx.beginPath()
+      ctx.moveTo(8.2,  14)
+      ctx.lineTo(19.8, 14)
+      ctx.lineTo(19,   23)
+      ctx.lineTo(9,    23)
+      ctx.closePath()
+      ctx.fillStyle = 'rgba(255,255,255,0.18)'
+      ctx.fill()
+      // Ice cube
+      ctx.lineWidth = 1.4
+      ctx.strokeRect(10.5, 15.5, 5, 4.5)
+      break
+    }
+
+    case 'dancer': {
+      ctx.lineWidth = 2.4
+
+      // === Left dancer ===
       // Head
-      ctx.beginPath(); ctx.arc(14, 5.5, 2.5, 0, Math.PI * 2); ctx.fill()
-      // Body
-      ctx.beginPath(); ctx.moveTo(14, 8); ctx.lineTo(14, 17); ctx.stroke()
-      // Arms — dynamic V pose
-      ctx.beginPath(); ctx.moveTo(14, 11); ctx.lineTo(7.5, 8); ctx.stroke()
-      ctx.beginPath(); ctx.moveTo(14, 11); ctx.lineTo(20.5, 9); ctx.stroke()
-      // Legs — spread
-      ctx.beginPath(); ctx.moveTo(14, 17); ctx.lineTo(9.5, 23); ctx.stroke()
-      ctx.beginPath(); ctx.moveTo(14, 17); ctx.lineTo(19.5, 22.5); ctx.stroke()
+      ctx.beginPath(); ctx.arc(9, 5.5, 2, 0, Math.PI * 2); ctx.fill()
+      // Torso — filled trapezoid (shoulders wider than hips)
+      ctx.beginPath()
+      ctx.moveTo(6.8, 7.5); ctx.lineTo(11.2, 7.5)
+      ctx.lineTo(10.4, 13); ctx.lineTo(7.6, 13)
+      ctx.closePath(); ctx.fill()
+      // Left arm — raised up-left
+      ctx.beginPath(); ctx.moveTo(7.2, 9); ctx.lineTo(3.5, 6); ctx.stroke()
+      // Right arm — reaching toward center
+      ctx.beginPath(); ctx.moveTo(10.8, 9); ctx.lineTo(14.5, 10.5); ctx.stroke()
+      // Left leg — straight down
+      ctx.beginPath(); ctx.moveTo(7.8, 13); ctx.lineTo(5.5, 22); ctx.stroke()
+      // Right leg — kicked out
+      ctx.beginPath(); ctx.moveTo(10.2, 13); ctx.lineTo(12.5, 20.5); ctx.stroke()
+
+      // === Right dancer — mirrored ===
+      // Head
+      ctx.beginPath(); ctx.arc(19, 5.5, 2, 0, Math.PI * 2); ctx.fill()
+      // Torso
+      ctx.beginPath()
+      ctx.moveTo(16.8, 7.5); ctx.lineTo(21.2, 7.5)
+      ctx.lineTo(20.4, 13); ctx.lineTo(17.6, 13)
+      ctx.closePath(); ctx.fill()
+      // Left arm — reaching toward center
+      ctx.beginPath(); ctx.moveTo(17.2, 9); ctx.lineTo(13.5, 10.5); ctx.stroke()
+      // Right arm — raised up-right
+      ctx.beginPath(); ctx.moveTo(20.8, 9); ctx.lineTo(24.5, 6); ctx.stroke()
+      // Left leg — kicked out
+      ctx.beginPath(); ctx.moveTo(17.8, 13); ctx.lineTo(15.5, 20.5); ctx.stroke()
+      // Right leg — straight down
+      ctx.beginPath(); ctx.moveTo(20.2, 13); ctx.lineTo(22.5, 22); ctx.stroke()
+
       break
     }
 

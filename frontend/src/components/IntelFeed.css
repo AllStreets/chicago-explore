@@ -126,7 +126,11 @@
 }
 
 .intel-card--event {
-  border-left: 2px solid #f59e0b;
+  border-left: 2px solid #10b981;
+}
+
+.intel-card--event .intel-card-label {
+  color: #10b981;
 }
 
 .intel-card--spots {

@@ -7,7 +7,8 @@ const OVERPASS_MIRRORS = [
   'https://overpass.kumi.systems/api/interpreter',
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ]
-const TTL_MS = 6 * 60 * 60 * 1000  // 6 hours
+const TTL_MS    = 6 * 60 * 60 * 1000  // 6 hours
+const CACHE_VER = 2                    // bump when queries change to auto-bust stale cache
 
 const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_key = ?')
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
@@ -103,7 +104,7 @@ async function overpassFetch(query) {
 // GET /api/places?type=restaurants
 router.get('/', async (req, res) => {
   const { type = 'restaurants' } = req.query
-  const cacheKey = JSON.stringify({ type })
+  const cacheKey = JSON.stringify({ v: CACHE_VER, type })
 
   const cached = stmtGet.get(cacheKey)
   if (cached && Date.now() - cached.cached_at < TTL_MS) {

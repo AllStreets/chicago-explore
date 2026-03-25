@@ -33,7 +33,6 @@ OPENWEATHER_KEY=<your_openweather_key>
 OPENWEATHER_API_KEY=<your_openweather_key>
 OPENAI_API_KEY=<your_openai_key>
 TICKETMASTER_KEY=<your_ticketmaster_key>
-FOURSQUARE_KEY=<your_foursquare_key>
 CTA_API_KEY=<your_cta_key>
 FRONTEND_URL=https://PLACEHOLDER.vercel.app
 ```
@@ -43,7 +42,7 @@ FRONTEND_URL=https://PLACEHOLDER.vercel.app
 
 Leave `FRONTEND_URL` as a placeholder for now — update it after the frontend is deployed.
 
-> Railway injects `PORT` automatically — do not set it manually.
+> **Important:** Do NOT add a `PORT` variable — Railway injects it automatically. Adding it manually will break routing.
 
 ### Get the backend URL
 
@@ -121,12 +120,14 @@ Also set a **billing alert** under Mapbox → **Billing** → **Usage Alerts** (
 
 ## 5. Post-Deploy Verification Checklist
 
-- [ ] Home page loads with 3D globe centered on Streeterville
+- [ ] Home page loads with Mapbox map centered on Streeterville
 - [ ] CTA train dots appear on the home map within a few seconds
-- [ ] IntelFeed shows weather, sports tile, tonight event, and closest CTA train
+- [ ] Stadium pins show official team logos (Bulls/Bears on top when overlapping)
+- [ ] Food (teal fork) and nightlife (purple martini) icons appear on home map
+- [ ] IntelFeed shows weather, sports score, tonight's event, train count, and closest CTA train
 - [ ] `/transit` shows all 8 L lines with animated train positions
-- [ ] `/food` loads the Foursquare restaurant map; cuisine filters work
-- [ ] `/nightlife` loads bars on the map with scene profile sidebar
+- [ ] `/food` loads OSM restaurant map; cuisine filters work; Streeterville results appear
+- [ ] `/nightlife` loads bars on map with 7 scene profiles including Streeterville
 - [ ] `/sports` loads team schedules and live scores
 - [ ] `/events` loads Ticketmaster events with color-coded filter tabs
 - [ ] `/weather` shows temperature tiles and animated lake scene

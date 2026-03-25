@@ -70,13 +70,15 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
           <span className="intel-feed-title">LIVE INTEL</span>
           <span className="intel-clock">{clock}</span>
         </div>
-        <span className="intel-feed-sub">
-          <RiMapPinLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
-          Streeterville
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span className="intel-feed-sub">
+            <RiMapPinLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
+            Streeterville
+          </span>
           {trainCount != null && (
             <span className="intel-train-badge">{trainCount} trains</span>
           )}
-        </span>
+        </div>
       </div>
 
       {weather && (
