@@ -1,4 +1,4 @@
-# Chicago Explorer
+# Chicago Explore
 
 A city intelligence app for exploring Chicago, centered on Streeterville.
 
