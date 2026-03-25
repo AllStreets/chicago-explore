@@ -140,7 +140,7 @@ chicago-explorer/
 │   │   ├── neighborhoods.js    # Static neighborhood data + AI advisor
 │   │   ├── sports.js           # ESPN scoreboard + team schedules
 │   │   ├── weather.js          # OpenWeatherMap current conditions
-│   │   └── yelp.js             # Overpass/OSM — food, drink, and nightlife places
+│   │   └── yelp.js             # Overpass/OSM — food, drink, and nightlife places (no API key needed)
 │   ├── tests/                  # Jest + Supertest backend tests
 │   ├── db.js                   # SQLite setup (cache + favorites tables)
 │   ├── server.js               # Express app entry point
@@ -159,7 +159,7 @@ chicago-explorer/
 │   │   │   ├── useMe.js        # Favorites/visited read+write
 │   │   │   ├── useMidnightRefresh.js  # Auto-refresh at midnight (Sports, Events, Weather)
 │   │   │   ├── useWeather.js   # Weather + lake data
-│   │   │   └── useYelp.js      # Overpass places with module-level cache
+│   │   │   └── useYelp.js      # Overpass/OSM places fetcher with module-level cache
 │   │   ├── pages/
 │   │   │   ├── HomePage.jsx    # Mapbox map, CTA trains, stadium logos, food/nightlife icons
 │   │   │   ├── TransitPage.jsx # All 8 CTA L lines, animated trains, Divvy stations
@@ -197,7 +197,7 @@ The backend caches all external API responses in SQLite to avoid rate limits and
 | Weather / lake | Per-request (no cache) | — |
 | Events | Per-request (no cache) | — |
 
-Frontend places data is cached in a module-level `Map` in `useYelp.js` — survives page navigation within the same session so Food and Nightlife pages load instantly after the homepage prefetches them.
+Frontend places data is cached in a module-level `Map` in `useYelp.js` (named for historical reasons — it hits Overpass/OSM, not Yelp) — survives page navigation within the same session so Food and Nightlife pages load instantly after the homepage prefetches them.
 
 ---
 
