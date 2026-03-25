@@ -1,6 +1,7 @@
 /* frontend/src/App.css */
 .main-content {
-  margin-left: 200px;
+  margin-left: var(--sidebar-w, 200px);
   min-height: 100vh;
   position: relative;
+  transition: margin-left 0.2s ease;
 }

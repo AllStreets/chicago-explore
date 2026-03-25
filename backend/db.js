@@ -27,6 +27,11 @@ db.exec(`
     visited_at INTEGER NOT NULL DEFAULT (strftime('%s','now')),
     UNIQUE(user_id, place_id)
   );
+  CREATE TABLE IF NOT EXISTS cta_routes_cache (
+    id        INTEGER PRIMARY KEY,
+    data      TEXT NOT NULL,
+    cached_at INTEGER NOT NULL
+  );
   CREATE TABLE IF NOT EXISTS me_bucket (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id   TEXT NOT NULL,

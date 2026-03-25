@@ -16,6 +16,64 @@
   color: var(--text-muted) !important;
 }
 
+/* Live data overlay — sits to the right of mapbox zoom controls */
+.home-map-overlay {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}
+
+.home-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.home-live-badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: home-blink 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes home-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+.home-refresh-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 3px 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  border-radius: 4px;
+}
+
+.home-refresh-btn:hover { color: #00d4ff; }
+
+@keyframes home-spin { to { transform: rotate(360deg); } }
+.home-refresh-btn.spinning svg { animation: home-spin 1s linear infinite; }
+
 /* Streeterville pulse marker */
 .streeterville-pulse {
   width: 16px;
@@ -46,3 +104,34 @@
   0%   { transform: scale(1); opacity: 0.6; }
   100% { transform: scale(2.5); opacity: 0; }
 }
+
+/* Popup overrides */
+.home-map .mapboxgl-popup-content {
+  background: #0d1f3c;
+  border: 1px solid rgba(0,212,255,0.25);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #e2e8f0;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  min-width: 140px;
+}
+
+.home-map .mapboxgl-popup-content strong {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.home-map .mapboxgl-popup-content small {
+  color: rgba(0,212,255,0.7);
+  font-size: 11px;
+}
+
+.home-map .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip { border-top-color:    #0d1f3c; }
+.home-map .mapboxgl-popup-anchor-top    .mapboxgl-popup-tip { border-bottom-color: #0d1f3c; }
+.home-map .mapboxgl-popup-anchor-left   .mapboxgl-popup-tip { border-right-color:  #0d1f3c; }
+.home-map .mapboxgl-popup-anchor-right  .mapboxgl-popup-tip { border-left-color:   #0d1f3c; }

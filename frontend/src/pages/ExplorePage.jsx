@@ -1,22 +1,48 @@
 import { useState } from 'react'
-import { RiBuildingLine, RiLeafLine, RiAncientGateLine, RiLandscapeLine, RiBrainLine } from 'react-icons/ri'
+import { RiBuildingLine, RiLeafLine, RiAncientGateLine, RiLandscapeLine, RiBrainLine, RiHeartLine, RiHeartFill, RiCheckboxCircleLine } from 'react-icons/ri'
+import { addFavorite, removeFavorite, addVisited, removeVisited } from '../hooks/useMe'
 import './ExplorePage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const LANDMARKS = [
-  { name: 'Millennium Park', category: 'icon', desc: 'Cloud Gate (The Bean), Crown Fountain, free concerts. 5 min walk from Streeterville.', tip: 'Best at golden hour or just after rain.' },
-  { name: 'Navy Pier', category: 'icon', desc: 'Chicago\'s lakefront playground. Fireworks Wed & Sat in summer. Ferris wheel, restaurants, Chicago Shakespeare Theater.', tip: 'Go on a weekday morning to avoid crowds.' },
-  { name: 'Chicago Architecture Center', category: 'architecture', desc: 'Best way to understand the city. Book the Chicago River Architecture Boat Tour — 90 mins, totally worth it.', tip: 'The free center itself has stunning models of every Chicago skyscraper.' },
-  { name: 'Art Institute of Chicago', category: 'culture', desc: 'World-class art museum. Don\'t miss the Thorne Miniature Rooms and the Impressionist gallery.', tip: 'Free on Thursdays after 5pm for Illinois residents.' },
-  { name: 'Lincoln Park Zoo', category: 'nature', desc: 'Free admission, always. Located in the 1,208-acre Lincoln Park. See the gorilla house and farm-in-the-zoo.', tip: 'Come in the morning when animals are active.' },
-  { name: 'The 606 Trail', category: 'nature', desc: 'Elevated rail-to-trail through Wicker Park, Bucktown, Logan Square. 2.7 miles, best view of the city skyline on foot.', tip: 'Rent a Divvy bike and ride the full length.' },
-  { name: 'Chicago Riverwalk', category: 'icon', desc: 'Below street level along the Chicago River. Kayak rentals, restaurants, bars, architecture views.', tip: 'Best at sunset when the buildings reflect off the water.' },
-  { name: 'Museum of Science & Industry', category: 'culture', desc: 'One of the largest science museums in the world. U-505 submarine, coal mine, weather exhibit.', tip: 'Allow 4+ hours. Worth the trip to Hyde Park.' },
-  { name: 'Wrigley Field', category: 'icon', desc: 'Even if you\'re not a Cubs fan, a game at Wrigley is a Chicago rite of passage. Bleacher seats, Old Style beer, the manual scoreboard.', tip: 'Rooftop bars across the street let you watch for free (mostly).' },
-  { name: 'Hyde Park & University of Chicago', category: 'architecture', desc: 'Stunning Gothic campus, Obama\'s house nearby, Museum of Science on the lakefront. A full day trip from Streeterville.', tip: 'Walk through the quad on a sunny day.' },
-  { name: 'Green Mill Cocktail Lounge', category: 'hidden', desc: 'Al Capone\'s favorite speakeasy. Still operating since 1907. Jazz every night, best on Sunday for the Poetry Slam.', tip: 'Cash only, no dress code, arrive early for a booth.' },
-  { name: 'Pilsen Mural Tour', category: 'hidden', desc: 'Self-guided walk through Chicago\'s Mexican-American neighborhood. Every block has massive murals, world-class street art.', tip: 'Pair with lunch at any taqueria on 18th Street.' },
+  // ── ICON ────────────────────────────────────────────────────────────────────
+  { name: 'Millennium Park', category: 'icon', desc: 'Cloud Gate (The Bean), Crown Fountain, free outdoor concerts at the Pritzker Pavilion. Grant Park\'s crown jewel, 5 min walk from Streeterville.', tip: 'Best at golden hour or just after rain — the Bean mirrors the skyline.' },
+  { name: 'Navy Pier', category: 'icon', desc: '3,000-foot pier on Lake Michigan. Fireworks Wed & Sat nights in summer. Centennial Wheel (196 ft), Chicago Shakespeare Theater, lake cruises.', tip: 'Weekday mornings are crowd-free. The free lakefront trail on the south side is underused.' },
+  { name: 'Chicago Riverwalk', category: 'icon', desc: 'Below street level along the Chicago River from Lake Street to Lake Shore Drive. Kayak rentals, 16 restaurants and bars, architecture canyon views.', tip: 'Best at sunset when the towers reflect off the water. The kayak tours from here are excellent.' },
+  { name: 'Wrigley Field', category: 'icon', desc: 'Opened 1914 — second-oldest MLB ballpark. Hand-turned scoreboard, ivy-covered outfield walls, bleacher seats. A Chicago rite of passage even if you\'re not a Cubs fan.', tip: 'Rooftop clubs on Waveland & Sheffield Avenues let you watch from outside the park for a cover.' },
+  { name: 'Willis Tower Skydeck', category: 'icon', desc: '103rd-floor glass-floor Ledge boxes extend 4.3 ft over Wacker Drive, 1,353 ft up. Tallest building in the Western Hemisphere 1973–1998. Best 360° view of the city.', tip: 'Arrive right at opening (9am) to beat tour groups. Cloud days give a moody below-cloud view.' },
+  { name: 'Grant Park', category: 'icon', desc: 'Chicago\'s "front yard" — 319 acres stretching from Michigan Ave to the lake. Site of Lollapalooza (July), Taste of Chicago (June), and the free Millennium Park concerts.', tip: 'Buckingham Fountain runs May–October and puts on a light show after dark. Free.' },
+  { name: 'Magnificent Mile', category: 'icon', desc: '13 blocks of Michigan Ave from the Chicago River to Oak Street. Tribune Tower (130 pieces of global landmarks embedded in the base), Wrigley Building, Water Tower, 875 N Michigan.', tip: 'The underground Pedway connects several buildings — useful in winter. Take the architectural walking tour along the strip.' },
+  // ── ARCHITECTURE ─────────────────────────────────────────────────────────────
+  { name: 'Chicago Architecture Center', category: 'architecture', desc: 'Best way to understand the city. Book the Chicago River Architecture Boat Tour — 90 min, covers 50+ buildings. The free center has scale models of every major Chicago skyscraper.', tip: 'The boat tour sells out weeks in advance in summer. Book online.' },
+  { name: 'Hyde Park & University of Chicago', category: 'architecture', desc: 'Collegiate Gothic campus designed in 1890. Obama\'s house is 2 blocks from the quad. Connects to the Oriental Institute and the Museum of Science & Industry on the lakefront.', tip: 'Walk through the main quad on a sunny day — looks like Oxford.' },
+  { name: 'The Rookery Building', category: 'architecture', desc: '209 S LaSalle St. Built 1888 by Burnham & Root — one of the world\'s first skyscrapers. Frank Lloyd Wright redesigned the light court interior in 1905. The atrium is open to the public.', tip: 'Walk in during a weekday. The lobby is free to view and the light court ceiling is stunning.' },
+  { name: 'Frank Lloyd Wright\'s Robie House', category: 'architecture', desc: '5757 S Woodlawn Ave, Hyde Park. 1910 Prairie Style masterpiece — the building that changed architecture. Overhanging rooflines, horizontal banding, art-glass windows. Daily tours.', tip: 'The 90-min guided tour is worth every penny. Docents explain the spatial logic.' },
+  { name: 'Chicago Water Tower', category: 'architecture', desc: '806 N Michigan Ave. Castellated Gothic limestone tower built 1869. One of very few buildings to survive the 1871 Great Chicago Fire. Houses a small free art gallery inside.', tip: 'The gallery rotates Chicago photographer exhibitions. Free admission, often overlooked.' },
+  { name: 'Marina City', category: 'architecture', desc: '300 N State St. Bertrand Goldberg\'s 1964 "corncob" twin towers — first mixed-use residential skyscraper combining housing, parking, and commercial in one circular structure. House of Blues is at the base.', tip: 'Take a river architecture boat tour for the best angle on these. Up close they\'re more massive than expected.' },
+  { name: 'Tribune Tower', category: 'architecture', desc: '435 N Michigan Ave. 1925 Neo-Gothic tower. 120+ stones embedded in the exterior lower base — from the Parthenon, Taj Mahal, Berlin Wall, Notre Dame, Moon, and more.', tip: 'Bend down and read the plaques on each stone. The Moon rock is there — you can touch it.' },
+  // ── CULTURE ──────────────────────────────────────────────────────────────────
+  { name: 'Art Institute of Chicago', category: 'culture', desc: 'World-class collection — Seurat\'s A Sunday on La Grande Jatte, Nighthawks, the Thorne Miniature Rooms, and the Impressionist wing. Michigan Ave at Adams.', tip: 'Free on Thursday evenings for Illinois residents. Budget at least 3 hours.' },
+  { name: 'Museum of Science & Industry', category: 'culture', desc: '1400 S Lake Shore Dr, Hyde Park. Captured German U-505 submarine (1944), working coal mine, weather exhibit, simulated coal mine, Science Storms tornado. One of the largest science museums in the world.', tip: 'Allow 4+ hours. The U-505 tour sells separately and is worth adding.' },
+  { name: 'The Field Museum', category: 'culture', desc: '1400 S Lake Shore Dr. Natural history museum — 40M+ specimens. SUE the T. rex (Maastrichtian era, most complete T. rex ever found) has her own hall since 2019. Ancient Egypt mummies, Evolving Planet exhibit.', tip: 'Basic admission includes SUE. Budget at least half a day.' },
+  { name: 'Shedd Aquarium', category: 'culture', desc: '1200 S Lake Shore Dr. 32,000+ animals. Beluga whales, Pacific white-sided dolphins, sea otters. "Tides" exhibit has sharks, river otters, and stingrays. Stunning lakefront views from the exterior.', tip: 'Go on a weekday to avoid weekend crowds. Free Chicago residents days run periodically — check the website.' },
+  { name: 'Adler Planetarium', category: 'culture', desc: '1300 S Lake Shore Dr. First planetarium in the Western Hemisphere (1930). Skywatch Point on the east tip of the museum peninsula gives the most unobstructed Chicago skyline view anywhere in the city.', tip: 'The skyline view from Skywatch Point at sunrise is extraordinary. Park on the peninsula and walk east.' },
+  { name: 'Chicago History Museum', category: 'culture', desc: '1601 N Clark St, Lincoln Park. Abraham Lincoln\'s deathbed, Great Chicago Fire artifacts, Chicago River diorama, original L car. Best single-building history of the city.', tip: 'Free for Illinois residents on Mondays. The permanent "Chicago: Crossroads of America" exhibit takes 2+ hours.' },
+  { name: 'Second City', category: 'culture', desc: '1616 N Wells St, Old Town. Opened 1959. Alumni include Bill Murray, John Belushi, Gilda Radner, Tina Fey, Stephen Colbert, Chris Farley. Two stages nightly — mainstage + e.t.c. Free improv sets follow Friday and Saturday late shows.', tip: 'The free late-night improv set after the 11pm Friday show is one of the best free things in the city.' },
+  // ── NATURE ────────────────────────────────────────────────────────────────────
+  { name: 'Lincoln Park Zoo', category: 'nature', desc: 'Free admission always. 35 acres inside the 1,208-acre Lincoln Park. Regenstein African Journey, Pritzker Family Children\'s Zoo, penguin house. Consistently one of the most-visited free zoos in the US.', tip: 'Come in the morning when animals are most active. The farm-in-the-zoo in the south section is overlooked.' },
+  { name: 'The 606 Trail', category: 'nature', desc: '2.7-mile elevated rail-to-trail conversion through Wicker Park, Bucktown, Humboldt Park, Logan Square. 56 feet above street level at the highest point. Wildflower plantings, skyline views.', tip: 'Rent a Divvy bike at one end and ride the full length. The Bloomingdale Ave end drops into Logan Square.' },
+  { name: 'Garfield Park Conservatory', category: 'nature', desc: '300 N Central Park Ave. One of the largest public conservatories in the US — free admission. The Fern Room (1907, Jens Jensen design) reproduces a Carboniferous coal swamp. Palm House, Cactus House, Show House.', tip: 'Free, open daily. Dramatically undervisited for how spectacular it is. Go on a gray winter day — tropical inside.' },
+  { name: 'Montrose Beach & Dunes', category: 'nature', desc: 'Montrose Ave at the lake, Uptown. A birding hotspot during spring migration — rare warblers stop here. The "Magic Hedge" (a security hedge from a former Nike missile base) is the most reliable rare-bird spot in the Midwest.', tip: 'Come in early May for warbler migration. Birders come from across the country. The beach itself is the widest in Chicago.' },
+  { name: 'Northerly Island', category: 'nature', desc: '1521 S Linn White Dr. 91-acre peninsula converted from Meigs Field airport (closed 2003). Lakefront trail, wetlands, great blue heron nesting, native prairie plantings. Huntington Bank Pavilion outdoor concert venue.', tip: 'Walk or bike the loop trail at dawn — it\'s nearly empty and the skyline view from the south tip is unmatched.' },
+  // ── HIDDEN GEMS ───────────────────────────────────────────────────────────────
+  { name: 'Green Mill Cocktail Lounge', category: 'hidden', desc: 'Al Capone\'s favorite speakeasy, 4802 N Broadway, Uptown. Operating since 1907 — same booths, same back room. Jazz every night. Sunday night is the Uptown Poetry Slam, oldest in the country.', tip: 'Cash only. Arrive early for a booth. The $10 cover on weekends includes the show.' },
+  { name: 'Pilsen Mural Tour', category: 'hidden', desc: 'Self-guided walk through Chicago\'s Mexican-American neighborhood on the Lower West Side. Every block along 18th Street has massive murals — the highest concentration of outdoor murals in the US.', tip: 'Pair with lunch at any taqueria on 18th Street. Start at the National Museum of Mexican Art (free admission).' },
+  { name: 'The Violet Hour', category: 'hidden', desc: '1520 N Damen Ave, Wicker Park. No signage — look for the mural of a woman with an umbrella. James Beard Award-nominated craft cocktail bar. Low lighting, no cellphones after 10pm, deliberately unhurried.', tip: 'Go before 8pm to get seated without waiting. The cocktail menu changes seasonally. Let the bartender choose for you.' },
+  { name: 'Longman & Eagle', category: 'hidden', desc: '2657 N Kedzie Ave, Logan Square. Michelin-starred gastropub (bib gourmand since 2012) that looks like a dive bar. Six-room inn above the bar. Exceptional whiskey program — 300+ bottles. Whole-animal butchery.', tip: 'Walk-in brunch is easier than dinner reservations. Sit at the bar and ask the bartender what\'s new.' },
+  { name: 'The Empty Bottle', category: 'hidden', desc: '1035 N Western Ave, Ukrainian Village. Legendary Chicago indie rock venue since 1992. Before they were famous: Modest Mouse, The National, Wilco all played here. Cheapest beer in the city, no pretension.', tip: 'Check the calendar — weeknight shows often have $10 cover. The back patio in summer is one of Chicago\'s best-kept secrets.' },
+  { name: 'Gene & Jude\'s', category: 'hidden', desc: '2720 River Rd, River Grove — 20 min from the Loop but worth it. Cash-only hot dog stand open since 1945. Chicago-style dog served with fries on top of the dog, no ketchup ever, no seats, no debate.', tip: 'Order a double and a root beer. No modifications. There\'s always a line but it moves fast.' },
 ]
 
 const CATEGORIES = ['all', 'icon', 'architecture', 'culture', 'nature', 'hidden']
@@ -97,6 +123,7 @@ function AIChatBox() {
 
 export default function ExplorePage() {
   const [category, setCategory] = useState('all')
+  const [saved, setSaved] = useState({})
   const filtered = category === 'all' ? LANDMARKS : LANDMARKS.filter(l => l.category === category)
 
   return (
@@ -128,6 +155,38 @@ export default function ExplorePage() {
             <div className="explore-card-tip">
               <span className="explore-tip-label">TIP</span>
               {l.tip}
+            </div>
+            <div className="explore-card-actions">
+              <button
+                className={`explore-action-btn${saved[l.name] === 'favorite' ? ' active' : ''}`}
+                title={saved[l.name] === 'favorite' ? 'Remove from favorites' : 'Save to favorites'}
+                onClick={() => {
+                  if (saved[l.name] === 'favorite') {
+                    removeFavorite(l.name)
+                    setSaved(s => ({ ...s, [l.name]: null }))
+                  } else {
+                    addFavorite({ id: l.name, name: l.name })
+                    setSaved(s => ({ ...s, [l.name]: 'favorite' }))
+                  }
+                }}
+              >
+                {saved[l.name] === 'favorite' ? <RiHeartFill /> : <RiHeartLine />}
+              </button>
+              <button
+                className={`explore-action-btn${saved[l.name] === 'visited' ? ' active visited' : ''}`}
+                title={saved[l.name] === 'visited' ? 'Remove from been there' : 'Mark as been there'}
+                onClick={() => {
+                  if (saved[l.name] === 'visited') {
+                    removeVisited(l.name)
+                    setSaved(s => ({ ...s, [l.name]: null }))
+                  } else {
+                    addVisited({ id: l.name, name: l.name })
+                    setSaved(s => ({ ...s, [l.name]: 'visited' }))
+                  }
+                }}
+              >
+                <RiCheckboxCircleLine />
+              </button>
             </div>
           </div>
         ))}

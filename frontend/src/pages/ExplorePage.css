@@ -101,11 +101,13 @@
 }
 
 .explore-card {
+  position: relative;
   background: #0a1628;
   border: 1px solid #1e3a5f;
   border-left: 3px solid var(--cat-color, #64748b);
   border-radius: 8px;
   padding: 16px;
+  padding-top: 14px;
 }
 
 .explore-card-cat {
@@ -134,4 +136,40 @@
   font-size: 9px;
   margin-right: 6px;
   letter-spacing: 0.1em;
+}
+
+.explore-card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+}
+
+.explore-action-btn {
+  background: none;
+  border: 1px solid #1e3a5f;
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 3px 7px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+
+.explore-action-btn:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: var(--text);
+}
+
+.explore-action-btn.active {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.explore-action-btn.active.visited {
+  border-color: #10b981;
+  color: #10b981;
 }

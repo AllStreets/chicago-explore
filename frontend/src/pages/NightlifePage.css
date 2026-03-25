@@ -2,22 +2,25 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--bg);
+  color: var(--text);
   overflow: hidden;
 }
 
 .nightlife-header {
-  padding: 16px 20px 12px;
-  border-bottom: 1px solid #1e3a5f;
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .nightlife-title {
-  font-size: 20px;
-  font-weight: 700;
-  display: block;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .nightlife-filters {
@@ -27,36 +30,36 @@
 }
 
 .nightlife-filter-btn {
-  background: #0f1f3a;
-  border: 1px solid #1e3a5f;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border);
   color: var(--text-muted);
   padding: 4px 12px;
   border-radius: 16px;
-  font-size: 11px;
-  font-family: var(--font-mono);
+  font-size: 12px;
+  font-family: var(--font-ui);
   cursor: pointer;
-  text-transform: capitalize;
   transition: all 0.15s;
 }
 
-.nightlife-filter-btn.active,
 .nightlife-filter-btn:hover {
-  border-color: #8b5cf6;
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
+  color: var(--text);
+  border-color: rgba(255,255,255,0.2);
 }
 
 .nightlife-layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 280px 1fr;
   flex: 1;
   overflow: hidden;
 }
 
 .nightlife-sidebar {
   overflow-y: auto;
-  padding: 16px;
-  border-right: 1px solid #1e3a5f;
+  padding: 12px 16px;
+  border-right: 1px solid var(--border);
 }
 
 .nightlife-scenes-label,
@@ -71,16 +74,16 @@
 
 .nightlife-scene {
   border-left: 3px solid #8b5cf6;
-  padding: 8px 10px;
-  margin-bottom: 8px;
-  background: #0a1628;
+  padding: 7px 10px;
+  margin-bottom: 6px;
+  background: rgba(10, 22, 40, 0.6);
   border-radius: 0 4px 4px 0;
 }
 
 .nightlife-scene-name {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 .nightlife-scene-vibe {
@@ -93,45 +96,12 @@
   font-size: 12px;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  padding: 4px 0;
 }
 
 .nightlife-card {
   padding: 8px 0;
-  border-bottom: 1px solid #0f1f3a;
-}
-
-.nightlife-card-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.nightlife-card-meta {
-  display: flex;
-  gap: 8px;
-  margin-top: 3px;
-}
-
-.nightlife-card-rating {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: #8b5cf6;
-}
-
-.nightlife-card-price {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-
-.nightlife-card-hood {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.nightlife-map {
-  width: 100%;
-  height: 100%;
+  border-bottom: 1px solid rgba(30,58,95,0.5);
 }
 
 .nightlife-card-top {
@@ -140,16 +110,100 @@
   align-items: flex-start;
 }
 
-.nightlife-fav-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 15px;
-  padding: 0;
-  flex-shrink: 0;
-  transition: color 0.15s;
+.nightlife-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.nightlife-fav-btn:hover { color: #ef4444; }
-.nightlife-fav-btn.active { color: #ef4444; }
+.nightlife-card-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nightlife-card-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.nightlife-card-hood {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.nightlife-card-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.nightlife-action-btn {
+  background: none;
+  border: 1px solid #1e3a5f;
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 3px 7px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+
+.nightlife-action-btn:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: var(--text);
+}
+
+.nightlife-action-btn.active {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.nightlife-action-btn.active.visited {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.nightlife-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Mapbox popup overrides */
+.nightlife-map .mapboxgl-popup-content {
+  background: #0d1f3c;
+  border: 1px solid rgba(0,212,255,0.25);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #e2e8f0;
+  font-family: var(--font-ui, sans-serif);
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  min-width: 140px;
+}
+
+.nightlife-map .mapboxgl-popup-content strong {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.nightlife-map .mapboxgl-popup-content small {
+  color: rgba(139,92,246,0.85);
+  font-size: 11px;
+}
+
+.nightlife-map .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip { border-top-color:    #0d1f3c; }
+.nightlife-map .mapboxgl-popup-anchor-top    .mapboxgl-popup-tip { border-bottom-color: #0d1f3c; }
+.nightlife-map .mapboxgl-popup-anchor-left   .mapboxgl-popup-tip { border-right-color:  #0d1f3c; }
+.nightlife-map .mapboxgl-popup-anchor-right  .mapboxgl-popup-tip { border-left-color:   #0d1f3c; }

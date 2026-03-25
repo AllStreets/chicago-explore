@@ -48,6 +48,13 @@ router.post('/visited', (req, res) => {
   }
 })
 
+// DELETE /api/me/visited/:place_id
+router.delete('/visited/:place_id', (req, res) => {
+  const userId = getUserId(req)
+  db.prepare('DELETE FROM me_visited WHERE user_id = ? AND place_id = ?').run(userId, req.params.place_id)
+  res.json({ ok: true })
+})
+
 // POST /api/me/bucket
 router.post('/bucket', (req, res) => {
   const userId = getUserId(req)

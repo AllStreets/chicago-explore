@@ -73,6 +73,71 @@ function useAIBrief(neighborhood) {
   return { text, streaming, fetchBrief }
 }
 
+function useNeighborhoodAsk(neighborhood) {
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState('')
+  const [streaming, setStreaming] = useState(false)
+  const abortRef = useRef(null)
+
+  // Clear answer + question when neighborhood changes
+  useEffect(() => {
+    setAnswer('')
+    if (abortRef.current) abortRef.current.abort()
+  }, [neighborhood?.id])
+
+  async function ask() {
+    if (!question.trim() || streaming) return
+    setAnswer('')
+    setStreaming(true)
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    const neighborhoodCtx = neighborhood
+      ? `The user is currently viewing the ${neighborhood.name} neighborhood in Chicago (${neighborhood.tagline}). `
+      : ''
+
+    try {
+      const res = await fetch(`${API}/api/ai/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `${neighborhoodCtx}${question}`,
+          context: 'neighborhoods'
+        }),
+        signal: controller.signal
+      })
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buf = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buf += decoder.decode(value, { stream: true })
+        const lines = buf.split('\n')
+        buf = lines.pop()
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const data = line.slice(6).trim()
+          if (data === '[DONE]') { setStreaming(false); return }
+          try {
+            const p = JSON.parse(data)
+            if (p.text) setAnswer(a => a + p.text)
+          } catch { /* skip */ }
+        }
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        setAnswer('AI unavailable — add ANTHROPIC_API_KEY to enable.')
+      }
+    } finally {
+      setStreaming(false)
+    }
+  }
+
+  return { question, setQuestion, answer, streaming, ask }
+}
+
 const VIBE_COLORS = {
   upscale: '#00d4ff', lakefront: '#3b82f6', walkable: '#10b981',
   artsy: '#8b5cf6', indie: '#a78bfa', nightlife: '#f97316',
@@ -88,11 +153,8 @@ const VIBE_COLORS = {
 export default function NeighborhoodsPage() {
   const { hoods, loading } = useNeighborhoods()
   const [selected, setSelected] = useState(null)
-  const { text: aiText, streaming, fetchBrief } = useAIBrief(selected)
-
-  function select(hood) {
-    setSelected(hood)
-  }
+  const { text: aiText, streaming: aiStreaming, fetchBrief } = useAIBrief(selected)
+  const { question, setQuestion, answer, streaming: askStreaming, ask } = useNeighborhoodAsk(selected)
 
   return (
     <div className="neighborhoods-page">
@@ -109,7 +171,7 @@ export default function NeighborhoodsPage() {
             <div
               key={h.id}
               className={`neighborhood-card${selected?.id === h.id ? ' selected' : ''}`}
-              onClick={() => select(h)}
+              onClick={() => setSelected(h)}
             >
               <div className="neighborhood-card-name">{h.name}</div>
               <div className="neighborhood-card-tagline">{h.tagline}</div>
@@ -126,65 +188,96 @@ export default function NeighborhoodsPage() {
           ))}
         </div>
 
-        <div className="neighborhoods-detail">
-          {!selected && (
-            <div className="neighborhoods-placeholder">
-              Select a neighborhood to explore
+        <div className="neighborhoods-right">
+          {/* AI ask box — always visible */}
+          <div className="nd-ask">
+            <div className="nd-ask-label">
+              <RiBrainLine />
+              ASK YOUR NEIGHBORHOOD GUIDE
             </div>
-          )}
-          {selected && (
-            <>
-              <div className="nd-name">{selected.name}</div>
-              <div className="nd-tagline">{selected.tagline}</div>
-              <div className="nd-desc">{selected.description}</div>
-
-              <div className="nd-stats">
-                <div className="nd-stat">
-                  <RiWalkLine />
-                  <span>Walk {selected.walkScore}</span>
-                </div>
-                <div className="nd-stat">
-                  <RiSubwayLine />
-                  <span>Transit {selected.transitScore}</span>
-                </div>
-                <div className="nd-stat">
-                  <RiHomeSmileLine />
-                  <span>~${selected.avgRent?.toLocaleString()}/mo</span>
-                </div>
-                <div className="nd-stat">
-                  <RiMapPinLine />
-                  <span>{selected.commute}</span>
-                </div>
+            <div className="nd-ask-input-row">
+              <input
+                className="nd-ask-input"
+                placeholder={selected
+                  ? `Ask anything about ${selected.name}, or where you should live…`
+                  : 'Where should I live in Chicago? Best neighborhood for nightlife?'}
+                value={question}
+                onChange={e => setQuestion(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && ask()}
+              />
+              <button className="nd-ask-btn" onClick={ask} disabled={askStreaming}>
+                {askStreaming ? '...' : 'Ask'}
+              </button>
+            </div>
+            {(answer || askStreaming) && (
+              <div className="nd-ask-answer">
+                {answer}
+                {askStreaming && <span className="nd-ask-cursor">|</span>}
               </div>
+            )}
+          </div>
 
-              {selected.topSpots?.length > 0 && (
-                <div className="nd-spots">
-                  <div className="nd-spots-label">TOP SPOTS</div>
-                  {selected.topSpots.map(s => (
-                    <span key={s} className="nd-spot">{s}</span>
-                  ))}
-                </div>
-              )}
+          {/* Neighborhood detail */}
+          <div className="neighborhoods-detail">
+            {!selected && (
+              <div className="neighborhoods-placeholder">
+                Select a neighborhood to explore
+              </div>
+            )}
+            {selected && (
+              <>
+                <div className="nd-name">{selected.name}</div>
+                <div className="nd-tagline">{selected.tagline}</div>
+                <div className="nd-desc">{selected.description}</div>
 
-              <div className="nd-ai">
-                <div className="nd-ai-label">
-                  <RiBrainLine />
-                  AI BRIEF
+                <div className="nd-stats">
+                  <div className="nd-stat">
+                    <RiWalkLine />
+                    <span>Walk {selected.walkScore}</span>
+                  </div>
+                  <div className="nd-stat">
+                    <RiSubwayLine />
+                    <span>Transit {selected.transitScore}</span>
+                  </div>
+                  <div className="nd-stat">
+                    <RiHomeSmileLine />
+                    <span>~${selected.avgRent?.toLocaleString()}/mo</span>
+                  </div>
+                  <div className="nd-stat">
+                    <RiMapPinLine />
+                    <span>{selected.commute}</span>
+                  </div>
                 </div>
-                {!aiText && !streaming && (
-                  <button className="nd-ai-btn" onClick={fetchBrief}>
-                    Generate brief
-                  </button>
-                )}
-                {(aiText || streaming) && (
-                  <div className="nd-ai-text">
-                    {aiText}
-                    {streaming && <span className="nd-ai-cursor">|</span>}
+
+                {selected.topSpots?.length > 0 && (
+                  <div className="nd-spots">
+                    <div className="nd-spots-label">TOP SPOTS</div>
+                    {selected.topSpots.map(s => (
+                      <span key={s} className="nd-spot">{s}</span>
+                    ))}
                   </div>
                 )}
-              </div>
-            </>
-          )}
+
+                <div className="nd-ai">
+                  <div className="nd-ai-label">
+                    <RiBrainLine />
+                    AI BRIEF
+                  </div>
+                  {!aiText && !aiStreaming && (
+                    <button className="nd-ai-btn" onClick={fetchBrief}>
+                      Generate brief
+                    </button>
+                  )}
+                  {(aiText || aiStreaming) && (
+                    <div className="nd-ai-text">
+                      {aiText}
+                      {aiStreaming && <span className="nd-ai-cursor">|</span>}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

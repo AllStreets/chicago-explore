@@ -2,28 +2,58 @@ const { Router } = require('express')
 const db = require('../db')
 const router = Router()
 
-const OVERPASS = 'https://overpass-api.de/api/interpreter'
+const OVERPASS_MIRRORS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+]
 const TTL_MS = 6 * 60 * 60 * 1000  // 6 hours
 
 const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_key = ?')
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
 
+// Shared bounding boxes (west boundary ~-87.635 cuts off lake, east ~-87.72 hits western suburbs)
+// S=south N=north W=west E=east — format (S,W,N,E)
+const BB_WIDE    = '41.85,-87.72,41.97,-87.625'  // whole city, excludes lake
+const BB_NORTH   = '41.905,-87.72,41.97,-87.625' // Lincoln Park → Andersonville / Wicker Park
+const BB_CENTRAL = '41.87,-87.655,41.905,-87.625' // River North, West Loop, downtown
+
 // Map UI category → OSM amenity/tag filter
 const CATEGORY_QUERIES = {
-  restaurants: '[out:json];(node["amenity"="restaurant"](41.87,-87.65,41.92,-87.60);way["amenity"="restaurant"](41.87,-87.65,41.92,-87.60););out center 20;',
-  bars:        '[out:json];(node["amenity"="bar"](41.87,-87.65,41.92,-87.60);way["amenity"="bar"](41.87,-87.65,41.92,-87.60););out center 20;',
-  cafes:       '[out:json];(node["amenity"="cafe"](41.87,-87.65,41.92,-87.60);way["amenity"="cafe"](41.87,-87.65,41.92,-87.60););out center 20;',
-  pizza:       '[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](41.87,-87.65,41.92,-87.60););out center 20;',
-  sushi:       '[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](41.87,-87.65,41.92,-87.60););out center 20;',
-  tacos:       '[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](41.87,-87.65,41.92,-87.60););out center 20;',
-  brunch:      '[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](41.87,-87.65,41.92,-87.60);node["amenity"="cafe"](41.87,-87.65,41.92,-87.60););out center 20;',
-  nightlife:   '[out:json];(node["amenity"~"bar|nightclub"](41.87,-87.65,41.92,-87.60);way["amenity"~"bar|nightclub"](41.87,-87.65,41.92,-87.60););out center 20;',
-  jazzandblues:'[out:json];(node["amenity"~"bar|music_venue"]["music"~"jazz|blues"](41.87,-87.65,41.92,-87.60);node["amenity"="music_venue"](41.87,-87.65,41.92,-87.60););out center 20;',
-  danceclub:   '[out:json];(node["amenity"="nightclub"](41.87,-87.65,41.92,-87.60);way["amenity"="nightclub"](41.87,-87.65,41.92,-87.60););out center 20;',
-  rooftop_bars:'[out:json];(node["amenity"="bar"]["rooftop"="yes"](41.87,-87.65,41.92,-87.60);node["amenity"="bar"](41.87,-87.65,41.92,-87.60););out center 15;',
-  wine_bars:   '[out:json];(node["amenity"="bar"]["bar"="wine_bar"](41.87,-87.65,41.92,-87.60);node["amenity"="wine_bar"](41.87,-87.65,41.92,-87.60););out center 20;',
-  cocktailbars:'[out:json];(node["amenity"="bar"]["bar"~"cocktail"](41.87,-87.65,41.92,-87.60);node["amenity"="bar"](41.87,-87.65,41.92,-87.60););out center 20;',
+  // Food
+  restaurants: `[out:json];(node["amenity"="restaurant"](41.87,-87.655,41.92,-87.625);way["amenity"="restaurant"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  bars:        `[out:json];(node["amenity"="bar"](${BB_WIDE});way["amenity"="bar"](${BB_WIDE}););out center 50;`,
+  cafes:       `[out:json];(node["amenity"="cafe"](41.87,-87.655,41.92,-87.625);way["amenity"="cafe"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  pizza:       `[out:json];(node["amenity"="restaurant"]["cuisine"="pizza"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  sushi:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"sushi|japanese"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  tacos:       `[out:json];(node["amenity"="restaurant"]["cuisine"~"mexican|tacos"](41.87,-87.655,41.92,-87.625););out center 20;`,
+  brunch:      `[out:json];(node["amenity"="restaurant"]["breakfast"="yes"](41.87,-87.655,41.92,-87.625);node["amenity"="cafe"](41.87,-87.655,41.92,-87.625););out center 20;`,
+
+  // Nightlife — wider bounding boxes, emphasis on nightclubs + cocktail infrastructure
+  nightlife:    `[out:json];(node["amenity"~"bar|nightclub"](${BB_WIDE});way["amenity"~"bar|nightclub"](${BB_WIDE}););out center 50;`,
+  jazzandblues: `[out:json];(node["amenity"~"bar|music_venue"]["music"~"jazz|blues"](${BB_WIDE});node["amenity"="music_venue"](${BB_WIDE}););out center 30;`,
+  danceclub:    `[out:json];(node["amenity"="nightclub"](${BB_WIDE});way["amenity"="nightclub"](${BB_WIDE}););out center 40;`,
+  rooftop_bars: `[out:json];(node["amenity"="bar"]["rooftop"="yes"](${BB_WIDE});node["amenity"="bar"]["level"~"[2-9]"](${BB_WIDE});node["amenity"="bar"](${BB_WIDE}););out center 30;`,
+  wine_bars:    `[out:json];(node["amenity"="bar"]["bar"~"wine"](${BB_WIDE});node["amenity"="wine_bar"](${BB_WIDE});node["amenity"="bar"]["cuisine"~"wine"](${BB_WIDE}););out center 30;`,
+  cocktailbars: `[out:json];(node["amenity"="bar"]["bar"~"cocktail"](${BB_WIDE});node["amenity"="nightclub"](${BB_CENTRAL});way["amenity"="nightclub"](${BB_CENTRAL});node["amenity"="bar"](${BB_CENTRAL}););out center 40;`,
 }
+
+// Food "all" — two parallel zones for downtown + wider city coverage
+const ALL_FOOD_QUERIES = [
+  '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625);way["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625););out center 60;',
+  '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625);way["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625););out center 60;',
+]
+
+// Nightlife "all" — 6 neighborhood zones fetched in parallel, each capped at 25 results
+// Bounding boxes trimmed to ~-87.625 east to exclude the lakefront
+const NL_ALL_QUERIES = [
+  '[out:json];(node["amenity"~"bar|nightclub"](41.884,-87.641,41.900,-87.625);way["amenity"~"bar|nightclub"](41.884,-87.641,41.900,-87.625););out center 25;', // River North
+  '[out:json];(node["amenity"~"bar|nightclub"](41.908,-87.696,41.926,-87.666);way["amenity"~"bar|nightclub"](41.908,-87.696,41.926,-87.666););out center 25;', // Wicker Park
+  '[out:json];(node["amenity"~"bar|nightclub"](41.942,-87.662,41.957,-87.646);way["amenity"~"bar|nightclub"](41.942,-87.662,41.957,-87.646););out center 25;', // Wrigleyville
+  '[out:json];(node["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650);way["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650););out center 20;', // Andersonville
+  '[out:json];(node["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635);way["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635););out center 25;', // West Loop
+  '[out:json];(node["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630);way["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630););out center 20;', // Lincoln Park
+]
 
 function parseElement(el) {
   const tags = el.tags || {}
@@ -33,10 +63,14 @@ function parseElement(el) {
   return {
     id:           String(el.id),
     name:         tags.name,
+    amenity:      tags.amenity || '',
     categories:   [tags.cuisine || tags.amenity || 'place'].map(c => c.replace(/_/g, ' ')),
     rating:       null,
     price:        '',
     neighborhood: tags['addr:suburb'] || tags['addr:neighbourhood'] || 'Chicago',
+    address:      tags['addr:housenumber'] && tags['addr:street']
+                    ? `${tags['addr:housenumber']} ${tags['addr:street']}`
+                    : (tags['addr:street'] || ''),
     lat,
     lon,
     distance:     null,
@@ -44,7 +78,26 @@ function parseElement(el) {
   }
 }
 
-// GET /api/places?type=restaurants&open_now=true
+async function overpassFetch(query) {
+  let lastErr
+  for (const mirror of OVERPASS_MIRRORS) {
+    try {
+      const r = await fetch(mirror, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `data=${encodeURIComponent(query)}`,
+        signal: AbortSignal.timeout(14000),
+      })
+      if (r.status === 429 || r.status === 504) { lastErr = new Error(`Overpass ${r.status}`); continue }
+      if (!r.ok) throw new Error(`Overpass ${r.status}`)
+      const data = await r.json()
+      return data.elements || []
+    } catch (e) { lastErr = e }
+  }
+  throw lastErr
+}
+
+// GET /api/places?type=restaurants
 router.get('/', async (req, res) => {
   const { type = 'restaurants' } = req.query
   const cacheKey = JSON.stringify({ type })
@@ -54,21 +107,29 @@ router.get('/', async (req, res) => {
     return res.json(JSON.parse(cached.data))
   }
 
-  const query = CATEGORY_QUERIES[type] || CATEGORY_QUERIES.restaurants
-
   try {
-    const r = await fetch(OVERPASS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `data=${encodeURIComponent(query)}`,
-      signal: AbortSignal.timeout(10000),
-    })
-    if (!r.ok) throw new Error(`Overpass ${r.status}`)
-    const data = await r.json()
-    const places = (data.elements || [])
-      .map(parseElement)
-      .filter(Boolean)
-      .slice(0, 20)
+    let elements
+
+    if (type === 'all') {
+      const [zoneA, zoneB] = await Promise.all(ALL_FOOD_QUERIES.map(overpassFetch))
+      const seen = new Set()
+      elements = []
+      for (const el of [...zoneA, ...zoneB]) {
+        if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+      }
+    } else if (type === 'nightlife_all') {
+      const zones = await Promise.all(NL_ALL_QUERIES.map(overpassFetch))
+      const seen = new Set()
+      elements = []
+      for (const el of zones.flat()) {
+        if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
+      }
+    } else {
+      const query = CATEGORY_QUERIES[type] || CATEGORY_QUERIES.restaurants
+      elements = await overpassFetch(query)
+    }
+
+    const places = elements.map(parseElement).filter(Boolean).slice(0, 120)
     const payload = { places }
     stmtSet.run(cacheKey, JSON.stringify(payload), Date.now())
     res.json(payload)

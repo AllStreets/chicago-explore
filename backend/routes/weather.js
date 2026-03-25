@@ -17,9 +17,13 @@ router.get('/', async (_req, res) => {
     const d = await r.json()
     const tempC = Math.round(d.main.temp)
     const feelsC = Math.round(d.main.feels_like)
+    const highC = Math.round(d.main.temp_max)
+    const lowC = Math.round(d.main.temp_min)
     res.json({
       temp:        tempC,
       tempF:       Math.round(tempC * 9/5 + 32),
+      highF:       Math.round(highC * 9/5 + 32),
+      lowF:        Math.round(lowC * 9/5 + 32),
       feelsLike:   feelsC,
       feelsLikeF:  Math.round(feelsC * 9/5 + 32),
       humidity:    d.main.humidity,

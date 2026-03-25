@@ -11,7 +11,6 @@ function getUserId() {
 }
 
 export async function addFavorite(place) {
-  // place: { id, name, lat, lon }
   const userId = getUserId()
   try {
     await fetch(`${API}/api/me/favorites`, {
@@ -22,14 +21,33 @@ export async function addFavorite(place) {
   } catch { /* silently fail */ }
 }
 
+export async function removeFavorite(placeId) {
+  const userId = getUserId()
+  try {
+    await fetch(`${API}/api/me/favorites/${encodeURIComponent(placeId)}`, {
+      method: 'DELETE',
+      headers: { 'X-User-ID': userId }
+    })
+  } catch { /* silently fail */ }
+}
+
 export async function addVisited(place) {
-  // place: { id, name }
   const userId = getUserId()
   try {
     await fetch(`${API}/api/me/visited`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-User-ID': userId },
       body: JSON.stringify({ place_id: place.id, place_name: place.name })
+    })
+  } catch { /* silently fail */ }
+}
+
+export async function removeVisited(placeId) {
+  const userId = getUserId()
+  try {
+    await fetch(`${API}/api/me/visited/${encodeURIComponent(placeId)}`, {
+      method: 'DELETE',
+      headers: { 'X-User-ID': userId }
     })
   } catch { /* silently fail */ }
 }
