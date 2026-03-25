@@ -90,7 +90,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
             <span style={{color:'#60a5fa'}}>{weather.lowF ?? Math.round((weather.temp-2) * 9/5 + 32)}°</span>
             <span style={{fontSize:'11px',color:'var(--text-muted)',marginLeft:6}}>F</span>
           </div>
-          <div className="intel-card-sub">{weather.description} · Wind {weather.wind?.speed ?? weather.wind} m/s</div>
+          <div className="intel-card-sub">{weather.description} · Wind {Math.round((weather.wind?.speed ?? weather.wind ?? 0) * 2.237 * 10) / 10} mph</div>
           {lake && <div className="intel-card-badge">{lake.niceLabel}</div>}
         </div>
       )}

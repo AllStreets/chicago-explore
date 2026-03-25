@@ -154,7 +154,8 @@ function LakeScene({ lake, weather }) {
   const showSnow = state === 'snowy'
   const showLightning = state === 'stormy'
 
-  const overlayDesc = `${stateLabels[state]} — niceScore ${lake.niceScore ?? '--'} · ${lake.tempC ?? '--'}°C water · ${lake.windMps ?? '--'} m/s wind`
+  const lakeWindMph = lake.windMps != null ? Math.round(lake.windMps * 2.237 * 10) / 10 : '--'
+  const overlayDesc = `${stateLabels[state]} — niceScore ${lake.niceScore ?? '--'} · ${lake.tempC ?? '--'}°C water · ${lakeWindMph} mph wind`
 
   return (
     <div className={`lake-scene lake-scene--${state}`}>
@@ -187,7 +188,7 @@ function LakeScene({ lake, weather }) {
         <div className="lake-metrics">
           <span>niceScore {lake.niceScore ?? '--'}</span>
           <span>{lake.tempC ?? '--'}°C water</span>
-          <span>{lake.windMps ?? '--'} m/s wind</span>
+          <span>{lakeWindMph} mph wind</span>
         </div>
         <div className="lake-badge">
           {lake.niceLabel || (state === 'beautiful' ? 'Excellent conditions' : 'Check before going out')}
@@ -220,7 +221,7 @@ export default function WeatherPage() {
   const highF      = weather?.highF ?? null
   const lowF       = weather?.lowF ?? null
   const feelsLikeF = weather?.feelsLikeF ?? (weather?.feelsLike != null ? Math.round(weather.feelsLike * 9 / 5 + 32) : null)
-  const windSpeed  = weather?.wind?.speed ?? weather?.wind ?? 0
+  const windSpeed  = Math.round((weather?.wind?.speed ?? weather?.wind ?? 0) * 2.237 * 10) / 10
   const windDeg    = weather?.wind?.deg ?? 0
   const humidity   = weather?.humidity ?? null
   const visibility = weather?.visibility ?? null
@@ -284,7 +285,7 @@ export default function WeatherPage() {
               <div className="weather-stats-row">
                 <div className="weather-stat">
                   <RiWindyLine />
-                  <span>{windSpeed} m/s {windDir(windDeg)}</span>
+                  <span>{windSpeed} mph {windDir(windDeg)}</span>
                 </div>
                 <div className="weather-stat">
                   <RiWaterFlashLine />
