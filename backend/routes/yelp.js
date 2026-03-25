@@ -8,7 +8,7 @@ const OVERPASS_MIRRORS = [
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ]
 const TTL_MS    = 6 * 60 * 60 * 1000  // 6 hours
-const CACHE_VER = 2                    // bump when queries change to auto-bust stale cache
+const CACHE_VER = 3                    // bump when queries change to auto-bust stale cache
 
 const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_key = ?')
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
@@ -40,24 +40,11 @@ const CATEGORY_QUERIES = {
   cocktailbars: `[out:json];(node["amenity"="bar"]["bar"~"cocktail"](${BB_WIDE});node["amenity"="nightclub"](${BB_CENTRAL});way["amenity"="nightclub"](${BB_CENTRAL});node["amenity"="bar"](${BB_CENTRAL}););out center 40;`,
 }
 
-// Food "all" — three parallel zones: downtown, north side, Streeterville
-const ALL_FOOD_QUERIES = [
-  '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625);way["amenity"~"restaurant|bar|cafe"](41.87,-87.655,41.905,-87.625););out center 60;',
-  '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625);way["amenity"~"restaurant|bar|cafe"](41.905,-87.72,41.97,-87.625););out center 60;',
-  `[out:json];(node["amenity"~"restaurant|bar|cafe"](${BB_STREETERVILLE});way["amenity"~"restaurant|bar|cafe"](${BB_STREETERVILLE}););out center 30;`,
-]
+// Food "all" — single wide query avoids parallel rate-limit issues
+const ALL_FOOD_QUERY = '[out:json];(node["amenity"~"restaurant|bar|cafe"](41.85,-87.72,41.99,-87.612);way["amenity"~"restaurant|bar|cafe"](41.85,-87.72,41.99,-87.612););out center 150;'
 
-// Nightlife "all" — 6 neighborhood zones fetched in parallel, each capped at 25 results
-// Bounding boxes trimmed to ~-87.625 east to exclude the lakefront
-const NL_ALL_QUERIES = [
-  '[out:json];(node["amenity"~"bar|nightclub"](41.884,-87.641,41.900,-87.625);way["amenity"~"bar|nightclub"](41.884,-87.641,41.900,-87.625););out center 25;', // River North
-  '[out:json];(node["amenity"~"bar|nightclub"](41.908,-87.696,41.926,-87.666);way["amenity"~"bar|nightclub"](41.908,-87.696,41.926,-87.666););out center 25;', // Wicker Park
-  '[out:json];(node["amenity"~"bar|nightclub"](41.942,-87.662,41.957,-87.646);way["amenity"~"bar|nightclub"](41.942,-87.662,41.957,-87.646););out center 25;', // Wrigleyville
-  '[out:json];(node["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650);way["amenity"~"bar|nightclub"](41.973,-87.670,41.990,-87.650););out center 20;', // Andersonville
-  '[out:json];(node["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635);way["amenity"~"bar|nightclub"](41.877,-87.655,41.890,-87.635););out center 25;', // West Loop
-  '[out:json];(node["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630);way["amenity"~"bar|nightclub"](41.920,-87.648,41.943,-87.630););out center 20;', // Lincoln Park
-  `[out:json];(node["amenity"~"bar|nightclub"](${BB_STREETERVILLE});way["amenity"~"bar|nightclub"](${BB_STREETERVILLE}););out center 20;`, // Streeterville
-]
+// Nightlife "all" — single wide query covers all 7 scene neighborhoods
+const NL_ALL_QUERY = '[out:json];(node["amenity"~"bar|nightclub"](41.85,-87.72,41.99,-87.612);way["amenity"~"bar|nightclub"](41.85,-87.72,41.99,-87.612););out center 150;'
 
 function parseElement(el) {
   const tags = el.tags || {}
@@ -115,27 +102,9 @@ router.get('/', async (req, res) => {
     let elements
 
     if (type === 'all') {
-      const results = await Promise.allSettled(ALL_FOOD_QUERIES.map(overpassFetch))
-      const seen = new Set()
-      elements = []
-      for (const r of results) {
-        if (r.status === 'fulfilled') {
-          for (const el of r.value) {
-            if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
-          }
-        }
-      }
+      elements = await overpassFetch(ALL_FOOD_QUERY)
     } else if (type === 'nightlife_all') {
-      const results = await Promise.allSettled(NL_ALL_QUERIES.map(overpassFetch))
-      const seen = new Set()
-      elements = []
-      for (const r of results) {
-        if (r.status === 'fulfilled') {
-          for (const el of r.value) {
-            if (!seen.has(el.id)) { seen.add(el.id); elements.push(el) }
-          }
-        }
-      }
+      elements = await overpassFetch(NL_ALL_QUERY)
     } else {
       const query = CATEGORY_QUERIES[type] || CATEGORY_QUERIES.restaurants
       elements = await overpassFetch(query)
