@@ -8,6 +8,12 @@ const LINE_COLORS = {
   Pink: '#ec4899', Y: '#eab308',
 }
 
+const LINE_NAMES = {
+  Red: 'Red', Blue: 'Blue', Brn: 'Brown',
+  G: 'Green', Org: 'Orange', P: 'Purple',
+  Pink: 'Pink', Y: 'Yellow',
+}
+
 // Streeterville coordinates
 const HOME_LAT = 41.8919
 const HOME_LON = -87.6197
@@ -155,7 +161,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
           <div className="intel-card intel-card--train">
             <span className="intel-train-dot" style={{ background: LINE_COLORS[closestTrain.line] || '#00d4ff' }} />
             <div className="intel-train-info">
-              <span className="intel-train-line">{closestTrain.line ? `${closestTrain.line} Line` : 'CTA Train'}</span>
+              <span className="intel-train-line">{closestTrain.line ? `${LINE_NAMES[closestTrain.line] || closestTrain.line} Line` : 'CTA Train'}</span>
               <span className="intel-train-station">{closestTrain.nextStation}</span>
             </div>
             {arrivalMins(closestTrain.arrTime) && (
