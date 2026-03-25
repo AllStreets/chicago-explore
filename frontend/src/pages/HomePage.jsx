@@ -447,7 +447,7 @@ export default function HomePage() {
         }
         if (map.getLayer('cta-train-ring')) {
           map.setPaintProperty('cta-train-ring', 'circle-radius', 6 + Math.sin(ringPhase) * 4)
-          map.setPaintProperty('cta-train-ring', 'circle-stroke-opacity', 0.08 + Math.sin(ringPhase) * 0.25)
+          map.setPaintProperty('cta-train-ring', 'circle-stroke-opacity', Math.max(0, 0.08 + Math.sin(ringPhase) * 0.25))
         }
 
         const now = Date.now()

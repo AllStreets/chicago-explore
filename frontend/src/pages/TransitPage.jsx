@@ -122,7 +122,7 @@ export default function TransitPage() {
         }
         if (map.getLayer('train-ring')) {
           map.setPaintProperty('train-ring', 'circle-radius', 6 + Math.sin(ringPhase) * 4)
-          map.setPaintProperty('train-ring', 'circle-stroke-opacity', 0.08 + Math.sin(ringPhase) * 0.25)
+          map.setPaintProperty('train-ring', 'circle-stroke-opacity', Math.max(0, 0.08 + Math.sin(ringPhase) * 0.25))
         }
 
         const now = Date.now()
