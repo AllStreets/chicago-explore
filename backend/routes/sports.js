@@ -106,4 +106,40 @@ router.get('/', async (_req, res) => {
   res.json(results)
 })
 
+// GET /api/sports/tickets?team=Bulls&date=2026-04-01
+router.get('/tickets', async (req, res) => {
+  const clientId = process.env.SEATGEEK_CLIENT_ID
+  const { team, date } = req.query
+
+  if (!clientId) {
+    const TEAM_URLS = {
+      Bulls: 'https://www.nba.com/bulls/tickets',
+      Blackhawks: 'https://www.nhl.com/blackhawks/tickets',
+      Cubs: 'https://www.mlb.com/cubs/tickets',
+      'White Sox': 'https://www.mlb.com/white-sox/tickets',
+      Bears: 'https://www.chicagobears.com/tickets/',
+      Fire: 'https://www.chicago-fire.com/tickets',
+    }
+    return res.json({ tickets: null, fallbackUrl: TEAM_URLS[team] || 'https://seatgeek.com', keyMissing: true })
+  }
+
+  try {
+    const q = encodeURIComponent(`${team} ${date || ''}`.trim())
+    const url = `https://api.seatgeek.com/2/events?q=${q}&venue.city=Chicago&client_id=${clientId}&per_page=3`
+    const r = await fetch(url, { signal: AbortSignal.timeout(6000) })
+    const json = await r.json()
+    const events = (json?.events || []).map(e => ({
+      id:          e.id,
+      title:       e.title,
+      datetime:    e.datetime_local,
+      url:         e.url,
+      lowestPrice: e.stats?.lowest_price || null,
+      medianPrice: e.stats?.median_price || null,
+    }))
+    res.json({ tickets: events })
+  } catch (e) {
+    res.status(502).json({ error: 'Ticket data unavailable', detail: e.message })
+  }
+})
+
 module.exports = router

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { RiHeartFill, RiCheckboxCircleLine, RiDeleteBinLine, RiPencilLine, RiFileTextLine } from 'react-icons/ri'
+import { RiHeartFill, RiCheckboxCircleLine, RiDeleteBinLine, RiPencilLine, RiFileTextLine, RiRouteLine } from 'react-icons/ri'
 import './MyChicagoPage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -63,6 +63,32 @@ export default function MyChicagoPage() {
   const [noteModal, setNoteModal] = useState(null)   // { placeId, placeName, text }
   const [viewModal, setViewModal] = useState(null)   // { placeName, notes }
   const [noteDraft, setNoteDraft] = useState('')
+  const [plan, setPlan] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('chicago_day_plan') || '[]') }
+    catch { return [] }
+  })
+
+  function savePlan(newPlan) {
+    setPlan(newPlan)
+    localStorage.setItem('chicago_day_plan', JSON.stringify(newPlan))
+  }
+
+  function addToPlan(place) {
+    if (plan.find(p => p.id === place.place_id)) return
+    savePlan([...plan, { id: place.place_id, name: place.place_name }])
+  }
+
+  function removeFromPlan(id) {
+    savePlan(plan.filter(p => p.id !== id))
+  }
+
+  function movePlan(i, dir) {
+    const next = [...plan]
+    const swap = i + dir
+    if (swap < 0 || swap >= next.length) return
+    ;[next[i], next[swap]] = [next[swap], next[i]]
+    savePlan(next)
+  }
 
   function openWriteNote(v) {
     setNoteDraft(v.notes || '')
@@ -101,6 +127,9 @@ export default function MyChicagoPage() {
         </button>
         <button className={`mc-tab${tab === 'visited' ? ' active' : ''}`} onClick={() => setTab('visited')}>
           <RiCheckboxCircleLine /> Been There
+        </button>
+        <button className={`mc-tab${tab === 'plan' ? ' active' : ''}`} onClick={() => setTab('plan')}>
+          <RiRouteLine /> Day Plan
         </button>
       </div>
 
@@ -153,6 +182,50 @@ export default function MyChicagoPage() {
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {!loading && tab === 'plan' && (
+        <div className="mc-plan">
+          <div className="mc-plan-hint">Add stops from your Favorites to build a day plan</div>
+
+          {me.favorites?.length > 0 && (
+            <div className="mc-plan-fav-list">
+              {me.favorites.map(f => (
+                <button
+                  key={f.id}
+                  className="mc-plan-add-btn"
+                  onClick={() => addToPlan(f)}
+                  disabled={!!plan.find(p => p.id === f.place_id)}
+                >
+                  + {f.place_name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {plan.length > 0 && (
+            <div className="mc-plan-list">
+              {plan.map((stop, i) => (
+                <div key={stop.id} className="mc-plan-stop">
+                  <span className="mc-plan-num">{i + 1}</span>
+                  <span className="mc-plan-name">{stop.name}</span>
+                  <div className="mc-plan-actions">
+                    <button onClick={() => movePlan(i, -1)} disabled={i === 0}>↑</button>
+                    <button onClick={() => movePlan(i,  1)} disabled={i === plan.length - 1}>↓</button>
+                    <button onClick={() => removeFromPlan(stop.id)}>×</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {plan.length === 0 && me.favorites?.length === 0 && (
+            <div className="mc-empty">Save favorites first, then build your day plan here</div>
+          )}
+          {plan.length === 0 && me.favorites?.length > 0 && (
+            <div className="mc-empty">Click a favorite above to add it to your plan</div>
+          )}
         </div>
       )}
 

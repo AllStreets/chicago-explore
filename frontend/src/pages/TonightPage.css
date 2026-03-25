@@ -1,0 +1,92 @@
+/* frontend/src/pages/TonightPage.css */
+.tonight-page {
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tonight-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.tonight-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+.tonight-sub   { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); margin: 0; }
+
+.tonight-refresh {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 6px; font-size: 18px;
+  transition: color 0.15s;
+}
+.tonight-refresh:hover { color: #00d4ff; }
+
+.tonight-loading {
+  font-size: 13px; color: var(--text-muted);
+  font-family: var(--font-mono); padding: 20px 0;
+}
+
+.tonight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  max-width: 900px;
+}
+
+.tn-tile {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.tn-tile--wide { grid-column: 1 / -1; }
+
+.tn-tile-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 9px; font-family: var(--font-mono);
+  letter-spacing: 0.12em; font-weight: 700;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+
+/* Weather */
+.tn-weather { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.tn-temp    { font-size: 40px; font-weight: 700; font-family: var(--font-mono); color: #00d4ff; }
+.tn-feels   { font-size: 13px; color: var(--text-muted); }
+.tn-desc    { font-size: 13px; color: var(--text); flex: 1; text-transform: capitalize; }
+.tn-weather-meta {
+  width: 100%; display: flex; gap: 16px; margin-top: 8px;
+  font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);
+}
+.tn-weather-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* Beaches */
+.tn-beach-list { display: flex; flex-direction: column; gap: 8px; }
+.tn-beach-row  { display: flex; justify-content: space-between; align-items: center; }
+.tn-beach-name { font-size: 12px; color: var(--text); }
+.tn-beach-status { font-size: 11px; font-family: var(--font-mono); font-weight: 700; }
+
+/* Events */
+.tn-event-list { display: flex; flex-direction: column; gap: 8px; }
+.tn-event-row  {
+  display: flex; align-items: flex-start; gap: 10px;
+  text-decoration: none; padding: 4px 0;
+  border-bottom: 1px solid rgba(30,58,95,0.5);
+}
+.tn-event-row:last-child { border-bottom: none; }
+.tn-event-time  { font-size: 10px; font-family: var(--font-mono); color: #00d4ff; white-space: nowrap; padding-top: 2px; }
+.tn-event-info  { flex: 1; }
+.tn-event-name  { font-size: 12px; color: var(--text); display: block; }
+.tn-event-venue { font-size: 10px; color: var(--text-muted); display: block; }
+
+/* Games */
+.tn-game-list { display: flex; flex-direction: column; gap: 8px; }
+.tn-game-row  { display: flex; align-items: center; gap: 10px; }
+.tn-game-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tn-game-info { flex: 1; }
+.tn-game-name { font-size: 12px; color: var(--text); display: block; }
+.tn-game-time { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+.tn-game-score { font-size: 13px; font-family: var(--font-mono); color: #00d4ff; }
+
+.tn-missing { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin: 0; }

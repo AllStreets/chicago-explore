@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { RiWifiLine, RiRefreshLine } from 'react-icons/ri'
+import { RiWifiLine, RiRefreshLine, RiBusLine } from 'react-icons/ri'
 import useCTA from '../hooks/useCTA'
 import { sharedTrainState } from '../hooks/trainAnimState'
 import MapPlaceholder from '../components/MapPlaceholder'
@@ -43,6 +43,8 @@ export default function TransitPage() {
   const trainStateRef = useRef(sharedTrainState)   // shared with HomePage — no position reset on navigate
   const GLIDE_MS = 14000
   const { trains, loading, refresh } = useCTA()
+  const [showBuses, setShowBuses] = useState(false)
+  const [buses, setBuses] = useState([])
 
   useEffect(() => {
     trainDataRef.current = trains
@@ -116,6 +118,68 @@ export default function TransitPage() {
       map.on('mouseenter', 'train-dots', () => { map.getCanvas().style.cursor = 'pointer' })
       map.on('mouseleave', 'train-dots', () => { map.getCanvas().style.cursor = '' })
 
+      // Divvy stations layer
+      map.addSource('divvy', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
+      map.addLayer({
+        id: 'divvy-dots', type: 'circle', source: 'divvy',
+        paint: {
+          'circle-radius': 3.5,
+          'circle-color': ['case', ['==', ['get', 'renting'], true], '#10b981', '#64748b'],
+          'circle-stroke-color': '#060b18', 'circle-stroke-width': 1,
+        }
+      })
+      map.on('click', 'divvy-dots', e => {
+        const { name, bikes, docks, renting } = e.features[0].properties
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(e.features[0].geometry.coordinates)
+          .setHTML(
+            `<strong>${name}</strong>` +
+            `<div style="margin-top:6px;font-size:11px">` +
+            `<span style="color:#10b981">${bikes} bikes</span> · ` +
+            `<span style="color:#00d4ff">${docks} docks</span>` +
+            (!renting ? `<br><span style="color:#ef4444">Not currently renting</span>` : '') +
+            `</div>`
+          )
+          .addTo(map)
+      })
+      map.on('mouseenter', 'divvy-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'divvy-dots', () => { map.getCanvas().style.cursor = '' })
+
+      // Load Divvy station data
+      fetch(`${API}/api/divvy/stations`)
+        .then(r => r.json())
+        .then(d => {
+          if (map.getSource('divvy')) {
+            map.getSource('divvy').setData({
+              type: 'FeatureCollection',
+              features: (d.stations || []).map(s => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [s.lon, s.lat] },
+                properties: { name: s.name, bikes: s.bikesAvailable, docks: s.docksAvailable, renting: s.isRenting },
+              }))
+            })
+          }
+        }).catch(() => {})
+
+      // Bus dots layer
+      map.addSource('cta-buses', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
+      map.addLayer({
+        id: 'bus-dots', type: 'circle', source: 'cta-buses',
+        paint: {
+          'circle-radius': 4, 'circle-color': '#f59e0b',
+          'circle-stroke-color': '#060b18', 'circle-stroke-width': 1.2,
+        }
+      })
+      map.on('click', 'bus-dots', e => {
+        const { route, destination } = e.features[0].properties
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(e.features[0].geometry.coordinates)
+          .setHTML(`<strong>Route ${route}</strong><br><small>${destination}</small>`)
+          .addTo(map)
+      })
+      map.on('mouseenter', 'bus-dots', () => { map.getCanvas().style.cursor = 'pointer' })
+      map.on('mouseleave', 'bus-dots', () => { map.getCanvas().style.cursor = '' })
+
       // Animation loop
       let glowPhase = 0, ringPhase = 0
       const animate = () => {
@@ -167,6 +231,35 @@ export default function TransitPage() {
     return () => { ro.disconnect(); cancelAnimationFrame(rafRef.current); map.remove(); mapRef.current = null }
   }, [])
 
+  // Bus fetch effect
+  useEffect(() => {
+    if (!showBuses) { setBuses([]); return }
+    async function fetchBuses() {
+      try {
+        const r = await fetch(`${API}/api/cta/buses`)
+        const d = await r.json()
+        setBuses(d.buses || [])
+      } catch {}
+    }
+    fetchBuses()
+    const id = setInterval(fetchBuses, 30000)
+    return () => clearInterval(id)
+  }, [showBuses])
+
+  // Sync bus positions to map source
+  useEffect(() => {
+    const src = mapRef.current?.getSource('cta-buses')
+    if (!src) return
+    src.setData({
+      type: 'FeatureCollection',
+      features: buses.map(b => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
+        properties: { route: b.route, destination: b.destination },
+      }))
+    })
+  }, [buses])
+
   const trainsByLine = Object.fromEntries(LINES.map(l => [l.id, trains.filter(t => t.line === l.id)]))
 
   return (
@@ -179,6 +272,13 @@ export default function TransitPage() {
             <RiWifiLine size={9} />
             LIVE CTA DATA
           </span>
+          <button
+            className={`transit-bus-btn${showBuses ? ' active' : ''}`}
+            onClick={() => setShowBuses(s => !s)}
+            title={showBuses ? 'Hide buses' : 'Show buses'}
+          >
+            <RiBusLine size={13} />
+          </button>
           <button
             className={`transit-refresh-btn${loading ? ' spinning' : ''}`}
             onClick={refresh}

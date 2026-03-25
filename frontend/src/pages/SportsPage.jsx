@@ -1,9 +1,44 @@
 import { useEffect, useRef, useState } from 'react'
-import { RiCalendarLine, RiMapPinLine, RiRefreshLine } from 'react-icons/ri'
+import { RiCalendarLine, RiMapPinLine, RiRefreshLine, RiTicketLine } from 'react-icons/ri'
 import useMidnightRefresh from '../hooks/useMidnightRefresh'
 import './SportsPage.css'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+function TicketButton({ team, date }) {
+  const [info, setInfo] = useState(null)
+  const [fetching, setFetching] = useState(false)
+
+  async function fetchTickets() {
+    setFetching(true)
+    try {
+      const r = await fetch(`${API}/api/sports/tickets?team=${encodeURIComponent(team)}&date=${date || ''}`)
+      setInfo(await r.json())
+    } catch {} finally { setFetching(false) }
+  }
+
+  if (!info) {
+    return (
+      <button className="ticket-btn" onClick={fetchTickets} disabled={fetching}>
+        <RiTicketLine /> {fetching ? '...' : 'Tickets'}
+      </button>
+    )
+  }
+
+  if (info.keyMissing || !info.tickets?.length) {
+    return <a className="ticket-btn" href={info.fallbackUrl || 'https://seatgeek.com'} target="_blank" rel="noreferrer"><RiTicketLine /> Get Tickets</a>
+  }
+
+  return (
+    <div className="ticket-options">
+      {info.tickets.map(t => (
+        <a key={t.id} className="ticket-option" href={t.url} target="_blank" rel="noreferrer">
+          {t.lowestPrice ? `From $${t.lowestPrice}` : 'View Tickets'}
+        </a>
+      ))}
+    </div>
+  )
+}
 
 const TEAM_COLORS = {
   Cubs:        '#0e3386',
@@ -159,6 +194,9 @@ export default function SportsPage() {
                           {formatDate(g.date)}
                         </span>
                         {g.venue && <span className="sports-game-venue">{g.venue}</span>}
+                      </div>
+                      <div className="sports-game-tickets">
+                        <TicketButton team={team.name} date={g.date?.slice(0, 10)} />
                       </div>
                     </div>
                   ))}

@@ -3,13 +3,16 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   RiHome4Line, RiCompassDiscoverLine, RiSubwayLine, RiRestaurantLine,
-  RiMoonLine, RiFootballLine, RiCalendarEventLine, RiCloudLine,
-  RiCommunityLine, RiUser3Line, RiMenuLine,
+  RiMoonLine, RiMoonClearLine, RiFootballLine, RiCalendarEventLine, RiCloudLine,
+  RiCommunityLine, RiUser3Line, RiMenuLine, RiWaterFlashLine, RiAlertLine,
 } from 'react-icons/ri'
 import './Sidebar.css'
 
 const NAV = [
   { to: '/',              icon: RiHome4Line,           label: 'Home' },
+  { to: '/tonight',       icon: RiMoonClearLine,       label: 'Tonight' },
+  { to: '/beach',         icon: RiWaterFlashLine,      label: 'Beaches' },
+  { to: '/311',           icon: RiAlertLine,           label: 'Chicago 311' },
   { to: '/explore',       icon: RiCompassDiscoverLine, label: 'Explore' },
   { to: '/transit',       icon: RiSubwayLine,          label: 'Transit' },
   { to: '/nightlife',     icon: RiMoonLine,            label: 'Nightlife' },

@@ -50,7 +50,8 @@
   50%       { opacity: 0.25; }
 }
 
-.transit-refresh-btn {
+.transit-refresh-btn,
+.transit-bus-btn {
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.3);
@@ -63,6 +64,8 @@
 }
 
 .transit-refresh-btn:hover { color: #00d4ff; }
+.transit-bus-btn:hover { color: #f59e0b; }
+.transit-bus-btn.active { color: #f59e0b; }
 
 @keyframes transit-spin { to { transform: rotate(360deg); } }
 .transit-refresh-btn.spinning svg { animation: transit-spin 1s linear infinite; }

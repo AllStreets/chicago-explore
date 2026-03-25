@@ -34,6 +34,10 @@ app.use('/api/sports',        require('./routes/sports'))
 app.use('/api/events',        require('./routes/events'))
 app.use('/api/ai',            require('./routes/ai'))
 app.use('/api/me',            require('./routes/me'))
+app.use('/api/tonight',       require('./routes/tonight'))
+app.use('/api/beach',         require('./routes/beach'))
+app.use('/api/311',           require('./routes/reports311'))
+app.use('/api/push',          require('./routes/push'))
 
 if (require.main === module) {
   const port = process.env.PORT || 3001

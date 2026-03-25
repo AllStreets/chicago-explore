@@ -259,3 +259,11 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.2; }
 }
+
+.sports-game-tickets { margin-top: 6px; }
+.ticket-btn { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); color: #00d4ff; padding: 3px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s; font-family: var(--font-mono); }
+.ticket-btn:hover:not(:disabled) { background: rgba(0,212,255,0.2); }
+.ticket-btn:disabled { opacity: 0.5; cursor: default; }
+.ticket-options { display: flex; flex-direction: column; gap: 3px; }
+.ticket-option { display: inline-block; font-size: 10px; color: #10b981; text-decoration: none; font-family: var(--font-mono); }
+.ticket-option:hover { text-decoration: underline; }

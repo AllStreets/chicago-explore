@@ -164,4 +164,48 @@ router.get('/alerts', async (_req, res) => {
   }
 })
 
+const busKey = () => process.env.CTA_BUS_KEY
+
+// GET /api/cta/buses?routes=79,22,36  (comma-separated route numbers)
+router.get('/buses', async (req, res) => {
+  const apiKey = busKey()
+  if (!apiKey) return res.json({ buses: [], error: 'CTA_BUS_KEY not set' })
+  const routes = req.query.routes || '22,36,66,8,77,151'  // key downtown routes
+  try {
+    const url = `http://www.ctabustracker.com/bustime/api/v2/getvehicles?key=${apiKey}&rt=${routes}&format=json`
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    const json = await r.json()
+    const vehicles = (json?.['bustime-response']?.vehicle || []).map(v => ({
+      id:          v.vid,
+      route:       v.rt,
+      lat:         parseFloat(v.lat),
+      lon:         parseFloat(v.lon),
+      heading:     parseInt(v.hdg, 10) || 0,
+      destination: v.des || '',
+    }))
+    res.json({ buses: vehicles })
+  } catch (e) {
+    res.json({ buses: [], error: e.message })
+  }
+})
+
+// GET /api/cta/bus-routes — list of CTA bus routes
+router.get('/bus-routes', async (_req, res) => {
+  const apiKey = busKey()
+  if (!apiKey) return res.json({ routes: [] })
+  try {
+    const url = `http://www.ctabustracker.com/bustime/api/v2/getroutes?key=${apiKey}&format=json`
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    const json = await r.json()
+    const routes = (json?.['bustime-response']?.routes || []).map(rt => ({
+      id:    rt.rt,
+      name:  rt.rtnm,
+      color: rt.rtclr || '#64748b',
+    }))
+    res.json({ routes })
+  } catch (e) {
+    res.json({ routes: [] })
+  }
+})
+
 module.exports = router

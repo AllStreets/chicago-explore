@@ -1,5 +1,5 @@
 // frontend/src/App.jsx
-import { Component } from 'react'
+import { Component, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import HomePage from './pages/HomePage'
@@ -12,6 +12,9 @@ import EventsPage from './pages/EventsPage'
 import ExplorePage from './pages/ExplorePage'
 import WeatherPage from './pages/WeatherPage'
 import MyChicagoPage from './pages/MyChicagoPage'
+import TonightPage from './pages/TonightPage'
+import BeachPage from './pages/BeachPage'
+import ReportsPage from './pages/ReportsPage'
 import './App.css'
 
 class PageBoundary extends Component {
@@ -27,7 +30,33 @@ class PageBoundary extends Component {
   }
 }
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 export default function App() {
+  useEffect(() => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    navigator.serviceWorker.register('/sw.js').then(async reg => {
+      const r = await fetch(`${API}/api/push/vapid-key`)
+      const { key } = await r.json()
+      if (!key) return
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: key,
+      })
+      await fetch(`${API}/api/push/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoint: sub.endpoint,
+          keys: {
+            p256dh: btoa(String.fromCharCode(...new Uint8Array(sub.getKey('p256dh')))),
+            auth:   btoa(String.fromCharCode(...new Uint8Array(sub.getKey('auth')))),
+          },
+        }),
+      })
+    }).catch(() => {})
+  }, [])
+
   return (
     <BrowserRouter>
       <Sidebar />
@@ -44,6 +73,9 @@ export default function App() {
             <Route path="/explore"       element={<ExplorePage />} />
             <Route path="/weather"       element={<WeatherPage />} />
             <Route path="/me"            element={<MyChicagoPage />} />
+            <Route path="/tonight"       element={<TonightPage />} />
+            <Route path="/beach"         element={<BeachPage />} />
+            <Route path="/311"           element={<ReportsPage />} />
           </Routes>
         </PageBoundary>
       </main>

@@ -13,6 +13,15 @@ if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
 const TYPES = ['all', 'restaurants', 'bars', 'cafes', 'pizza', 'sushi', 'tacos', 'brunch']
 
+function todayDateStr() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T19:00`
+}
+
+function reservationUrl(name) {
+  return `https://www.opentable.com/s/?covers=2&dateTime=${encodeURIComponent(todayDateStr())}&metroId=13&term=${encodeURIComponent(name)}`
+}
+
 const BAR_KEYWORDS = ['bar', 'cocktail', 'lounge', 'nightlife', 'wine', 'beer', 'pub', 'spirits', 'tavern', 'brewery']
 
 function isBar(place) {
@@ -183,6 +192,11 @@ export default function FoodPage() {
                 >
                   <RiCheckboxCircleLine />
                 </button>
+                {!isBar(p) && (
+                  <a className="food-reserve-btn" href={reservationUrl(p.name)} target="_blank" rel="noreferrer">
+                    Reserve
+                  </a>
+                )}
               </div>
             </div>
           ))}
