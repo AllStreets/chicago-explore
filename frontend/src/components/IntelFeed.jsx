@@ -127,28 +127,37 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
         {tonightGames.length === 0 ? (
           <div className="intel-card-sub" style={{ paddingTop: 4 }}>No Chicago games tonight</div>
         ) : (
-          tonightGames.map((g, i) => (
-            <div key={i} className="intel-sport-row">
-              <span className="intel-sport-dot" style={{ background: g.color || '#00d4ff' }} />
-              <div className="intel-sport-info">
-                <span className="intel-sport-teams">{g.team} vs {g.opponent}</span>
-                <span className="intel-sport-meta">{SPORT_LABELS[g.sport] || g.sport.toUpperCase()}</span>
-              </div>
-              {g.state === 'in' && g.chicagoScore != null ? (
-                <div className="intel-sport-score">
-                  <span className="intel-sport-live-dot" />
-                  <span className="intel-sport-score-num" style={{ color: g.color || '#00d4ff' }}>{g.chicagoScore}</span>
-                  <span className="intel-sport-score-dash">-</span>
-                  <span className="intel-sport-score-num" style={{ color: 'var(--text-muted)' }}>{g.oppScore}</span>
+          tonightGames.map((g, i) => {
+            const isFinal    = g.state === 'post'
+            const chicagoWon = isFinal && g.chicagoScore != null && g.chicagoScore > g.oppScore
+            const oppWon     = isFinal && g.oppScore     != null && g.oppScore     > g.chicagoScore
+            return (
+              <div key={i} className="intel-sport-row">
+                <span className="intel-sport-dot" style={{ background: g.color || '#00d4ff' }} />
+                <div className="intel-sport-info">
+                  <span className="intel-sport-teams">
+                    <span style={{ fontWeight: chicagoWon ? 700 : undefined }}>{g.team}</span>
+                    {' vs '}
+                    <span style={{ fontWeight: oppWon ? 700 : undefined }}>{g.opponent}</span>
+                  </span>
+                  <span className="intel-sport-meta">{SPORT_LABELS[g.sport] || g.sport.toUpperCase()}</span>
                 </div>
-              ) : (
-                <span className={`intel-sport-time${g.state === 'in' ? ' live' : ''}`}>
-                  {g.state === 'in' && <span className="intel-sport-live-dot" />}
-                  {g.time}
-                </span>
-              )}
-            </div>
-          ))
+                {(g.state === 'in' || isFinal) && g.chicagoScore != null ? (
+                  <div className="intel-sport-score">
+                    {g.state === 'in' && <span className="intel-sport-live-dot" />}
+                    <span className="intel-sport-score-num" style={{ color: g.color || '#00d4ff', fontWeight: chicagoWon ? 700 : undefined }}>{g.chicagoScore}</span>
+                    <span className="intel-sport-score-dash">-</span>
+                    <span className="intel-sport-score-num" style={{ color: 'var(--text-muted)', fontWeight: oppWon ? 700 : undefined }}>{g.oppScore}</span>
+                  </div>
+                ) : (
+                  <span className={`intel-sport-time${g.state === 'in' ? ' live' : ''}`}>
+                    {g.state === 'in' && <span className="intel-sport-live-dot" />}
+                    {g.time}
+                  </span>
+                )}
+              </div>
+            )
+          })
         )}
       </div>
 

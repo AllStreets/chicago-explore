@@ -105,17 +105,20 @@ function formatDate(dateStr) {
 
 function ScoreBadge({ game }) {
   if (game.state === 'pre') return null
-  const isLive = game.state === 'in'
+  const isLive   = game.state === 'in'
+  const isFinal  = game.state === 'post'
+  const awayWon  = isFinal && game.awayScore != null && game.awayScore > game.homeScore
+  const homeWon  = isFinal && game.homeScore != null && game.homeScore > game.awayScore
   return (
     <div className="sports-score-block">
       <div className="sports-score-teams">
-        <span className="sports-score-team">{game.awayTeam}</span>
+        <span className="sports-score-team" style={{ fontWeight: awayWon ? 700 : undefined }}>{game.awayTeam}</span>
         <span className="sports-score-vs">
-          <span className="sports-score-num">{game.awayScore ?? '–'}</span>
+          <span className="sports-score-num" style={{ fontWeight: awayWon ? 700 : undefined }}>{game.awayScore ?? '–'}</span>
           <span className="sports-score-dash">–</span>
-          <span className="sports-score-num">{game.homeScore ?? '–'}</span>
+          <span className="sports-score-num" style={{ fontWeight: homeWon ? 700 : undefined }}>{game.homeScore ?? '–'}</span>
         </span>
-        <span className="sports-score-team">{game.homeTeam}</span>
+        <span className="sports-score-team" style={{ fontWeight: homeWon ? 700 : undefined }}>{game.homeTeam}</span>
       </div>
       <span className={`sports-game-status${isLive ? ' live' : ' final'}`}>
         {isLive && <span className="sports-live-dot" />}

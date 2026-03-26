@@ -46,7 +46,11 @@ router.get('/', async (_req, res) => {
   const key = 'tonight_v5'
   const cached = stmtGet.get(key)
   if (cached && Date.now() - cached.cached_at < TTL) {
-    return res.json(JSON.parse(cached.data))
+    // Always refresh game state — games share a cache with the home page so
+    // this is cheap and ensures Tonight and Home always agree on Final/Live
+    const freshGames = await fetchTonightGames().catch(() => null)
+    const data = JSON.parse(cached.data)
+    return res.json({ ...data, games: freshGames ?? data.games })
   }
 
   const result = {}

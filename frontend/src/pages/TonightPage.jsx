@@ -257,15 +257,18 @@ function GamesCard({ games }) {
         <div className="tn-game-list">
           {games.map((g, i) => {
             const teamColor = g.color || TEAM_COLORS[g.team] || '#64748b'
-            const isLive = g.chicagoScore != null
+            const isLive    = g.state === 'in'
+            const isFinal   = g.state === 'post'
+            const chicagoWon = isFinal && g.chicagoScore != null && g.chicagoScore > g.oppScore
+            const oppWon     = isFinal && g.oppScore     != null && g.oppScore     > g.chicagoScore
             return (
               <div key={i} className={`tn-game-row${isLive ? ' tn-game-row--live' : ''}`}>
                 <div className="tn-game-color-bar" style={{ background: teamColor }} />
                 <div className="tn-game-body">
                   <div className="tn-game-matchup">
-                    <span className="tn-game-team">{g.team}</span>
+                    <span className="tn-game-team" style={{ fontWeight: chicagoWon ? 700 : undefined }}>{g.team}</span>
                     <span className="tn-game-vs">vs</span>
-                    <span className="tn-game-opp">{g.opponent}</span>
+                    <span className="tn-game-opp" style={{ fontWeight: oppWon ? 700 : undefined }}>{g.opponent}</span>
                   </div>
                   <div className="tn-game-meta">
                     {isLive
@@ -275,11 +278,11 @@ function GamesCard({ games }) {
                     {g.venue && <span className="tn-game-venue">{g.venue}</span>}
                   </div>
                 </div>
-                {isLive && (
+                {(isLive || isFinal) && g.chicagoScore != null && (
                   <div className="tn-game-score">
-                    <span style={{ color: teamColor }}>{g.chicagoScore}</span>
+                    <span style={{ color: teamColor, fontWeight: chicagoWon ? 700 : undefined }}>{g.chicagoScore}</span>
                     <span className="tn-score-dash">–</span>
-                    <span>{g.oppScore}</span>
+                    <span style={{ fontWeight: oppWon ? 700 : undefined }}>{g.oppScore}</span>
                   </div>
                 )}
               </div>
