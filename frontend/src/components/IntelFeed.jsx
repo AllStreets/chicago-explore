@@ -136,18 +136,18 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
                 <span className="intel-sport-dot" style={{ background: g.color || '#00d4ff' }} />
                 <div className="intel-sport-info">
                   <span className="intel-sport-teams">
-                    <span style={{ fontWeight: chicagoWon ? 700 : undefined }}>{g.team}</span>
+                    <span style={{ fontWeight: chicagoWon ? 700 : oppWon ? 400 : undefined, opacity: oppWon ? 0.5 : undefined }}>{g.team}</span>
                     {' vs '}
-                    <span style={{ fontWeight: oppWon ? 700 : undefined }}>{g.opponent}</span>
+                    <span style={{ fontWeight: oppWon ? 700 : chicagoWon ? 400 : undefined, opacity: chicagoWon ? 0.5 : undefined }}>{g.opponent}</span>
                   </span>
                   <span className="intel-sport-meta">{SPORT_LABELS[g.sport] || g.sport.toUpperCase()}</span>
                 </div>
                 {(g.state === 'in' || isFinal) && g.chicagoScore != null ? (
                   <div className="intel-sport-score">
                     {g.state === 'in' && <span className="intel-sport-live-dot" />}
-                    <span className="intel-sport-score-num" style={{ color: g.color || '#00d4ff', fontWeight: chicagoWon ? 700 : undefined }}>{g.chicagoScore}</span>
+                    <span className="intel-sport-score-num" style={{ color: g.color || '#00d4ff', fontWeight: chicagoWon ? 700 : undefined, opacity: oppWon ? 0.4 : undefined }}>{g.chicagoScore}</span>
                     <span className="intel-sport-score-dash">-</span>
-                    <span className="intel-sport-score-num" style={{ color: 'var(--text-muted)', fontWeight: oppWon ? 700 : undefined }}>{g.oppScore}</span>
+                    <span className="intel-sport-score-num" style={{ fontWeight: oppWon ? 700 : undefined, opacity: chicagoWon ? 0.4 : undefined }}>{g.oppScore}</span>
                   </div>
                 ) : (
                   <span className={`intel-sport-time${g.state === 'in' ? ' live' : ''}`}>

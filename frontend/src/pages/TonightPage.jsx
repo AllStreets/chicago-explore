@@ -266,9 +266,9 @@ function GamesCard({ games }) {
                 <div className="tn-game-color-bar" style={{ background: teamColor }} />
                 <div className="tn-game-body">
                   <div className="tn-game-matchup">
-                    <span className="tn-game-team" style={{ fontWeight: chicagoWon ? 700 : undefined }}>{g.team}</span>
+                    <span className="tn-game-team" style={{ fontWeight: chicagoWon ? 700 : oppWon ? 400 : undefined, color: oppWon ? 'var(--text-muted)' : undefined }}>{g.team}</span>
                     <span className="tn-game-vs">vs</span>
-                    <span className="tn-game-opp" style={{ fontWeight: oppWon ? 700 : undefined }}>{g.opponent}</span>
+                    <span className="tn-game-opp" style={{ fontWeight: oppWon ? 700 : undefined, color: oppWon ? 'var(--text)' : undefined }}>{g.opponent}</span>
                   </div>
                   <div className="tn-game-meta">
                     {isLive
