@@ -91,6 +91,8 @@ async function fetchUpcomingGames(team) {
   }
 }
 
+const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000
+
 async function fetchTeamData(team) {
   const [today, upcomingResult] = await Promise.all([
     fetchTodayGame(team),
@@ -98,7 +100,17 @@ async function fetchTeamData(team) {
   ])
   const upcoming = Array.isArray(upcomingResult) ? upcomingResult : []
   const error    = upcomingResult?.error || null
-  return { ...team, today, upcoming, error }
+
+  // Drop completed games that are stale or superseded by a newer game
+  const hasActiveGame = today.some(g => g.state !== 'post')
+  const filtered = today.filter(g => {
+    if (g.state !== 'post') return true                          // always keep live/upcoming
+    if (hasActiveGame) return false                              // newer game started — drop old final
+    const age = Date.now() - new Date(g.date).getTime()
+    return age < TWENTY_FOUR_HOURS                              // drop finals older than 24h
+  })
+
+  return { ...team, today: filtered, upcoming, error }
 }
 
 router.get('/', async (_req, res) => {
