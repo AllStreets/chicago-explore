@@ -66,6 +66,8 @@ function isJunk(name) {
   if (/^[A-Z0-9]{4,12}$/.test(name)) return true
   // "Greek STO", "XYZ Package" — short all-caps strings with no lowercase
   if (name === name.toUpperCase() && name.length < 12 && !/\d/.test(name)) return true
+  // Test events left on Ticketmaster by venues
+  if (/\btest\b/i.test(name)) return true
   return false
 }
 
