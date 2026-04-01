@@ -1,5 +1,6 @@
 // frontend/src/pages/HomePage.jsx
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { RiWifiLine, RiRefreshLine } from 'react-icons/ri'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -229,6 +230,49 @@ function toNlGeoJSON(places) {
   }
 }
 
+function addNeighborhoodLayers(map, data) {
+  if (map.getSource('neighborhood-boundaries')) return
+  const layers = map.getStyle().layers
+  const labelLayer = layers.find(l => l.type === 'symbol' && l.layout?.['text-field'])
+  const beforeId = labelLayer?.id
+
+  map.addSource('neighborhood-boundaries', { type: 'geojson', data })
+  map.addLayer({
+    id: 'neighborhood-fill',
+    type: 'fill',
+    source: 'neighborhood-boundaries',
+    paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.15 },
+  }, beforeId)
+  map.addLayer({
+    id: 'neighborhood-line',
+    type: 'line',
+    source: 'neighborhood-boundaries',
+    paint: { 'line-color': ['get', 'color'], 'line-opacity': 0.5, 'line-width': 1.5 },
+  }, beforeId)
+}
+
+function wireNeighborhoodEvents(map, navigate) {
+  if (!map.getLayer('neighborhood-fill')) return
+  if (map._nhEventsWired) return
+  map._nhEventsWired = true
+  const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false })
+  map.on('mousemove', 'neighborhood-fill', (e) => {
+    map.getCanvas().style.cursor = 'pointer'
+    const { name, tagline } = e.features[0].properties
+    popup.setLngLat(e.lngLat)
+      .setHTML(`<strong>${name}</strong><br/><span>${tagline}</span>`)
+      .addTo(map)
+  })
+  map.on('mouseleave', 'neighborhood-fill', () => {
+    map.getCanvas().style.cursor = ''
+    popup.remove()
+  })
+  map.on('click', 'neighborhood-fill', (e) => {
+    const id = e.features[0].properties.id
+    navigate(`/neighborhoods#${id}`)
+  })
+}
+
 let _routesCache = null
 
 export default function HomePage() {
@@ -240,6 +284,9 @@ export default function HomePage() {
   const trainStateRef  = useRef(sharedTrainState)
   const foodRef        = useRef([])
   const nightlifeRef   = useRef([])
+  const boundariesRef  = useRef(null)
+  const [boundaries, setBoundaries] = useState(null)
+  const navigate = useNavigate()
   const GLIDE_MS = 8000
 
   const { trains, loading, refresh }          = useCTA()
@@ -435,6 +482,12 @@ export default function HomePage() {
         map.getSource('home-nightlife').setData(toNlGeoJSON(nightlifeRef.current))
       }
 
+      // Neighborhood polygon overlays — below all icon layers
+      if (boundariesRef.current) {
+        addNeighborhoodLayers(map, boundariesRef.current)
+        wireNeighborhoodEvents(map, navigate)
+      }
+
       // Pulse marker
       const el = document.createElement('div')
       el.className = 'streeterville-pulse'
@@ -524,6 +577,26 @@ export default function HomePage() {
     const src = mapRef.current?.getSource('home-nightlife')
     if (src) src.setData(toNlGeoJSON(nightlifePlaces))
   }, [nightlifePlaces])
+
+  // Fetch neighborhood boundaries once on mount
+  useEffect(() => {
+    fetch(`${API}/api/neighborhoods/boundaries`)
+      .then(r => r.json())
+      .then(data => {
+        boundariesRef.current = data
+        setBoundaries(data)
+      })
+      .catch(() => {})
+  }, [])
+
+  // Recovery: if boundaries arrived after map was already loaded
+  useEffect(() => {
+    const map = mapRef.current
+    if (!boundaries || !map) return
+    if (!map.isStyleLoaded()) return
+    addNeighborhoodLayers(map, boundaries)
+    wireNeighborhoodEvents(map, navigate)
+  }, [boundaries]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="home-page">

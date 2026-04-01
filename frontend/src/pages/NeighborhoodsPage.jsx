@@ -162,6 +162,17 @@ export default function NeighborhoodsPage() {
   const { text: aiText, streaming: aiStreaming, fetchBrief } = useAIBrief(selected)
   const { question, setQuestion, answer, streaming: askStreaming, ask } = useNeighborhoodAsk(selected)
 
+  useEffect(() => {
+    if (!hoods.length) return
+    const hash = window.location.hash.slice(1)
+    if (!hash) return
+    const el = document.getElementById(hash)
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    el.classList.add('neighborhood-card--flash')
+    el.addEventListener('animationend', () => el.classList.remove('neighborhood-card--flash'), { once: true })
+  }, [hoods])
+
   return (
     <div className="neighborhoods-page">
       <div className="neighborhoods-header">
@@ -176,6 +187,7 @@ export default function NeighborhoodsPage() {
           {hoods.map(h => (
             <div
               key={h.id}
+              id={h.id}
               className={`neighborhood-card${selected?.id === h.id ? ' selected' : ''}`}
               onClick={() => setSelected(h)}
             >

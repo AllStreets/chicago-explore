@@ -11,6 +11,7 @@ vi.mock('mapbox-gl', () => {
     this.addSource = vi.fn()
     this.addLayer = vi.fn()
     this.getSource = vi.fn(() => ({ setData: vi.fn() }))
+    this.getLayer = vi.fn(() => null)
     this.isStyleLoaded = vi.fn(() => true)
     this.getStyle = vi.fn(() => ({ layers: [] }))
     this.getCanvas = vi.fn(() => ({ style: {} }))
@@ -61,5 +62,17 @@ describe('HomePage', () => {
   it('renders the intel feed overlay', () => {
     render(<MemoryRouter><HomePage /></MemoryRouter>)
     expect(screen.getByText(/LIVE INTEL/i)).toBeInTheDocument()
+  })
+
+  it('fetches neighborhood boundaries on mount', async () => {
+    const fetchMock = vi.fn(() =>
+      Promise.resolve({ ok: true, json: () => Promise.resolve({ type: 'FeatureCollection', features: [] }) })
+    )
+    global.fetch = fetchMock
+    const { unmount } = render(<MemoryRouter><HomePage /></MemoryRouter>)
+    await new Promise(r => setTimeout(r, 50))
+    const calls = fetchMock.mock.calls.map(c => c[0])
+    expect(calls.some(url => url.includes('/api/neighborhoods/boundaries'))).toBe(true)
+    unmount()
   })
 })

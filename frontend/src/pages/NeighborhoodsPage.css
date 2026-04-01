@@ -289,3 +289,12 @@
 }
 
 @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0 } }
+
+@keyframes hood-flash {
+  0%   { box-shadow: 0 0 0 2px var(--accent); }
+  50%  { box-shadow: 0 0 12px 4px var(--accent); }
+  100% { box-shadow: none; }
+}
+.neighborhood-card--flash {
+  animation: hood-flash 0.8s ease-out forwards;
+}
