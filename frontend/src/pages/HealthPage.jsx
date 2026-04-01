@@ -37,11 +37,13 @@ function hexToRgb(hex) {
 function toGeoJSON(places) {
   return {
     type: 'FeatureCollection',
-    features: places.map(p => ({
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-      properties: { name: p.name, address: p.address || '' },
-    })),
+    features: places
+      .filter(p => p.lat && p.lng && p.lat > 41.5 && p.lat < 42.1 && p.lng > -88.1 && p.lng < -87.2)
+      .map(p => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+        properties: { name: p.name, address: p.address || '' },
+      })),
   }
 }
 
@@ -80,6 +82,8 @@ export default function HealthPage() {
       style: 'mapbox://styles/mapbox/dark-v11',
       center: [-87.65, 41.88],
       zoom: 12,
+      minZoom: 10,
+      maxBounds: [[-88.5, 41.3], [-87.0, 42.4]],
     })
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 

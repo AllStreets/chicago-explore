@@ -173,7 +173,7 @@ router.get('/', (_req, res) => {
 })
 
 router.get('/boundaries', async (_req, res) => {
-  const CACHE_KEY = 'neighborhood_boundaries_v1'
+  const CACHE_KEY = 'neighborhood_boundaries_v2'
   const cached = stmtGet.get(CACHE_KEY)
   if (cached && Date.now() - cached.cached_at < BOUNDARY_TTL) {
     return res.json(JSON.parse(cached.data))
@@ -214,7 +214,9 @@ router.get('/boundaries', async (_req, res) => {
       })
 
     const result = { type: 'FeatureCollection', features }
-    stmtSet.run(CACHE_KEY, JSON.stringify(result), Date.now())
+    if (features.length > 0) {
+      try { stmtSet.run(CACHE_KEY, JSON.stringify(result), Date.now()) } catch (_) {}
+    }
     res.json(result)
   } catch (err) {
     // Return empty FeatureCollection on error — frontend handles gracefully

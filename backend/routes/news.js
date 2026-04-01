@@ -6,31 +6,31 @@ const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_k
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
 
 const TTL_MS = 15 * 60 * 1000 // 15 minutes
-const CACHE_KEY = 'news_feed_v1'
+const CACHE_KEY = 'news_feed_v2'
 
 const FEEDS = [
   {
-    url: 'https://feeds.feedburner.com/chicagotribune/news/opinion',
-    fallback: null,
-    source: 'Chicago Tribune',
+    url: 'https://blockclubchicago.org/feed/',
+    fallback: 'https://chicago.suntimes.com/rss/index.xml',
+    source: 'Block Club Chicago',
     tab: 'chicago',
   },
   {
-    url: 'https://www.wbez.org/feeds/news',
-    fallback: null,
-    source: 'WBEZ',
+    url: 'https://chicago.suntimes.com/rss/index.xml',
+    fallback: 'https://wgntv.com/news/chicago-news/feed/',
+    source: 'Chicago Sun-Times',
     tab: 'chicago',
   },
   {
-    url: 'https://feeds.feedburner.com/associated-press/h6Io',
-    fallback: 'https://rsshub.app/ap/topics/apf-topnews',
-    source: 'AP',
+    url: 'https://feeds.npr.org/1001/rss.xml',
+    fallback: 'https://feeds.abcnews.com/abcnews/topstories',
+    source: 'NPR News',
     tab: 'national',
   },
   {
-    url: 'https://feeds.reuters.com/reuters/worldNews',
-    fallback: 'https://rsshub.app/reuters/world',
-    source: 'Reuters',
+    url: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+    fallback: 'https://feeds.skynews.com/feeds/rss/world.xml',
+    source: 'BBC News',
     tab: 'world',
   },
 ]

@@ -11,10 +11,10 @@ import './PoliticsPage.css'
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const SOURCE_COLORS = {
-  'Chicago Tribune': '#e63946',
-  'WBEZ': '#00d4ff',
-  'AP': '#ff6b35',
-  'Reuters': '#f97316',
+  'Block Club Chicago': '#00d4ff',
+  'Chicago Sun-Times': '#e63946',
+  'NPR News': '#3b82f6',
+  'BBC News': '#f97316',
 }
 
 function relativeTime(dateStr) {
