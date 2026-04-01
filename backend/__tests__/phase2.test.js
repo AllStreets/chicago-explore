@@ -74,4 +74,23 @@ describe('Phase 2 routes', () => {
     expect(res.status).toBe(200)
     expect(res.body.ok).toBe(true)
   })
+
+  it('GET /api/neighborhoods/boundaries returns GeoJSON FeatureCollection', async () => {
+    const res = await request(app).get('/api/neighborhoods/boundaries')
+    expect(res.status).toBe(200)
+    expect(res.body.type).toBe('FeatureCollection')
+    expect(Array.isArray(res.body.features)).toBe(true)
+  }, 15000)
+
+  it('GET /api/neighborhoods/boundaries features have required properties', async () => {
+    const res = await request(app).get('/api/neighborhoods/boundaries')
+    expect(res.status).toBe(200)
+    if (res.body.features.length > 0) {
+      const f = res.body.features[0]
+      expect(f.properties).toHaveProperty('id')
+      expect(f.properties).toHaveProperty('color')
+      expect(f.properties).toHaveProperty('tagline')
+      expect(f.properties).toHaveProperty('name')
+    }
+  }, 15000)
 })

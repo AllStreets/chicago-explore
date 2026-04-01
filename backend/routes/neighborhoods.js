@@ -1,5 +1,25 @@
 // backend/routes/neighborhoods.js
 const router = require('express').Router()
+const db = require('../db')
+const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_key = ?')
+const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
+
+const BOUNDARY_TTL = 24 * 60 * 60 * 1000  // 24 hours
+
+const HOOD_COLORS = {
+  'streeterville': '#1e40af',
+  'wicker-park':   '#8b5cf6',
+  'lincoln-park':  '#eab308',
+  'logan-square':  '#f43f5e',
+  'river-north':   '#f97316',
+  'south-loop':    '#06b6d4',
+  'bucktown':      '#84cc16',
+  'andersonville': '#10b981',
+  'pilsen':        '#ef4444',
+  'hyde-park':     '#6366f1',
+  'old-town':      '#ec4899',
+  'west-loop':     '#00d4ff',
+}
 
 const NEIGHBORHOODS = [
   {
@@ -150,6 +170,56 @@ const NEIGHBORHOODS = [
 
 router.get('/', (_req, res) => {
   res.json(NEIGHBORHOODS)
+})
+
+router.get('/boundaries', async (_req, res) => {
+  const CACHE_KEY = 'neighborhood_boundaries_v1'
+  const cached = stmtGet.get(CACHE_KEY)
+  if (cached && Date.now() - cached.cached_at < BOUNDARY_TTL) {
+    return res.json(JSON.parse(cached.data))
+  }
+
+  try {
+    const r = await fetch(
+      'https://data.cityofchicago.org/api/geospatial/bbvz-uum9?method=export&type=GeoJSON',
+      { signal: AbortSignal.timeout(8000) }
+    )
+    if (!r.ok) throw new Error(`City API ${r.status}`)
+    const geojson = await r.json()
+
+    // Build lookup map: lowercase name → neighborhood object
+    const lookup = {}
+    for (const n of NEIGHBORHOODS) {
+      lookup[n.name.toLowerCase()] = n
+    }
+
+    const features = (geojson.features || [])
+      .filter(f => {
+        const name = (f.properties?.pri_neigh || '').toLowerCase()
+        return !!lookup[name]
+      })
+      .map(f => {
+        const name = (f.properties.pri_neigh || '').toLowerCase()
+        const n = lookup[name]
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            id:      n.id,
+            name:    n.name,
+            color:   HOOD_COLORS[n.id] || '#00d4ff',
+            tagline: n.tagline,
+          },
+        }
+      })
+
+    const result = { type: 'FeatureCollection', features }
+    stmtSet.run(CACHE_KEY, JSON.stringify(result), Date.now())
+    res.json(result)
+  } catch (err) {
+    // Return empty FeatureCollection on error — frontend handles gracefully
+    res.json({ type: 'FeatureCollection', features: [] })
+  }
 })
 
 router.get('/:id', (req, res) => {
