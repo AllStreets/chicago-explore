@@ -96,7 +96,7 @@ function sortByDate(articles) {
   })
 }
 
-router.get('/news', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const cached = stmtGet.get(CACHE_KEY)
     if (cached && Date.now() - cached.cached_at < TTL_MS) {

@@ -436,57 +436,194 @@
   gap: 14px;
 }
 
-/* ── Market Summary ───────────────────────────────────────────────────────── */
+/* ── Top Movers ───────────────────────────────────────────────────────────── */
 
-.fin-summary-body {
+.fin-movers-body {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.fin-movers-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
+  min-width: 0;
 }
 
-.fin-summary-bar {
-  display: flex;
-  height: 8px;
-  border-radius: 4px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.04);
-}
-
-.fin-summary-seg {
-  height: 100%;
-  transition: width 0.4s ease;
-}
-
-.fin-summary-seg--up   { background: #22c55e; }
-.fin-summary-seg--flat { background: #475569; }
-.fin-summary-seg--dn   { background: #ef4444; }
-
-.fin-summary-legend {
-  display: flex;
-  gap: 20px;
+.fin-movers-col-hdr {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 11px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 2px;
 }
 
-.fin-summary-item {
+.fin-movers-col-hdr.up  { color: #22c55e; }
+.fin-movers-col-hdr.neg { color: #ef4444; }
+
+.fin-movers-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+.fin-mover-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
-.fin-summary-item .fin-summary-dot {
+.fin-mover-row:last-child { border-bottom: none; }
+
+.fin-mover-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.fin-mover-sym {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 700;
+  color: #00d4ff;
+  letter-spacing: 0.04em;
+}
+
+.fin-mover-name {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+.fin-mover-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.fin-mover-pct {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Chicago Composite Index ──────────────────────────────────────────────── */
+
+.fin-index-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.fin-index-base {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  color: #334155;
+  letter-spacing: 0.06em;
+}
+
+.fin-index-chg {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-index-days {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.fin-index-day {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  color: #334155;
+  text-transform: uppercase;
+}
+
+.fin-index-day.active {
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* ── 52-Week Range ────────────────────────────────────────────────────────── */
+
+.fin-range-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fin-range-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 34px;
+  align-items: center;
+  gap: 8px;
+}
+
+.fin-range-sym {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+.fin-range-track {
+  position: relative;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: visible;
+}
+
+.fin-range-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 2px;
+  opacity: 0.35;
+  transition: width 0.5s ease;
+}
+
+.fin-range-dot {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  display: inline-block;
+  border: 1.5px solid rgba(6, 11, 24, 0.8);
+  box-shadow: 0 0 6px currentColor;
+  transition: left 0.5s ease;
 }
 
-.fin-summary-item.up   { color: #22c55e; }
-.fin-summary-item.up   .fin-summary-dot { background: #22c55e; }
-.fin-summary-item.flat { color: #64748b; }
-.fin-summary-item.flat .fin-summary-dot { background: #475569; }
-.fin-summary-item.dn   { color: #ef4444; }
-.fin-summary-item.dn   .fin-summary-dot { background: #ef4444; }
+.fin-range-pct {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ── Sector Heatmap ───────────────────────────────────────────────────────── */
 
@@ -554,6 +691,12 @@
 
   .fin-bottom-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1300px) {
+  .fin-bottom-row {
+    grid-template-columns: 1fr 1fr;
   }
 }
 

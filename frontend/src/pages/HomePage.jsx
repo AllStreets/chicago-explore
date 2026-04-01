@@ -251,12 +251,24 @@ function addNeighborhoodLayers(map, data) {
   }, beforeId)
 }
 
+const ICON_LAYERS = ['home-food-icons', 'home-nl-icons', 'stadium-icons', 'cta-train-dots', 'cta-train-ring']
+
+function hasIconAt(map, point) {
+  const layers = ICON_LAYERS.filter(l => map.getLayer(l))
+  if (!layers.length) return false
+  return map.queryRenderedFeatures(point, { layers }).length > 0
+}
+
 function wireNeighborhoodEvents(map, navigate) {
   if (!map.getLayer('neighborhood-fill')) return
   if (map._nhEventsWired) return
   map._nhEventsWired = true
   const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false })
   map.on('mousemove', 'neighborhood-fill', (e) => {
+    if (hasIconAt(map, e.point)) {
+      popup.remove()
+      return
+    }
     map.getCanvas().style.cursor = 'pointer'
     const { name, tagline } = e.features[0].properties
     popup.setLngLat(e.lngLat)
@@ -268,6 +280,7 @@ function wireNeighborhoodEvents(map, navigate) {
     popup.remove()
   })
   map.on('click', 'neighborhood-fill', (e) => {
+    if (hasIconAt(map, e.point)) return
     const id = e.features[0].properties.id
     navigate(`/neighborhoods#${id}`)
   })

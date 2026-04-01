@@ -166,6 +166,8 @@ export default function NeighborhoodsPage() {
     if (!hoods.length) return
     const hash = window.location.hash.slice(1)
     if (!hash) return
+    const hood = hoods.find(h => h.id === hash)
+    if (hood) setSelected(hood)
     const el = document.getElementById(hash)
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })

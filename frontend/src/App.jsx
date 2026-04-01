@@ -80,7 +80,7 @@ export default function App() {
             <Route path="/beach"         element={<BeachPage />} />
             <Route path="/311"           element={<ReportsPage />} />
             <Route path="/finance"       element={<FinancePage />} />
-            <Route path="/politics"      element={<PoliticsPage />} />
+            <Route path="/news"           element={<PoliticsPage />} />
             <Route path="/health"        element={<HealthPage />} />
           </Routes>
         </PageBoundary>

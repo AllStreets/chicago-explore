@@ -19,7 +19,7 @@ const NAV = [
   { to: '/nightlife',     icon: RiMoonLine,            label: 'Nightlife' },
   { to: '/events',        icon: RiCalendarEventLine,   label: 'Events' },
   { to: '/health',        icon: RiHeartPulseLine,      label: 'Health' },
-  { to: '/politics',      icon: RiNewspaperLine,       label: 'Politics' },
+  { to: '/news',           icon: RiNewspaperLine,       label: 'News' },
   { to: '/weather',       icon: RiCloudLine,           label: 'Weather & Lake' },
   { to: '/finance',       icon: RiLineChartLine,       label: 'Finance' },
   { to: '/neighborhoods', icon: RiCommunityLine,       label: 'Neighborhoods' },

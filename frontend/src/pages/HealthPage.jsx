@@ -88,6 +88,9 @@ export default function HealthPage() {
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', () => {
+      // Force correct position after any init with zero-height container
+      map.jumpTo({ center: [-87.65, 41.88], zoom: 12 })
+
       // Pre-register icons for all categories
       CATEGORIES.forEach(c => {
         const imgId = `health-${c.key}`
