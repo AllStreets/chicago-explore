@@ -14,8 +14,6 @@ import { makeMapPin } from '../utils/mapIcons'
 import useHomeFeed from '../hooks/useHomeFeed'
 import './HomePage.css'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
 
