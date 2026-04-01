@@ -1,5 +1,5 @@
 // frontend/src/pages/HomePage.jsx
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { RiWifiLine, RiRefreshLine } from 'react-icons/ri'
 import mapboxgl from 'mapbox-gl'
@@ -13,6 +13,8 @@ import useYelp from '../hooks/useYelp'
 import { makeMapPin } from '../utils/mapIcons'
 import useHomeFeed from '../hooks/useHomeFeed'
 import './HomePage.css'
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 if (MAPBOX_TOKEN) mapboxgl.accessToken = MAPBOX_TOKEN
@@ -307,6 +309,14 @@ export default function HomePage() {
   const { places: foodPlaces }                = useYelp({ type: 'all' })
   const { places: nightlifePlaces }           = useYelp({ type: 'nightlife_all' })
   const { feed }                              = useHomeFeed()
+  const [topStory, setTopStory]               = useState(null)
+
+  useEffect(() => {
+    fetch(`${API}/api/news`)
+      .then(r => r.json())
+      .then(d => { if (d.chicago?.[0]) setTopStory(d.chicago[0]) })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     trainDataRef.current = trains
@@ -634,6 +644,7 @@ export default function HomePage() {
         trainCount={trains.length || feed.trainCount} nextEvent={feed.nextEvent}
         topSpots={getBuzzingSpots(feed.tonightGames || [], nightlifePlaces, foodPlaces)}
         tonightGames={feed.tonightGames || []}
+        topStory={topStory}
       />
     </div>
   )

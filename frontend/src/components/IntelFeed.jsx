@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine } from 'react-icons/ri'
+import { useNavigate } from 'react-router-dom'
+import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine, RiNewspaperLine } from 'react-icons/ri'
 import './IntelFeed.css'
 
 const LINE_COLORS = {
@@ -43,8 +44,9 @@ const SPORT_LABELS = {
   soccer:     'MLS',
 }
 
-export default function IntelFeed({ weather, lake, trains = [], trainCount, nextEvent, topSpots = [], tonightGames = [] }) {
+export default function IntelFeed({ weather, lake, trains = [], trainCount, nextEvent, topSpots = [], tonightGames = [], topStory = null }) {
   const [clock, setClock] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fmt = () => new Date().toLocaleTimeString('en-US', {
@@ -179,6 +181,17 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
           </div>
         )}
       </div>
+
+      {topStory && (
+        <div className="intel-card intel-card--news" onClick={() => navigate('/news')} role="button" tabIndex={0}>
+          <div className="intel-card-label">
+            <RiNewspaperLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
+            TOP STORY
+          </div>
+          <div className="intel-news-title">{topStory.title}</div>
+          <div className="intel-news-source">{topStory.source}</div>
+        </div>
+      )}
     </aside>
   )
 }

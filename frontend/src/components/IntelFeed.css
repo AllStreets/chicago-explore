@@ -269,3 +269,37 @@
 .intel-cta-section {
   margin-top: 2px;
 }
+
+/* ── Top Story tile ────────────────────────────────────────────────────────── */
+.intel-card--news {
+  border-left: 2px solid #00d4ff;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  margin-top: 2px;
+}
+
+.intel-card--news:hover {
+  background: rgba(0, 212, 255, 0.08);
+  border-left-color: #38bdf8;
+}
+
+.intel-news-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.35;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.intel-news-source {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #00d4ff;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
