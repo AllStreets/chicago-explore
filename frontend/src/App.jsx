@@ -15,6 +15,9 @@ import MyChicagoPage from './pages/MyChicagoPage'
 import TonightPage from './pages/TonightPage'
 import BeachPage from './pages/BeachPage'
 import ReportsPage from './pages/ReportsPage'
+import FinancePage from './pages/FinancePage'
+import PoliticsPage from './pages/PoliticsPage'
+import HealthPage from './pages/HealthPage'
 import './App.css'
 
 class PageBoundary extends Component {
@@ -76,6 +79,9 @@ export default function App() {
             <Route path="/tonight"       element={<TonightPage />} />
             <Route path="/beach"         element={<BeachPage />} />
             <Route path="/311"           element={<ReportsPage />} />
+            <Route path="/finance"       element={<FinancePage />} />
+            <Route path="/politics"      element={<PoliticsPage />} />
+            <Route path="/health"        element={<HealthPage />} />
           </Routes>
         </PageBoundary>
       </main>

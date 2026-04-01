@@ -5,19 +5,23 @@ import {
   RiHome4Line, RiCompassDiscoverLine, RiSubwayLine, RiRestaurantLine,
   RiMoonLine, RiMoonClearLine, RiFootballLine, RiCalendarEventLine, RiCloudLine,
   RiCommunityLine, RiUser3Line, RiMenuLine, RiAlertLine,
+  RiHeartPulseLine, RiNewspaperLine, RiLineChartLine,
 } from 'react-icons/ri'
 import './Sidebar.css'
 
 const NAV = [
   { to: '/',              icon: RiHome4Line,           label: 'Home' },
   { to: '/tonight',       icon: RiMoonClearLine,       label: 'Tonight' },
-  { to: '/explore',       icon: RiCompassDiscoverLine, label: 'Explore' },
   { to: '/transit',       icon: RiSubwayLine,          label: 'Transit' },
-  { to: '/nightlife',     icon: RiMoonLine,            label: 'Nightlife' },
+  { to: '/explore',       icon: RiCompassDiscoverLine, label: 'Explore' },
   { to: '/food',          icon: RiRestaurantLine,      label: 'Food & Drink' },
   { to: '/sports',        icon: RiFootballLine,        label: 'Sports' },
+  { to: '/nightlife',     icon: RiMoonLine,            label: 'Nightlife' },
   { to: '/events',        icon: RiCalendarEventLine,   label: 'Events' },
+  { to: '/health',        icon: RiHeartPulseLine,      label: 'Health' },
+  { to: '/politics',      icon: RiNewspaperLine,       label: 'Politics' },
   { to: '/weather',       icon: RiCloudLine,           label: 'Weather & Lake' },
+  { to: '/finance',       icon: RiLineChartLine,       label: 'Finance' },
   { to: '/neighborhoods', icon: RiCommunityLine,       label: 'Neighborhoods' },
   { to: '/311',           icon: RiAlertLine,           label: 'Chicago 311' },
   { to: '/me',            icon: RiUser3Line,           label: 'My Chicago' },

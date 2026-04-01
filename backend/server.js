@@ -38,6 +38,9 @@ app.use('/api/tonight',       require('./routes/tonight'))
 app.use('/api/beach',         require('./routes/beach'))
 app.use('/api/311',           require('./routes/reports311'))
 app.use('/api/push',          require('./routes/push'))
+app.use('/api/finance',       require('./routes/finance'))
+app.use('/api/news',          require('./routes/news'))
+app.use('/api/health-places', require('./routes/health'))
 
 if (require.main === module) {
   const port = process.env.PORT || 3001
