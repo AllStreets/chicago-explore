@@ -1,0 +1,224 @@
+/* HealthPage — dark theme */
+
+.hl-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #060b18;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #e2e8f0;
+  overflow: hidden;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.hl-header {
+  flex-shrink: 0;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.hl-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.hl-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #00d4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.hl-loading-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #475569;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Category pills ──────────────────────────────────────────────────────── */
+
+.hl-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hl-cat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: transparent;
+  color: #475569;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.hl-cat-btn:hover {
+  color: #94a3b8;
+  border-color: #64748b;
+}
+
+.hl-cat-btn.active {
+  font-weight: 600;
+}
+
+/* ── Body (map + sidebar) ─────────────────────────────────────────────────── */
+
+.hl-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hl-map-wrap {
+  flex: 1;
+  min-height: 400px;
+  position: relative;
+}
+
+.hl-map-wrap .mapboxgl-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+
+.hl-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(30, 58, 95, 0.4);
+  background: rgba(6, 11, 24, 0.95);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.hl-results-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+/* ── Skeleton loader ─────────────────────────────────────────────────────── */
+
+.hl-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hl-skeleton-card {
+  height: 62px;
+  border-radius: 6px;
+  background: rgba(30, 58, 95, 0.25);
+  animation: hl-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes hl-shimmer {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+
+/* ── Place card ──────────────────────────────────────────────────────────── */
+
+.hl-place-card {
+  background: rgba(10, 22, 40, 0.6);
+  border: 1px solid rgba(30, 58, 95, 0.4);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+
+.hl-place-card:hover {
+  border-color: rgba(0, 212, 255, 0.25);
+}
+
+.hl-place-name {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.hl-place-addr {
+  font-family: 'JetBrains Mono', monospace;
+  color: #64748b;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.hl-place-hours {
+  color: #475569;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.hl-place-link {
+  display: inline-block;
+  color: #00d4ff;
+  font-size: 12px;
+  text-decoration: none;
+  margin-top: 2px;
+}
+
+.hl-place-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Mapbox popup override ──────────────────────────────────────────────── */
+
+.mapboxgl-popup-content {
+  background: rgba(10, 22, 40, 0.95) !important;
+  color: #e2e8f0 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 12px !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 6px !important;
+  padding: 8px 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+}
+
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .hl-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .hl-map-wrap {
+    flex: none;
+    height: 320px;
+    min-height: 320px;
+  }
+
+  .hl-sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(30, 58, 95, 0.4);
+    overflow-y: visible;
+  }
+}
