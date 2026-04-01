@@ -16,11 +16,11 @@
   color: var(--text-muted) !important;
 }
 
-/* Live data overlay — sits to the right of mapbox zoom controls */
+/* Live data overlay — top-left of map */
 .home-map-overlay {
   position: absolute;
   top: 10px;
-  left: 50px;
+  left: 10px;
   display: flex;
   align-items: center;
   gap: 4px;
