@@ -265,9 +265,29 @@
   color: var(--text-muted);
 }
 
-/* ── CTA section ───────────────────────────────────────────────────────────── */
-.intel-cta-section {
-  margin-top: 2px;
+/* ── Weather tile ──────────────────────────────────────────────────────────── */
+.intel-card--weather {
+  border-left: 2px solid #7dd3fc;
+}
+
+.intel-card--weather .intel-card-label {
+  color: #7dd3fc;
+}
+
+/* ── CTA tile ──────────────────────────────────────────────────────────────── */
+.intel-card--cta {
+  border-left: 2px solid #818cf8;
+}
+
+.intel-card--cta .intel-card-label {
+  color: #818cf8;
+}
+
+.intel-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
 }
 
 /* ── Top Story tile ────────────────────────────────────────────────────────── */

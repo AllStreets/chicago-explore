@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine, RiNewspaperLine } from 'react-icons/ri'
+import { RiMapPinLine, RiCalendarEventLine, RiStoreLine, RiTrophyLine, RiNewspaperLine, RiSubwayLine, RiCloudLine } from 'react-icons/ri'
 import './IntelFeed.css'
 
 const LINE_COLORS = {
@@ -84,8 +84,11 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
       </div>
 
       {weather && (
-        <div className="intel-card">
-          <div className="intel-card-label">WEATHER</div>
+        <div className="intel-card intel-card--weather">
+          <div className="intel-card-label">
+            <RiCloudLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
+            WEATHER
+          </div>
           <div className="intel-card-value">
             <span style={{color:'#60a5fa'}}>{weather.tempF ?? Math.round(weather.temp * 9/5 + 32)}°</span>
             <span style={{fontSize:'11px',color:'var(--text-muted)',marginLeft:4}}>F</span>
@@ -163,13 +166,15 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
         )}
       </div>
 
-      <div className="intel-cta-section">
-        <div className="intel-card-label" style={{ marginBottom: 6 }}>CTA NEARBY</div>
-        {!closestTrain && (
-          <div className="intel-card-sub" style={{ padding: '8px 0' }}>Loading trains...</div>
-        )}
-        {closestTrain && (
-          <div className="intel-card intel-card--train">
+      <div className="intel-card intel-card--cta">
+        <div className="intel-card-label">
+          <RiSubwayLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
+          CTA NEARBY
+        </div>
+        {!closestTrain ? (
+          <div className="intel-card-sub" style={{ paddingTop: 4 }}>Loading trains...</div>
+        ) : (
+          <div className="intel-cta-row">
             <span className="intel-train-dot" style={{ background: LINE_COLORS[closestTrain.line] || '#00d4ff' }} />
             <div className="intel-train-info">
               <span className="intel-train-line">{closestTrain.line ? `${LINE_NAMES[closestTrain.line] || closestTrain.line} Line` : 'CTA Train'}</span>
