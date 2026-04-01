@@ -127,7 +127,11 @@
 
 .intel-card--event {
   border-left: 2px solid #10b981;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+
+.intel-card--event:hover { background: rgba(16, 185, 129, 0.08); }
 
 .intel-card--event .intel-card-label {
   color: #10b981;
@@ -135,7 +139,11 @@
 
 .intel-card--spots {
   border-left: 2px solid #f97316;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+
+.intel-card--spots:hover { background: rgba(249, 115, 22, 0.08); }
 
 .intel-card--spots .intel-card-label {
   color: #f97316;
@@ -178,7 +186,11 @@
 /* ── Sports tile ───────────────────────────────────────────────────────────── */
 .intel-card--sports {
   border-left: 2px solid #ef4444;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+
+.intel-card--sports:hover { background: rgba(239, 68, 68, 0.08); }
 
 .intel-card--sports .intel-card-label {
   color: #ef4444;
@@ -276,7 +288,11 @@
 /* ── Weather tile ──────────────────────────────────────────────────────────── */
 .intel-card--weather {
   border-left: 2px solid #7dd3fc;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+
+.intel-card--weather:hover { background: rgba(125, 211, 252, 0.08); }
 
 .intel-card--weather .intel-card-label {
   color: #7dd3fc;
@@ -285,7 +301,11 @@
 /* ── CTA tile ──────────────────────────────────────────────────────────────── */
 .intel-card--cta {
   border-left: 2px solid #818cf8;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+
+.intel-card--cta:hover { background: rgba(129, 140, 248, 0.08); }
 
 .intel-card--cta .intel-card-label {
   color: #818cf8;

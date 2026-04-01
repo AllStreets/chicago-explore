@@ -84,7 +84,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
       </div>
 
       {weather && (
-        <div className="intel-card intel-card--weather">
+        <div className="intel-card intel-card--weather" onClick={() => navigate('/weather')} role="button" tabIndex={0}>
           <div className="intel-card-label">
             <RiCloudLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
             WEATHER
@@ -99,7 +99,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
       )}
 
       {nextEvent && (
-        <div className="intel-card intel-card--event">
+        <div className="intel-card intel-card--event" onClick={() => navigate('/tonight')} role="button" tabIndex={0}>
           <div className="intel-card-label">
             <RiCalendarEventLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
             TONIGHT
@@ -110,7 +110,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
       )}
 
       {topSpots.length > 0 && (
-        <div className="intel-card intel-card--spots">
+        <div className="intel-card intel-card--spots" onClick={() => navigate('/food')} role="button" tabIndex={0}>
           <div className="intel-card-label">
             <RiStoreLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
             BUZZING NOW
@@ -124,7 +124,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
         </div>
       )}
 
-      <div className="intel-card intel-card--sports">
+      <div className="intel-card intel-card--sports" onClick={() => navigate('/sports')} role="button" tabIndex={0}>
         <div className="intel-card-label">
           <RiTrophyLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
           SPORTS
@@ -166,7 +166,7 @@ export default function IntelFeed({ weather, lake, trains = [], trainCount, next
         )}
       </div>
 
-      <div className="intel-card intel-card--cta">
+      <div className="intel-card intel-card--cta" onClick={() => navigate('/transit')} role="button" tabIndex={0}>
         <div className="intel-card-label">
           <RiSubwayLine style={{ verticalAlign: 'middle', marginRight: 4 }} />
           CTA NEARBY
