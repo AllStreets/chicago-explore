@@ -6,7 +6,7 @@ const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_k
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
 
 const TTL_MS = 15 * 60 * 1000 // 15 minutes
-const CACHE_KEY = 'news_feed_v2'
+const CACHE_KEY = 'news_feed_v3'
 
 const FEEDS = [
   {
@@ -39,8 +39,27 @@ function stripCdata(text) {
   return text.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim()
 }
 
+function decodeEntities(text) {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#8216;/g, '\u2018')
+    .replace(/&#8217;/g, '\u2019')
+    .replace(/&#8218;/g, '\u201a')
+    .replace(/&#8220;/g, '\u201c')
+    .replace(/&#8221;/g, '\u201d')
+    .replace(/&#8211;/g, '\u2013')
+    .replace(/&#8212;/g, '\u2014')
+    .replace(/&#8230;/g, '\u2026')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+}
+
 function stripHtml(text) {
-  return text.replace(/<[^>]+>/g, '').trim()
+  return decodeEntities(text.replace(/<[^>]+>/g, '')).trim()
 }
 
 function extractField(block, tag) {
