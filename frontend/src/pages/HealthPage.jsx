@@ -85,7 +85,6 @@ export default function HealthPage() {
       minZoom: 10,
       maxBounds: [[-88.5, 41.3], [-87.0, 42.4]],
     })
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', () => {
       // Force correct position after any init with zero-height container

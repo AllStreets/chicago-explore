@@ -344,7 +344,6 @@ export default function HomePage() {
       bearing: -17.6,
       antialias: true,
     })
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', async () => {
       const layers = map.getStyle().layers

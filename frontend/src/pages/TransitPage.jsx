@@ -72,7 +72,6 @@ export default function TransitPage() {
       center: [-87.6298, 41.8781],
       zoom: 11, pitch: 0,
     })
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', () => {
       // CTA route lines

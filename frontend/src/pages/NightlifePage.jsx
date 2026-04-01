@@ -89,7 +89,6 @@ export default function NightlifePage() {
       zoom: 11.8,
       pitch: 20,
     })
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', () => {
       // Register one icon per category + defaults for "all"

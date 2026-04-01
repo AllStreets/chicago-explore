@@ -74,7 +74,6 @@ export default function FoodPage() {
       zoom: 13,
       pitch: 30,
     })
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-left')
 
     map.on('load', () => {
       // Canvas icons — synchronous, no async loading issues
