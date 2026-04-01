@@ -1,0 +1,452 @@
+/* ── Finance Page — Bloomberg Terminal Aesthetic ───────────────────────── */
+
+.fin-page {
+  min-height: 100vh;
+  background: #060b18;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  color: #cbd5e1;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.fin-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fin-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.fin-title {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #00d4ff;
+  text-shadow: 0 0 18px rgba(0, 212, 255, 0.5);
+}
+
+.fin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fin-last-updated {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #475569;
+}
+
+.fin-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 3px;
+  color: #00d4ff;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.fin-refresh:hover {
+  background: rgba(0, 212, 255, 0.16);
+  border-color: rgba(0, 212, 255, 0.4);
+}
+
+.fin-refresh.spinning svg {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Ticker Strip ─────────────────────────────────────────────────────────── */
+
+.fin-ticker-wrap {
+  height: 36px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.fin-ticker-inner {
+  display: inline-flex;
+  animation: ticker-scroll 60s linear infinite;
+  white-space: nowrap;
+  align-items: center;
+  height: 100%;
+}
+
+.fin-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(0, 212, 255, 0.08);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+}
+
+.fin-ticker-sym {
+  color: #00d4ff;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.fin-ticker-price {
+  color: #e2e8f0;
+}
+
+.fin-ticker-chg.pos {
+  color: #22c55e;
+}
+
+.fin-ticker-chg.neg {
+  color: #ef4444;
+}
+
+/* ── Main Grid ────────────────────────────────────────────────────────────── */
+
+.fin-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Panels ───────────────────────────────────────────────────────────────── */
+
+.fin-panel {
+  background: rgba(8, 16, 34, 0.8);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 4px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fin-panel-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #00d4ff;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+/* ── Stocks Table ─────────────────────────────────────────────────────────── */
+
+.fin-panel--stocks {
+  overflow: hidden;
+}
+
+.fin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+}
+
+.fin-table thead tr {
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.fin-table thead th {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #475569;
+  text-align: left;
+  padding: 0 8px 8px 8px;
+  white-space: nowrap;
+}
+
+.fin-table thead th.fin-num {
+  text-align: right;
+}
+
+.fin-table tbody tr {
+  height: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.1s;
+}
+
+.fin-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.fin-table tbody tr:hover {
+  background: rgba(0, 212, 255, 0.04) !important;
+}
+
+.fin-table tbody tr.pos-row {
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.fin-table tbody tr.neg-row {
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.fin-table td {
+  padding: 0 8px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fin-sym {
+  color: #00d4ff;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.fin-name {
+  color: #94a3b8;
+  font-size: 11px;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fin-num {
+  text-align: right;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-price {
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pos {
+  color: #22c55e;
+}
+
+.neg {
+  color: #ef4444;
+}
+
+.fin-sector {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  color: #64748b;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Right Column ─────────────────────────────────────────────────────────── */
+
+.fin-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Rent Barometer ───────────────────────────────────────────────────────── */
+
+.fin-rent-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.fin-rent-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 52px 48px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+}
+
+.fin-rent-hood {
+  color: #94a3b8;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fin-rent-bar-wrap {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fin-rent-bar {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.5), #00d4ff);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+  transition: width 0.5s ease;
+}
+
+.fin-rent-val {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 11px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-rent-yoy {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  justify-content: flex-end;
+}
+
+.fin-rent-yoy.up   { color: #22c55e; }
+.fin-rent-yoy.down { color: #ef4444; }
+.fin-rent-yoy.flat { color: #64748b; }
+
+/* ── Economic Indicators ──────────────────────────────────────────────────── */
+
+.fin-indicators {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fin-ind-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  gap: 10px;
+}
+
+.fin-ind-row:last-child {
+  border-bottom: none;
+}
+
+.fin-ind-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fin-ind-label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fin-ind-note {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  color: #334155;
+  letter-spacing: 0.03em;
+}
+
+.fin-ind-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.fin-ind-value {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px rgba(241, 245, 249, 0.2);
+}
+
+.fin-ind-chg {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.fin-ind-chg.up   { color: #22c55e; }
+.fin-ind-chg.down { color: #ef4444; }
+.fin-ind-chg.flat { color: #64748b; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .fin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fin-right-col {
+    flex-direction: column;
+  }
+
+  .fin-rent-row {
+    grid-template-columns: 100px 1fr 48px 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .fin-page {
+    padding: 12px;
+  }
+
+  .fin-title {
+    font-size: 14px;
+  }
+
+  .fin-name {
+    display: none;
+  }
+
+  .fin-rent-row {
+    grid-template-columns: 90px 1fr 44px 40px;
+    gap: 6px;
+  }
+}
