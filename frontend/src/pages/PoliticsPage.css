@@ -1,0 +1,244 @@
+.pol-page {
+  background: #060b18;
+  min-height: 100vh;
+  padding: 24px 28px;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #e2e8f0;
+}
+
+/* ── Header ── */
+.pol-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.pol-title {
+  font-family: 'JetBrains Mono', monospace;
+  color: #00d4ff;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pol-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pol-refresh {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #00d4ff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: transform 0.25s ease, opacity 0.2s;
+  opacity: 0.8;
+}
+
+.pol-refresh:hover {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.pol-timestamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #475569;
+}
+
+/* ── Tabs ── */
+.pol-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(30, 58, 95, 0.4);
+}
+
+.pol-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.pol-tab:hover {
+  color: #94a3b8;
+}
+
+.pol-tab--active {
+  color: #00d4ff;
+  border-bottom-color: #00d4ff;
+}
+
+.pol-tab-icon {
+  font-size: 13px;
+}
+
+/* ── Feed ── */
+.pol-feed {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Card ── */
+.pol-card {
+  background: rgba(10, 22, 40, 0.6);
+  border: 1px solid rgba(30, 58, 95, 0.4);
+  border-radius: 6px;
+  padding: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pol-card:hover {
+  border-color: rgba(0, 212, 255, 0.25);
+  box-shadow: 0 2px 12px rgba(0, 212, 255, 0.06);
+}
+
+.pol-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pol-source-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--badge-color, #64748b);
+  background: color-mix(in srgb, var(--badge-color, #64748b) 20%, transparent);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.pol-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #475569;
+}
+
+.pol-card-title {
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.pol-card-desc {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pol-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #00d4ff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 10px;
+  letter-spacing: 0.05em;
+  transition: text-decoration 0.15s;
+}
+
+.pol-card-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Skeleton ── */
+@keyframes pol-shimmer {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+
+.pol-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 860px;
+}
+
+.pol-skeleton-card {
+  pointer-events: none;
+}
+
+.pol-skel-line {
+  background: rgba(30, 58, 95, 0.5);
+  border-radius: 4px;
+  animation: pol-shimmer 1.5s infinite;
+  height: 12px;
+  margin-top: 8px;
+}
+
+.pol-skel-short {
+  width: 80px;
+  height: 18px;
+  margin-top: 0;
+}
+
+.pol-skel-title {
+  width: 75%;
+  height: 16px;
+}
+
+.pol-skel-desc {
+  width: 90%;
+}
+
+.pol-skel-desc-narrow {
+  width: 60%;
+}
+
+/* ── Empty state ── */
+.pol-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 24px;
+  color: #334155;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.pol-empty-icon {
+  font-size: 36px;
+  opacity: 0.5;
+}
