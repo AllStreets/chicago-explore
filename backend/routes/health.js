@@ -14,13 +14,13 @@ const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_k
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
 
 const HEALTH_CATEGORIES = {
-  gyms:      { label: 'Gyms & Fitness',  source: 'overpass' },
-  wellness:  { label: 'Wellness & Spa',  source: 'overpass' },
-  grocery:   { label: 'Healthy Grocery', source: 'overpass' },
-  running:   { label: 'Running Paths',   source: 'overpass' },
-  courts:    { label: 'Sports Courts',   source: 'overpass' },
-  urgent:    { label: 'Urgent Care',     source: 'overpass' },
-  hospitals: { label: 'Hospitals',       source: 'overpass' },
+  gyms:      { label: 'Gyms & Fitness',  source: 'overpass', cacheVersion: 'v2' },
+  wellness:  { label: 'Wellness & Spa',  source: 'overpass', cacheVersion: 'v1' },
+  grocery:   { label: 'Healthy Grocery', source: 'overpass', cacheVersion: 'v2' },
+  running:   { label: 'Running Paths',   source: 'overpass', cacheVersion: 'v2' },
+  courts:    { label: 'Sports Courts',   source: 'overpass', cacheVersion: 'v2' },
+  urgent:    { label: 'Urgent Care',     source: 'overpass', cacheVersion: 'v2' },
+  hospitals: { label: 'Hospitals',       source: 'overpass', cacheVersion: 'v2' },
 }
 
 const OVERPASS_QUERIES = {
@@ -77,8 +77,8 @@ router.get('/', async (req, res) => {
     return res.json({ places: [] })
   }
 
-  const { label } = catDef
-  const cacheKey = `health_${category}_v2`
+  const { label, cacheVersion } = catDef
+  const cacheKey = `health_${category}_${cacheVersion}`
 
   const cached = stmtGet.get(cacheKey)
   if (cached && Date.now() - cached.cached_at < TTL_MS) {

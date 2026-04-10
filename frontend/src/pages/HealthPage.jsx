@@ -68,7 +68,7 @@ export default function HealthPage() {
   const mapInitialized    = useRef(false)
   const popupRef          = useRef(null)
 
-  const [activeCategory, setActiveCategory] = useState('gyms')
+  const [activeCategory, setActiveCategory] = useState('wellness')
   const [places, setPlaces]                 = useState([])
   const [loading, setLoading]               = useState(false)
 
@@ -107,7 +107,7 @@ export default function HealthPage() {
         type: 'symbol',
         source: 'health-pins',
         layout: {
-          'icon-image':            ['concat', 'health-', ['literal', 'gyms']],
+          'icon-image':            'health-wellness',
           'icon-size':             1,
           'icon-allow-overlap':    true,
           'icon-ignore-placement': true,
