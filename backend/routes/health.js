@@ -8,7 +8,7 @@ const OVERPASS_MIRRORS = [
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ]
 const TTL_MS = 6 * 60 * 60 * 1000  // 6 hours
-const BB = '41.85,-87.72,41.97,-87.625'
+const BB = '41.78,-87.75,42.00,-87.58'
 
 const stmtGet = db.prepare('SELECT data, cached_at FROM yelp_cache WHERE cache_key = ?')
 const stmtSet = db.prepare('INSERT OR REPLACE INTO yelp_cache (cache_key, data, cached_at) VALUES (?, ?, ?)')
@@ -24,13 +24,13 @@ const HEALTH_CATEGORIES = {
 }
 
 const OVERPASS_QUERIES = {
-  gyms:      `[out:json];(node["leisure"="fitness_centre"](${BB});way["leisure"="fitness_centre"](${BB});node["amenity"="gym"](${BB}););out center 80;`,
-  wellness:  `[out:json];(node["shop"="beauty"](${BB});node["amenity"="spa"](${BB});node["leisure"="spa"](${BB});node["healthcare"="alternative"](${BB}););out center 60;`,
-  grocery:   `[out:json];(node["shop"="supermarket"](${BB});node["shop"="health_food"](${BB});node["shop"="organic"](${BB});way["shop"="supermarket"](${BB}););out center 60;`,
-  running:   `[out:json];(way["leisure"="track"](${BB});way["highway"="footway"]["foot"="designated"](${BB});way["route"="running"](${BB});relation["route"="running"](${BB}););out center 40;`,
-  courts:    `[out:json];(node["leisure"="pitch"]["sport"~"basketball|tennis|volleyball"](${BB});way["leisure"="pitch"]["sport"~"basketball|tennis|volleyball"](${BB}););out center 60;`,
-  urgent:    `[out:json];(node["amenity"="clinic"](${BB});node["healthcare"="centre"](${BB});node["amenity"="doctors"](${BB});way["amenity"="clinic"](${BB}););out center 50;`,
-  hospitals: `[out:json];(node["amenity"="hospital"](${BB});way["amenity"="hospital"](${BB}););out center 30;`,
+  gyms:      `[out:json];(node["leisure"="fitness_centre"](${BB});way["leisure"="fitness_centre"](${BB});node["leisure"="sports_centre"](${BB});way["leisure"="sports_centre"](${BB});node["amenity"="gym"](${BB});way["amenity"="gym"](${BB}););out center 100;`,
+  wellness:  `[out:json];(node["shop"="beauty"](${BB});node["amenity"="spa"](${BB});node["leisure"="spa"](${BB});node["healthcare"="alternative"](${BB});node["shop"="massage"](${BB});node["shop"="hairdresser"](${BB}););out center 80;`,
+  grocery:   `[out:json];(node["shop"="supermarket"](${BB});way["shop"="supermarket"](${BB});node["shop"="health_food"](${BB});node["shop"="organic"](${BB});node["shop"="grocery"](${BB});way["shop"="grocery"](${BB});node["shop"="greengrocer"](${BB}););out center 80;`,
+  running:   `[out:json];(way["leisure"="track"](${BB});node["leisure"="track"](${BB});way["leisure"="fitness_trail"](${BB});node["leisure"="fitness_station"](${BB});way["leisure"="fitness_station"](${BB});way["highway"="path"]["foot"!="no"](${BB});way["highway"="footway"]["access"!="private"](${BB}););out center 80;`,
+  courts:    `[out:json];(node["leisure"="pitch"]["sport"~"basketball|tennis|volleyball"](${BB});way["leisure"="pitch"]["sport"~"basketball|tennis|volleyball"](${BB});node["sport"="basketball"](${BB});node["sport"="tennis"](${BB});node["amenity"="tennis"](${BB}););out center 80;`,
+  urgent:    `[out:json];(node["amenity"="clinic"](${BB});way["amenity"="clinic"](${BB});node["healthcare"="centre"](${BB});node["healthcare"="clinic"](${BB});node["amenity"="doctors"](${BB});node["amenity"="urgent_care"](${BB});node["healthcare"="urgent_care"](${BB}););out center 60;`,
+  hospitals: `[out:json];(node["amenity"="hospital"](${BB});way["amenity"="hospital"](${BB});relation["amenity"="hospital"](${BB}););out center 40;`,
 }
 
 async function fetchOverpass(query) {
@@ -41,7 +41,7 @@ async function fetchOverpass(query) {
         method: 'POST',
         body: `data=${encodeURIComponent(query)}`,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(25000),
       })
       if (!r.ok) { lastErr = new Error(`Overpass ${r.status}`); continue }
       const data = await r.json()
@@ -78,7 +78,7 @@ router.get('/', async (req, res) => {
   }
 
   const { label } = catDef
-  const cacheKey = `health_${category}_v1`
+  const cacheKey = `health_${category}_v2`
 
   const cached = stmtGet.get(cacheKey)
   if (cached && Date.now() - cached.cached_at < TTL_MS) {
