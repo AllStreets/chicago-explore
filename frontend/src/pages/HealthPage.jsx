@@ -68,7 +68,7 @@ export default function HealthPage() {
   const mapInitialized    = useRef(false)
   const popupRef          = useRef(null)
 
-  const [activeCategory, setActiveCategory] = useState('wellness')
+  const [activeCategory, setActiveCategory] = useState('gyms')
   const [places, setPlaces]                 = useState([])
   const [loading, setLoading]               = useState(false)
 
@@ -107,7 +107,7 @@ export default function HealthPage() {
         type: 'symbol',
         source: 'health-pins',
         layout: {
-          'icon-image':            'health-wellness',
+          'icon-image':            'health-gyms',
           'icon-size':             1,
           'icon-allow-overlap':    true,
           'icon-ignore-placement': true,
@@ -147,7 +147,20 @@ export default function HealthPage() {
     }
   }, [])
 
-  // Fetch + update map when category changes
+  // Update map icon immediately when category changes
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    const applyIcon = () => {
+      if (map.getLayer('health-icons')) {
+        map.setLayoutProperty('health-icons', 'icon-image', `health-${activeCategory}`)
+      }
+    }
+    if (map.isStyleLoaded()) applyIcon()
+    else map.once('load', applyIcon)
+  }, [activeCategory])
+
+  // Fetch data + update map markers when category changes
   useEffect(() => {
     const cat = CAT_MAP[activeCategory]
     if (!cat) return
@@ -164,23 +177,13 @@ export default function HealthPage() {
         const map = mapRef.current
         if (!map) return
 
-        const updateMap = () => {
+        const updateMarkers = () => {
           const src = map.getSource('health-pins')
-          if (!src) return
-
-          // Update icon-image layout property for this category
-          if (map.getLayer('health-icons')) {
-            map.setLayoutProperty('health-icons', 'icon-image', `health-${activeCategory}`)
-          }
-
-          src.setData(toGeoJSON(fetched))
+          if (src) src.setData(toGeoJSON(fetched))
         }
 
-        if (map.isStyleLoaded()) {
-          updateMap()
-        } else {
-          map.once('load', updateMap)
-        }
+        if (map.isStyleLoaded()) updateMarkers()
+        else map.once('load', updateMarkers)
       })
       .catch(() => setPlaces([]))
       .finally(() => setLoading(false))
