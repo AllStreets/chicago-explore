@@ -75,7 +75,10 @@ async function overpassFetch(query) {
     try {
       const r = await fetch(mirror, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'ChicagoExplorer/1.0 (chicago-explorer app; contact via github)',
+        },
         body: `data=${encodeURIComponent(query)}`,
         signal: AbortSignal.timeout(14000),
       })
