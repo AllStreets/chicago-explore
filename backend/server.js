@@ -23,6 +23,22 @@ app.use(express.json())
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 
+app.get('/api/settings/health', (_req, res) => {
+  res.json({
+    status: 'ok',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    env: {
+      openweather:  !!( process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_KEY ),
+      openai:       !!process.env.OPENAI_API_KEY,
+      anthropic:    !!process.env.ANTHROPIC_API_KEY,
+      cta:          !!process.env.CTA_API_KEY,
+      ticketmaster: !!process.env.TICKETMASTER_KEY,
+      vapid:        !!( process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY ),
+    },
+  })
+})
+
 app.use('/api/cta',           require('./routes/cta'))
 app.use('/api/weather',       require('./routes/weather'))
 app.use('/api/lake',          require('./routes/lake'))

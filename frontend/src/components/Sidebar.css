@@ -69,6 +69,13 @@
   overflow-x: hidden;
 }
 
+/* Bottom settings link */
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
 .sidebar-link {
   display: flex;
   align-items: center;

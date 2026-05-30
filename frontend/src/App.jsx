@@ -18,6 +18,7 @@ import ReportsPage from './pages/ReportsPage'
 import FinancePage from './pages/FinancePage'
 import PoliticsPage from './pages/PoliticsPage'
 import HealthPage from './pages/HealthPage'
+import SettingsPage from './pages/SettingsPage'
 import './App.css'
 
 class PageBoundary extends Component {
@@ -35,7 +36,20 @@ class PageBoundary extends Component {
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
+function applyAppearance() {
+  const accent = localStorage.getItem('chi_ui_accent') || '#00d4ff'
+  const density = localStorage.getItem('chi_ui_density') || 'normal'
+  const r = parseInt(accent.slice(1, 3), 16) || 0
+  const g = parseInt(accent.slice(3, 5), 16) || 212
+  const b = parseInt(accent.slice(5, 7), 16) || 255
+  document.documentElement.style.setProperty('--accent', accent)
+  document.documentElement.style.setProperty('--accent-rgb', `${r}, ${g}, ${b}`)
+  document.documentElement.setAttribute('data-density', density)
+}
+
 export default function App() {
+  useEffect(() => { applyAppearance() }, [])
+
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
     navigator.serviceWorker.register('/sw.js').then(async reg => {
@@ -82,6 +96,7 @@ export default function App() {
             <Route path="/finance"       element={<FinancePage />} />
             <Route path="/news"           element={<PoliticsPage />} />
             <Route path="/health"        element={<HealthPage />} />
+            <Route path="/settings"      element={<SettingsPage />} />
           </Routes>
         </PageBoundary>
       </main>
